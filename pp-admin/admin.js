@@ -73,6 +73,7 @@
     } catch (e) { list.innerHTML = `<p class="flash flash--error">${e.message}</p>`; }
   });
 
+  window.ppPickImage = pickImage;   // usato anche dalla Modifica visuale
   document.querySelectorAll('[data-pick-image]').forEach((b) => b.addEventListener('click', async () => {
     const p = await pickImage();
     if (p) { const inp = b.closest('.field, .panel').querySelector('[data-image-path]'); inp.value = p; }

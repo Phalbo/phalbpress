@@ -196,3 +196,38 @@ fieldset { border: 0; padding: 0; margin: 0; }
 .preview-img { max-width: 100%; max-height: 420px; object-fit: contain; background: #f2f2f2; }
 .rows li.unread { border-left: 4px solid #c63232; padding-left: 10px; }
 .msg { white-space: normal; margin: 6px 0 0; }
+
+/* ---------- Modifica visuale ---------- */
+.vis { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
+.vis__stage { position: sticky; top: 12px; height: calc(100vh - 140px); min-height: 480px; background: #e9e8e3; border: 1px solid var(--line-strong, #ccc); border-radius: 8px; overflow: hidden; display: flex; justify-content: center; }
+.vis__frame { width: 100%; height: 100%; border: 0; background: #fff; transition: width .2s ease; }
+.vis--phone .vis__frame { width: 390px; box-shadow: 0 0 0 1px rgba(0,0,0,.15), 0 10px 40px rgba(0,0,0,.18); }
+.vis__side { max-height: calc(100vh - 140px); overflow: auto; position: sticky; top: 12px; }
+.vis__h { font-size: 1rem; margin: 8px 0 0; }
+.vis-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; }
+.vis-item, .vis-tones, .vis-form { min-width: 0; }
+.vis-item { display: flex; gap: 6px; align-items: center; border: 1px solid var(--line-strong, #ccc); border-radius: 6px; background: #fff; padding: 4px 4px 4px 0; }
+.vis-item.is-current { border-color: #2f6fed; box-shadow: 0 0 0 2px rgba(47,111,237,.25); }
+.vis-item.is-hidden .vis-item__pick { opacity: .6; }
+.vis-item.is-dragging { opacity: .4; }
+.vis-item__pick { flex: 1; min-width: 0; text-align: left; border: 0; background: none; padding: 6px 10px; font: inherit; cursor: grab; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vis-item__kind { display: block; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: #6b6b66; }
+.vis-item__move { display: flex; gap: 2px; flex: none; }
+.vis-item__move .btn { min-width: 30px; padding: 0 6px; }
+.vis-add { align-items: flex-end; flex-wrap: wrap; }
+.vis-add .field { flex: 1; min-width: 0; margin: 0; }
+.vis-form__head h2 { margin: 2px 0 8px; font-size: 1.15rem; }
+.vis-form__head p { margin: 0; }
+.vis-tones { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.vis-tones legend { font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+.vis-tone { display: flex; align-items: center; gap: 6px; font-size: 13px; border: 1px solid var(--line-strong, #ccc); border-radius: 6px; padding: 6px 8px; cursor: pointer; }
+.vis-tone input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.vis-tone:has(input:checked) { border-color: #2f6fed; box-shadow: 0 0 0 2px rgba(47,111,237,.25); }
+.vis-tone:has(input:focus-visible) { outline: 3px solid #2f6fed; outline-offset: 2px; }
+.vis-tone__chip { width: 18px; height: 18px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.2); flex: none; }
+.vis-tone__chip--auto { background: repeating-linear-gradient(45deg, #ddd 0 4px, #fff 4px 8px); }
+.vis-tone__chip--custom { background: conic-gradient(#e04e1b, #f2c230, #14594a, #2f6fed, #8b3fd1, #e04e1b); }
+.vis-field[hidden] { display: none; }
+.vis-field .field, .vis-field .check { margin: 0; }
+.vis-field .thumb { max-width: 160px; }
+@media (max-width: 1100px) { .vis { grid-template-columns: 1fr; } .vis__stage, .vis__side { position: static; max-height: none; } .vis__stage { height: 70vh; } }

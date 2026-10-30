@@ -110,4 +110,24 @@
       try { await navigator.clipboard.writeText(b.dataset.shareCopy); const t = b.textContent; b.textContent = b.dataset.done; setTimeout(() => (b.textContent = t), 1600); } catch (e) {}
     });
   });
+  /* ---------- parallasse delle immagini di fondo (Modifica visuale): solo se chi guarda non ha chiesto meno movimento ---------- */
+  const plx = Array.from(document.querySelectorAll('.chapter__bg[data-parallax] img'));
+  if (plx.length && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let ticking = false;
+    const move = () => {
+      ticking = false;
+      const vh = window.innerHeight;
+      plx.forEach((img) => {
+        const r = img.parentElement.getBoundingClientRect();
+        if (r.bottom < -200 || r.top > vh + 200) return;
+        // da -1 (fascia sotto lo schermo) a 1 (fascia sopra): l'immagine si sposta al massimo del 14% della sua fascia
+        const p = Math.max(-1, Math.min(1, (r.top + r.height / 2 - vh / 2) / (vh / 2 + r.height / 2)));
+        img.style.transform = 'translate3d(0,' + (p * r.height * 0.14).toFixed(1) + 'px,0)';
+      });
+    };
+    const ask = () => { if (!ticking) { ticking = true; requestAnimationFrame(move); } };
+    window.addEventListener('scroll', ask, { passive: true });
+    window.addEventListener('resize', ask);
+    move();
+  }
 })();

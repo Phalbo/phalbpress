@@ -62,3 +62,31 @@
 .pp-hit__title { font-size: 1.25rem; font-weight: 700; font-family: var(--font-display, inherit); }
 .pp-hit p { margin: 6px 0 0; max-width: 70ch; }
 .pp-hit mark { background: color-mix(in srgb, var(--accent, #ff0) 30%, transparent); color: inherit; }
+
+/* ---------- Aspetto delle fasce (Modifica visuale). Dopo il tema e l'identità: le scelte fatte nella gestione vincono su ogni tema.
+   Una fascia con fondo scuro (colore libero scuro o immagine con velo scuro) ha la classe chapter--ink, con fondo chiaro chapter--paper:
+   testi e riquadri seguono le regole che il tema ha già per quei toni. ---------- */
+/* testo attenuato leggibile su ogni fondo: si calcola dal colore del testo della fascia (prima era un grigio pensato solo per il fondo chiaro) */
+.chapter--accent { --muted: color-mix(in srgb, var(--accent-ink) 78%, var(--accent)); }
+.chapter--green { --muted: color-mix(in srgb, var(--field-1-ink) 78%, var(--field-1)); }
+.chapter--blue { --muted: color-mix(in srgb, var(--field-2-ink) 78%, var(--field-2)); }
+.chapter--ink { --muted: color-mix(in srgb, var(--black-ink) 78%, var(--black)); }
+.chapter.chapter--custom { --surface: color-mix(in srgb, var(--chapter-ink) 9%, transparent); --muted: color-mix(in srgb, var(--chapter-ink) 78%, var(--chapter-bg)); background: var(--chapter-bg) !important; color: var(--chapter-ink) !important; }
+.chapter--custom + .chapter--paper, .chapter--has-bg + .chapter--paper, .chapter--paper + .chapter--custom, .chapter--paper + .chapter--has-bg { padding-top: var(--section, 6rem); }
+.chapter.chapter--sp-compact { padding-top: calc(var(--section, 6rem) * 0.5) !important; padding-bottom: calc(var(--section, 6rem) * 0.5) !important; }
+.chapter.chapter--sp-wide { padding-top: calc(var(--section, 6rem) * 1.6) !important; padding-bottom: calc(var(--section, 6rem) * 1.6) !important; }
+.chapter--w-narrow > :not(.chapter__bg) { max-width: min(48rem, 100%) !important; margin-left: auto !important; margin-right: auto !important; }
+.chapter--w-full > :not(.chapter__bg) { max-width: none !important; }
+
+/* immagine di fondo: dietro al contenuto, sopra il colore della fascia; il velo tiene il testo leggibile */
+.chapter--has-bg { position: relative; isolation: isolate; overflow: hidden; }
+.chapter--has-bg > .chapter__bg { position: absolute !important; inset: 0; z-index: -1; max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; overflow: hidden; pointer-events: none; }
+.chapter__bg img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; }
+.chapter__bg[data-parallax] img { top: -18%; height: 136%; will-change: transform; }
+.chapter__bg::after { content: ""; position: absolute; inset: 0; }
+.chapter--over-dark > .chapter__bg::after { background: linear-gradient(rgba(0, 0, 0, 0.52), rgba(0, 0, 0, 0.68)); }
+.chapter--over-light > .chapter__bg::after { background: rgba(255, 255, 255, 0.82); }
+.chapter.chapter--over-dark { color: #fff; --muted: rgba(255, 255, 255, 0.84); --surface: rgba(255, 255, 255, 0.1); }
+.chapter.chapter--over-light { color: #111; --muted: rgba(17, 17, 17, 0.76); --surface: rgba(0, 0, 0, 0.05); }
+@media (prefers-reduced-motion: reduce) { .chapter__bg[data-parallax] img { top: 0; height: 100%; transform: none !important; } }
+@media print { .chapter__bg { display: none !important; } }

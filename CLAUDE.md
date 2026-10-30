@@ -66,6 +66,12 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`).
 - Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, steps, collection, figures, latest, text, gallery, cta, video), ordine = menu_order.
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
+- **Aspetto delle fasce** (`Blocks::look()`: tone con `custom`, bg_color, bg_image, bg_focus, bg_overlay, parallax, spacing, width; in `meta`, non tradotti):
+  si applicano in `Blocks::decorate()` al primo `<section>` del blocco, quindi valgono con ogni tema senza toccarne i partial. Un fondo scuro (colore libero scuro
+  o velo scuro) diventa `chapter--ink`, uno chiaro `chapter--paper`: testi e riquadri seguono le regole del tema per quei toni. CSS in `pp-assets/pp.css`
+  (dopo tema e identità), parallasse in `_base/assets/base.js`. Un tema nuovo deve reggere `chapter--custom`, `chapter--has-bg`, `chapter--over-dark|light`,
+  `chapter--sp-compact|wide`, `chapter--w-narrow|full`: per colori di card e testi usare `--surface` e `--muted`, che quelle classi ridefiniscono.
+- **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
 - Anteprima: `/{admin}/preview?path=/it/…&theme=slug[&palette=1]` (bozze e programmati visibili, palette del tema al posto di quella dell'identità).
 - Nuovi temi: skill design-taste-frontend (draw → direction sheet, inspect). Le direzioni usate sono in ogni theme.json.
 

@@ -242,7 +242,7 @@ final class Admin
         return Hooks::filter('fields', $out, $type, $row);
     }
 
-    private static function fieldValue(array $f, $v)
+    public static function fieldValue(array $f, $v)
     {
         $v = is_string($v) ? trim($v) : $v;
         return match ($f['type']) {
@@ -252,6 +252,8 @@ final class Admin
             'date' => preg_match('~^\d{4}-\d{2}-\d{2}$~', (string)$v) ? (string)$v : '',
             'select' => array_key_exists((string)$v, $f['options']) || in_array((string)$v, $f['options'], true) ? (string)$v : '',
             'entry' => (string)(int)$v ?: '',
+            'color' => preg_match('~^#[0-9a-f]{6}$~i', (string)$v) ? strtolower((string)$v) : '',
+            'image' => preg_match('~^uploads/[A-Za-z0-9/_.-]+$~', (string)$v) && !str_contains((string)$v, '..') ? (string)$v : '',
             default => (string)$v,
         };
     }
@@ -401,12 +403,21 @@ final class Admin
         Content::$preview = true;
         if (!empty($_GET['theme']) && isset(PP::themes()[$_GET['theme']])) PP::$theme = (string)$_GET['theme'];
         $seg = array_values(array_filter(explode('/', $path), 'strlen'));
+        // Modifica visuale: le fasce della home si possono cliccare
+        $edit = !empty($_GET['edit']) && Auth::can('publish') && class_exists('Blocks');
+        if ($edit) Blocks::$edit = true;
         $page = PP::page($seg ?: [I18n::$master]);
         header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
         $html = $page['html'];
         // "con i colori del tema": la palette e i font suggeriti sostituiscono per un momento quelli dell'identità
         if (PP::$theme && !empty($_GET['palette']) && class_exists('Identity')) {
             $html = str_replace('</head>', '<style>' . Identity::css(PP::themes()[PP::$theme]) . '</style></head>', $html);
+        }
+        if ($edit) {
+            $tools = '<link rel="stylesheet" href="' . e(PP::url('pp-admin/visual-frame.css')) . '?v=' . PP::VERSION . '">'
+                . '<script src="' . e(PP::url('pp-admin/visual-frame.js')) . '?v=' . PP::VERSION . '" defer></script>';
+            echo str_replace('</head>', $tools . '</head>', $html);
+            return;
         }
         $bar = '<div role="status" style="position:sticky;top:0;z-index:9999;background:#111;color:#fff;font:600 13px/1 system-ui,sans-serif;padding:8px 16px;text-align:center">Anteprima' . (PP::$theme ? ' · tema ' . e(PP::themes()[PP::$theme]['name'] ?? PP::$theme) : '') . ' · non è il sito pubblico</div>';
         echo preg_replace('~<body([^>]*)>~', '<body$1>' . $bar, $html, 1);

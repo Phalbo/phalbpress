@@ -47,8 +47,7 @@ final class Blocks
 
     public static function fields(string $kind): array
     {
-        $common = [
-            'tone' => ['label' => 'Colore della fascia', 'type' => 'select', 'options' => ['' => 'Automatico', 'paper' => 'Sfondo', 'accent' => 'Accento', 'field1' => 'Campo 1', 'field2' => 'Campo 2', 'dark' => 'Scuro']],
+        $common = self::look() + [
             'anchor' => ['label' => 'Ancora', 'hint' => 'facoltativa: per linkare #ancora'],
         ];
         $out = [];
@@ -70,7 +69,70 @@ final class Blocks
         $b['tone'] = in_array($tone, ['paper', 'accent', 'field1', 'field2', 'dark'], true) ? $tone : 'paper';
         $b['lg'] = $b['_fallback'] ? ' lang="' . e(I18n::hreflang($b['_lang'])) . '"' : '';
         $b['id_attr'] = ($a = Media::slug((string)($b['meta_arr']['anchor'] ?? ''))) ? $a : 'b' . (int)$b['id'];
-        return PP::partial('blocks/' . $kind, ['b' => $b, 'i' => $i, 'x' => $b['x'], 'm' => $b['meta_arr']]) ?: PP::partial('blocks/text', ['b' => $b, 'i' => $i, 'x' => $b['x'], 'm' => $b['meta_arr']]);
+        $html = PP::partial('blocks/' . $kind, ['b' => $b, 'i' => $i, 'x' => $b['x'], 'm' => $b['meta_arr']]) ?: PP::partial('blocks/text', ['b' => $b, 'i' => $i, 'x' => $b['x'], 'm' => $b['meta_arr']]);
+        return self::decorate($html, $b);
+    }
+
+    /** Anteprima della Modifica visuale: le fasce si possono cliccare. */
+    public static bool $edit = false;
+
+    /**
+     * Aspetto della fascia, uguale per tutti i tipi di blocco (Modifica visuale e scheda del blocco).
+     * Si applica in decorate() all'apertura della fascia, così vale con ogni tema, anche con quelli che riscrivono i blocchi.
+     */
+    public static function look(): array
+    {
+        return [
+            'tone' => ['label' => 'Fondo', 'type' => 'select', 'options' => ['' => 'Automatico (dal tema)', 'paper' => 'Sfondo', 'accent' => 'Colore principale', 'field1' => 'Campo 1', 'field2' => 'Campo 2', 'dark' => 'Scuro', 'custom' => 'Colore libero']],
+            'bg_color' => ['label' => 'Colore libero', 'type' => 'color', 'hint' => 'solo con Fondo: Colore libero; il testo diventa nero o bianco da solo'],
+            'bg_image' => ['label' => 'Immagine di fondo', 'type' => 'image', 'hint' => 'orizzontale, almeno 1920 px'],
+            'bg_focus' => ['label' => 'Parte dell’immagine da tenere', 'type' => 'select', 'options' => ['' => 'Centro', 'top' => 'Alto', 'bottom' => 'Basso', 'left' => 'Sinistra', 'right' => 'Destra']],
+            'bg_overlay' => ['label' => 'Velo sopra l’immagine', 'type' => 'select', 'options' => ['' => 'Scuro, testo bianco', 'light' => 'Chiaro, testo scuro', 'none' => 'Nessuno (solo se l’immagine è già uniforme)']],
+            'parallax' => ['label' => 'Parallasse: l’immagine scorre più lenta del testo', 'type' => 'checkbox'],
+            'spacing' => ['label' => 'Spazio sopra e sotto', 'type' => 'select', 'options' => ['' => 'Normale', 'compact' => 'Compatto', 'wide' => 'Ampio']],
+            'width' => ['label' => 'Larghezza del contenuto', 'type' => 'select', 'options' => ['' => 'Normale', 'narrow' => 'Stretta', 'full' => 'Piena']],
+        ];
+    }
+
+    /** Aggiunge all'apertura della fascia (il primo <section>) le scelte di aspetto: classi, colore libero, immagine di fondo. */
+    public static function decorate(string $html, array $b): string
+    {
+        $m = $b['meta_arr'] ?? [];
+        if (!preg_match('~<section\b[^>]*>~', $html, $tag, PREG_OFFSET_CAPTURE)) return $html;
+        [$open, $pos] = $tag[0];
+        $add = [];
+        $style = '';
+        $ink = null;   // 'light' = testo chiaro (fondo scuro), 'dark' = testo scuro
+        $color = (string)($m['bg_color'] ?? '');
+        if (($m['tone'] ?? '') === 'custom' && preg_match('~^#[0-9a-f]{6}$~i', $color)) {
+            $txt = class_exists('Identity') ? Identity::inkOn($color) : '#000000';
+            $add[] = 'chapter--custom';
+            $style .= '--chapter-bg:' . $color . ';--chapter-ink:' . $txt . ';';
+            $ink = $txt === '#ffffff' ? 'light' : 'dark';
+        }
+        $bg = '';
+        $image = (string)($m['bg_image'] ?? '');
+        if ($image !== '' && preg_match('~^uploads/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|avif)$~i', $image) && is_file(PP_ROOT . '/' . $image)) {
+            $over = in_array($m['bg_overlay'] ?? '', ['light', 'none'], true) ? $m['bg_overlay'] : 'dark';
+            $add[] = 'chapter--has-bg';
+            $add[] = 'chapter--over-' . $over;
+            if ($over !== 'none') $ink = $over === 'dark' ? 'light' : 'dark';
+            $focus = ['top' => '50% 15%', 'bottom' => '50% 85%', 'left' => '15% 50%', 'right' => '85% 50%'][$m['bg_focus'] ?? ''] ?? '50% 50%';
+            $img = img($image, '', '100vw', '', true);
+            $img = preg_replace('~^<img~', '<img style="object-position:' . $focus . '"', $img, 1);
+            $bg = '<div class="chapter__bg" aria-hidden="true"' . (!empty($m['parallax']) ? ' data-parallax' : '') . '>' . $img . '</div>';
+        }
+        // fondo scuro (colore libero scuro o velo scuro) = fascia "scura" del tema; fondo chiaro = fascia "chiara":
+        // il tema la disegna con le regole che ha già per quei toni, cambia solo il colore o l'immagine sotto
+        if ($ink !== null) $open = preg_replace('~\bchapter--(paper|accent|green|blue|ink)\b~', $ink === 'light' ? 'chapter--ink' : 'chapter--paper', $open, 1);
+        if (in_array($m['spacing'] ?? '', ['compact', 'wide'], true)) $add[] = 'chapter--sp-' . $m['spacing'];
+        if (in_array($m['width'] ?? '', ['narrow', 'full'], true)) $add[] = 'chapter--w-' . $m['width'];
+        if ($add) $open = preg_replace('~\bclass="~', 'class="' . implode(' ', $add) . ' ', $open, 1);
+        if ($style !== '') $open = preg_replace('~^<section~', '<section style="' . e($style) . '"', $open, 1);
+        if ($ink !== null) $open = preg_match('~\bdata-ink="~', $open) ? preg_replace('~\bdata-ink="[^"]*"~', 'data-ink="' . $ink . '"', $open, 1) : preg_replace('~^<section~', '<section data-ink="' . $ink . '"', $open, 1);
+        if (self::$edit) $open = preg_replace('~^<section~', '<section data-pp-block="' . (int)$b['id'] . '" data-pp-kind="' . e((string)$b['template']) . '"'
+            . (($b['status'] ?? 'published') !== 'published' ? ' data-pp-hidden' : ''), $open, 1);
+        return substr($html, 0, $pos) . $open . $bg . substr($html, $pos + strlen($tag[0][0]));
     }
 
     /** Link di un pulsante: https://…, /percorso, #ancora, nome di una sezione o slug di una pagina. */

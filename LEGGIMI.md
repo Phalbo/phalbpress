@@ -1,4 +1,4 @@
-# PhalbPress 1.2.1
+# PhalbPress 1.3
 
 Motore leggero in PHP per siti di progetto multilingua. Primo sito: **VOICE Europe**.
 PHP 8.1+ e MySQL/MariaDB (SiteGround). Niente WordPress, niente plugin di terzi, niente librerie esterne.
@@ -71,7 +71,7 @@ Per provarlo in locale senza MySQL: `'driver' => 'sqlite'` in `config.php`, poi 
 | Privacy, cookie, dichiarazione accessibilità | Privacy e cookie / Accessibilità |
 | Sito statico, controlli, versioni, programmati | Sistema |
 | Aspetto del sito | Temi (anteprima con i tuoi colori o con quelli del tema, poi Attiva) |
-| Home | Blocchi della home: ogni blocco è un pezzo della pagina, l'ordine decide la posizione |
+| Home | **Modifica visuale**: clicchi una fascia nell'anteprima e ne cambi fondo, immagine, parallasse, spazio, larghezza; sposti, nascondi, aggiungi. I testi da Blocchi della home |
 | Voci del menu, link esterni, footer | Menu |
 | Indirizzo di una pagina | campo Indirizzo sotto il titolo: si compila da solo dal titolo, in ogni lingua. Se lo cambi, il vecchio porta al nuovo |
 | Pubblicare più tardi / togliere a una data | nella pagina del contenuto → Programma |

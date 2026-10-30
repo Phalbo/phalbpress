@@ -1,5 +1,5 @@
 <header class="head"><h1>Temi</h1>
-  <div class="head__actions"><a class="btn" href="<?= e(Admin::u('entries/block')) ?>">Blocchi della home (<?= $blocks ?>)</a></div></header>
+  <div class="head__actions"><a class="btn btn--primary" href="<?= e(Admin::u('visual')) ?>">Modifica visuale</a> <a class="btn" href="<?= e(Admin::u('entries/block')) ?>">Blocchi della home (<?= $blocks ?>)</a></div></header>
 <section class="panel">
   <p class="hint">Il tema cambia l’aspetto di tutto il sito: impaginazione, tipografia, menu, fasce colorate. Testi, immagini, menu e traduzioni restano gli stessi.
     I colori e i font sono quelli di <a href="<?= e(Admin::u('identity')) ?>">Identità visiva</a>; ogni tema ne suggerisce alcuni, che puoi applicare attivandolo.
