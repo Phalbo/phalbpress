@@ -4,8 +4,21 @@
 /data/
 /dist/
 /search/
-/[a-z][a-z]/
-/[a-z][a-z]-[A-Za-z]*/
+# cartelle statiche delle lingue (es. en/, it/, sr-Latn/): elencate una per una, mai con un'espressione che prenda anche pp-*
+/en/
+/it/
+/es/
+/fr/
+/de/
+/pt/
+/bg/
+/pl/
+/sr/
+/sl/
+/sq/
+/hr/
+/ro/
+/el/
 /404.html
 /sitemap.xml
 /robots.txt

@@ -1,0 +1,11 @@
+{
+  "name": "Editoriale",
+  "order": 3,
+  "description": "Ogni sezione è un foglio stampato posato su un fondo scuro: schede, biglietti con la tacca, bordi perforati. Titoli in un gotico americano, testo in un serif da giornale.",
+  "best_for": "riviste, programmi culturali, archivi, progetti con molte notizie e storie",
+  "direction": "The page is the object (tasteskill, seed 1469661280)",
+  "palette": {"ground": "#ffd6ec", "ink": "#3d0012", "accent": "#3d0012", "field1": "#ff99d3", "field2": "#f6e3ec", "dark": "#3d0012", "hero1": "#3d0012", "hero2": "#3d0012"},
+  "fonts": {"display": "Libre Franklin", "text": "Source Serif 4"},
+  "buttons": "pill",
+  "body_class": "photo-hero"
+}

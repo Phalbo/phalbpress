@@ -1,0 +1,11 @@
+{
+  "name": "Documentario",
+  "order": 5,
+  "description": "Le fotografie fanno il racconto: apertura a tutto schermo con il titolo sul bordo come in un film, poche parole in colonna stretta, immagini grandi a misure diverse.",
+  "best_for": "progetti con molte foto e video dal territorio: comunità, luoghi, reportage, storie di persone",
+  "direction": "The place carries it (tasteskill, seed 90413904)",
+  "palette": {"ground": "#e5e1d8", "ink": "#2a1d17", "accent": "#456f3a", "field1": "#456f3a", "field2": "#dad5ca", "dark": "#2a1d17", "hero1": "#ffffff", "hero2": "#ffffff"},
+  "fonts": {"display": "Newsreader", "text": "Newsreader"},
+  "buttons": "square",
+  "body_class": "photo-hero"
+}

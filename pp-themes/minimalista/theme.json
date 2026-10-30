@@ -1,0 +1,10 @@
+{
+  "name": "Minimalista",
+  "order": 6,
+  "description": "Quasi un sussurro: una sola colonna stretta, titoli poco più grandi del testo, tantissimo spazio, un solo colore d'accento per schermata.",
+  "best_for": "siti istituzionali sobri, professionali, portfolio, ricerca",
+  "direction": "The quiet instrument (tasteskill, seed 1601906513)",
+  "palette": {"ground": "#ddd6c6", "ink": "#2a2a26", "accent": "#4f6238", "field1": "#3f5a2a", "field2": "#d2cab8", "dark": "#3f5a2a", "hero1": "#2a2a26", "hero2": "#2a2a26"},
+  "fonts": {"display": "Work Sans", "text": "Work Sans"},
+  "buttons": "square"
+}

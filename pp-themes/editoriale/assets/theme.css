@@ -1,0 +1,93 @@
+/* Editoriale — "The page is the object" (tasteskill, seed 1469661280).
+   Il sito è una pila di fogli stampati su un fondo scuro (il colore "scuro" dell'identità):
+   ogni sezione è un foglio con bordi veri, l'intestazione è un biglietto con la tacca, il footer è il retro.
+   Suggeriti: bordeaux e rosa, Libre Franklin + Source Serif 4. */
+:root {
+  --weight-head: 700;
+  --tracking-head: -0.035em;
+  --leading-head: 0.92;
+  --step-display: clamp(3rem, 1rem + 8vw, 9.5rem);
+  --sheet: clamp(10px, 1.6vw, 24px);
+  --radius-box: 0px;
+  --head-bg: var(--black);
+  --head-ink: var(--black-ink);
+  --section: clamp(3.5rem, 7vw, 7rem);
+}
+body { background: var(--black); }
+.site-main { padding: 0 var(--sheet) var(--sheet); display: grid; gap: var(--sheet); }
+.chapter { box-shadow: none; }
+.chapter--paper + .chapter--paper { padding-top: var(--section); }
+.site-head__in { max-width: none; }
+.brand__logo { background: var(--bg); border-radius: 50%; padding: 2px; }
+.nav__link { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.875rem; font-family: var(--font-display); }
+.nav-toggle { background: var(--black-ink); color: var(--black); }
+h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-display); }
+.band__title, .hero__title, .storypage__name { text-transform: uppercase; }
+
+/* il biglietto: tacche ai lati tagliate con clip-path */
+.band, .hero, .storypage {
+  clip-path: polygon(0 0, 100% 0, 100% calc(50% - 22px), calc(100% - 22px) 50%, 100% calc(50% + 22px), 100% 100%, 0 100%, 0 calc(50% + 22px), 22px 50%, 0 calc(50% - 22px));
+}
+.hero { min-height: min(82svh, 860px); text-align: center; justify-items: center; align-content: center; }
+.hero__title { align-items: center; line-height: 0.88; }
+.hero__aside { align-items: center; text-align: center; }
+.hero__say { justify-content: center; max-width: 60ch; }
+.photo-hero .hero--img .hero__img::after { background: rgba(0,0,0,.45); }
+
+/* fogli perforati: la riga di puntini tondi separa le parti come una matrice da strappare */
+.steps__list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 0; }
+.step { padding: 28px 24px; border-left: 6px dotted currentColor; }
+.step:first-child { border-left: 0; padding-left: 0; }
+@media (max-width: 760px) { .step { border-left: 0; border-top: 6px dotted currentColor; padding: 24px 0; } .step:first-child { border-top: 0; } }
+.step__line { text-transform: uppercase; font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem); }
+
+.statement { text-align: center; justify-items: center; }
+.statement__head { max-width: 18ch; }
+.statement__body { max-width: 900px; text-align: left; }
+.statement__fact { font-style: italic; border-top: 6px dotted currentColor; padding-top: 18px; }
+
+/* elenchi come il listino stampato: nome a sinistra, puntini, dettaglio a destra */
+.collection__item { grid-template-columns: auto 1fr auto; align-items: baseline; padding: 12px 0; }
+.collection__name { font-size: clamp(1.25rem, 1rem + 1vw, 1.9rem); text-transform: uppercase; }
+.collection__ctx { grid-column: 1 / -1; grid-row: 2; font-style: italic; }
+.collection__item::after { content: ""; grid-column: 2; grid-row: 1; border-bottom: 4px dotted currentColor; margin: 0 12px; opacity: 0.6; transform: translateY(-6px); }
+.collection__who { grid-column: 3; grid-row: 1; }
+@media (max-width: 760px) { .collection__item { grid-template-columns: 1fr; } .collection__item::after { display: none; } .collection__who { grid-column: 1; grid-row: auto; text-align: left; } }
+
+/* numeri: lo scontrino con il totale */
+.figures__list { grid-template-columns: 1fr; max-width: 720px; gap: 0; }
+.figure { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 4px dotted currentColor; }
+.figure__val { font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); order: 2; }
+.figure__cap { font-size: var(--step-lead); max-width: 28ch; }
+
+.latest__cols { gap: var(--sheet); }
+.latest__col { background: var(--surface); padding: 24px; }
+.chapter--paper .latest__col { background: color-mix(in srgb, var(--ink) 6%, var(--bg)); }
+.latest__sub { text-transform: uppercase; font-family: var(--font-display); }
+.textblock { justify-items: center; }
+.textblock__head { text-align: center; text-transform: uppercase; }
+.textblock__body { max-width: 62ch; }
+.textblock__body::first-letter { font-family: var(--font-display); font-weight: 700; float: left; font-size: 4.2em; line-height: 0.8; padding: 0.06em 0.08em 0 0; }
+
+/* foto incollate sul foglio come tavole fuori testo */
+.gallery__list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 28px; }
+.gallery__item { background: var(--bg); padding: 10px 10px 34px; }
+.gallery__item:nth-child(odd) { transform: rotate(-1.2deg); } .gallery__item:nth-child(even) { transform: rotate(1deg); }
+.cta { justify-items: center; text-align: center; }
+
+.cards { gap: var(--sheet); }
+.card { background: color-mix(in srgb, var(--ink) 5%, var(--bg)); padding: 0 0 20px; }
+.card__body { padding: 0 20px; }
+.card__img { aspect-ratio: 5 / 4; }
+.card__title { text-transform: uppercase; font-family: var(--font-display); }
+.band { justify-items: center; text-align: center; padding-top: clamp(3rem, 7vw, 6rem); }
+.band__title { max-width: 16ch; }
+.toc__list a { border-left: 4px dotted currentColor; }
+.partner { border-top: 6px dotted currentColor; }
+
+/* il retro del biglietto */
+.site-foot { margin: 0 var(--sheet) var(--sheet); background: var(--bg); color: var(--ink); }
+.foot__word { display: block; }
+.foot__word text { text-transform: uppercase; }
+.foot__line { border-top: 6px dotted currentColor; padding-top: 18px; }
+.site-main { grid-template-columns: minmax(0, 1fr); }

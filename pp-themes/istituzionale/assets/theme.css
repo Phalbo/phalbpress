@@ -1,0 +1,120 @@
+/* Istituzionale — "The printed annual" (tasteskill, seed 205672542).
+   Un asse fisso al 42% della larghezza: i titoli partono lì, il testo pende a destra, a sinistra solo note brevi.
+   Colori e font: Identità visiva. Suggeriti: verde bottiglia e oro, Bodoni Moda + Jost. */
+:root {
+  --axis: 42%;
+  --weight-head: 500;
+  --tracking-head: -0.02em;
+  --leading-head: 0.95;
+  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --step-display: clamp(3rem, 1rem + 7.5vw, 9rem);
+  --radius: 0px;
+  --section: clamp(5rem, 11vw, 10rem);
+  --head-h: 80px;
+}
+body { letter-spacing: 0.01em; }
+.chapter, .band, .article { display: grid; grid-template-columns: var(--axis) minmax(0, 1fr); column-gap: calc(var(--gutter) * 2); }
+.chapter > *, .band > *, .article > * { grid-column: 2; max-width: none; margin: 0; }
+.statement__head, .collection__head, .figures__head, .latest__head, .cta__head, .gallery__head, .videoblock__head { max-width: 20ch; }
+.prose { max-width: 62ch; }
+
+/* testata: nome a sinistra, menu che parte dall'asse */
+.site-head { border-bottom: 0; }
+.site-head__in { max-width: none; }
+.brand { margin-right: auto; }
+.brand__name { font-size: 1.25rem; font-weight: 500; }
+.nav__link { font-weight: 500; letter-spacing: 0.02em; }
+
+/* apertura: frase grande dall'asse, foto come fascia di testata */
+.hero { min-height: auto; padding-top: clamp(3rem, 6vw, 6rem); align-content: start; row-gap: 28px; }
+.hero__title { grid-column: 1 / -1; padding-left: calc(var(--axis) + var(--gutter) * 2); font-size: var(--step-display); line-height: 0.92; font-weight: 500; }
+.hero__l2 { font-style: italic; }
+.hero__say { grid-column: 1; grid-row: 2; align-self: start; max-width: none; }
+.hero__aside { grid-column: 2; grid-row: 2; max-width: 46ch; }
+.hero__sentence { font-size: var(--step-lead); }
+.hero--img .hero__img { display: block; grid-column: 1 / -1; grid-row: 1; margin: calc(var(--section) * -1) calc(var(--margin) * -1) 24px; height: 45vh; }
+.hero--img .hero__img img { width: 100%; height: 100%; object-fit: cover; }
+.hero--img .hero__title { grid-row: 2; } .hero--img .hero__say, .hero--img .hero__aside { grid-row: 3; }
+
+/* dichiarazione: titolo sull'asse, il dato come nota a sinistra */
+.statement { row-gap: 32px; }
+.statement__body { grid-column: 1 / -1; display: grid; grid-template-columns: var(--axis) minmax(0, 1fr); column-gap: calc(var(--gutter) * 2); }
+.statement__text { grid-column: 2; max-width: 38ch; }
+.statement__fact { grid-column: 1; grid-row: 1; font-size: var(--step-body); font-style: normal; max-width: 28ch; }
+
+/* passi: la frase a sinistra dell'asse, il testo a destra */
+.steps__list { grid-column: 1 / -1 !important; grid-template-columns: 1fr; gap: 40px; }
+.step { display: grid; grid-template-columns: var(--axis) minmax(0, 1fr); column-gap: calc(var(--gutter) * 2); align-items: baseline; }
+.step__line { font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.6rem); font-weight: 500; text-align: right; }
+.step__text { max-width: 46ch; font-size: var(--step-lead); line-height: 1.4; }
+.step__text { margin: 0; }
+
+/* elenchi: nome grande sull'asse, chi e dove nella colonna delle note */
+.collection__list, .collection__top { grid-column: 1 / -1; }
+.collection__top { display: grid; grid-template-columns: var(--axis) minmax(0, 1fr); column-gap: calc(var(--gutter) * 2); }
+.collection__top > * { grid-column: 2; }
+.collection__item { grid-template-columns: var(--axis) minmax(0, 1fr); column-gap: calc(var(--gutter) * 2); padding: 20px 0; }
+.collection__who { grid-column: 1; grid-row: 1 / span 2; text-align: right; align-self: center; }
+.collection__name { grid-column: 2; font-weight: 500; }
+.collection__ctx { grid-column: 2; }
+@media (max-width: 760px) { .collection__item { grid-template-columns: 1fr; } .collection__who, .collection__name, .collection__ctx { grid-column: 1; grid-row: auto; text-align: left; } }
+
+/* numeri: pagina intera di colore, cifre enormi */
+.figures__list { gap: 0; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }
+.figure { padding: 28px 24px 28px 0; }
+.figure__val { font-size: clamp(4rem, 2rem + 7vw, 10rem); font-weight: 500; }
+.figure__cap { font-weight: 400; font-size: var(--step-lead); line-height: 1.25; }
+
+/* ultime: il titolo nella colonna delle note, le due colonne appese all'asse */
+.latest { row-gap: 0; }
+.latest__head { grid-column: 1 !important; grid-row: 1; text-align: right; }
+.latest__cols { grid-column: 2; grid-row: 1; }
+.latest__cols { grid-template-columns: 1fr 1fr; }
+@media (max-width: 900px) { .latest__cols { grid-template-columns: 1fr; } }
+.latest__sub { font-family: var(--font); font-size: var(--step-body); font-weight: 500; text-transform: none; letter-spacing: 0.04em; }
+
+/* testo: titolo nella colonna delle note */
+.textblock { row-gap: 0; }
+.textblock__head { grid-column: 1 !important; grid-row: 1; font-size: var(--step-head); max-width: none; text-align: right; }
+.textblock__body { grid-column: 2; grid-row: 1; font-size: var(--step-lead); line-height: 1.5; }
+.textblock__body mark { background: transparent; color: inherit; font-weight: 500; text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 0.12em; text-underline-offset: 0.18em; }
+
+/* galleria: mosaico senza spazi, foto e tessere di colore pieno */
+.gallery__list { grid-column: 1 / -1; gap: 0; grid-template-columns: repeat(4, 1fr); }
+.gallery__item img { aspect-ratio: 1; border-radius: 0; }
+.gallery__item--2 { background: var(--accent); } .gallery__item--2 img { mix-blend-mode: multiply; }
+@media (max-width: 760px) { .gallery__list { grid-template-columns: 1fr 1fr; } }
+
+/* pagine interne */
+.band { padding-top: clamp(3rem, 7vw, 6rem); row-gap: 20px; }
+.band__title { font-size: clamp(2.5rem, 1rem + 5.5vw, 7rem); max-width: 16ch !important; }
+.band--long .band__title { font-size: var(--step-head); }
+.band__meta, .band__kicker { grid-column: 1; grid-row: 1 / span 2; align-self: end; }
+.band__img { grid-column: 1 / -1 !important; max-width: none !important; }
+.article--toc > .toc { grid-column: 1 !important; grid-row: 1 / span 6; position: sticky; top: calc(var(--head-h) + 24px); align-self: start; }
+.article--toc { grid-template-columns: var(--axis) minmax(0, 1fr); }
+.article__img { grid-column: 1 / -1 !important; }
+.toc__list a { border-left: 0; padding-left: 0; }
+.toc__list a:hover { text-decoration: underline; }
+.cards, .newslist > .filter, .storylist, .partners, .results__group { grid-column: 2; }
+.partners { display: grid; grid-column: 1 / -1; padding-left: calc(var(--axis) + var(--gutter) * 2); }
+.card__title { font-weight: 500; }
+.card__img { aspect-ratio: 16 / 10; }
+.doctable th, .doctable td { border-top-color: color-mix(in srgb, currentColor 22%, transparent); }
+
+/* footer: il contatto è il titolo */
+.foot__cols { grid-template-columns: var(--axis) repeat(3, minmax(0, 1fr)); }
+.foot__col--brand { grid-column: 1; }
+.foot__name { font-size: var(--step-head); font-weight: 500; line-height: 1; }
+
+@media (max-width: 900px) {
+  :root { --axis: 100%; }
+  .chapter, .band, .article, .article--toc, .statement__body, .collection__top { grid-template-columns: 1fr; }
+  .chapter > *, .band > *, .article > *, .statement__text, .statement__fact, .textblock__head, .textblock__body, .collection__top > *, .hero__say, .hero__aside { grid-column: 1 !important; grid-row: auto !important; }
+  .hero__title { padding-left: 0; }
+  .collection__item { grid-template-columns: 1fr; } .collection__who, .collection__name, .collection__ctx { grid-column: 1 !important; grid-row: auto !important; text-align: left; }
+  .step { grid-template-columns: 1fr; } .step__line, .latest__head, .textblock__head { text-align: left; } .latest__cols { grid-column: 1 !important; grid-row: auto; }
+  .partners { padding-left: 0; }
+  .foot__cols { grid-template-columns: 1fr 1fr; } .foot__col--brand { grid-column: 1 / -1; }
+  .article--toc > .toc { position: static; }
+}

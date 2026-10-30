@@ -1,0 +1,11 @@
+{
+  "name": "Tech / Futurista",
+  "order": 7,
+  "description": "Una plancia di tessere incastrate su fondo scuro: geometrie, numeri che si contano, barre che misurano, microanimazioni.",
+  "best_for": "tecnologia, innovazione, ricerca, intelligenza artificiale, piattaforme digitali",
+  "direction": "The well-kept board (tasteskill, seed 350775227)",
+  "palette": {"ground": "#111111", "ink": "#f2f2f2", "accent": "#a08672", "field1": "#a08672", "field2": "#262626", "dark": "#0a0a0a", "hero1": "#f2f2f2", "hero2": "#a08672"},
+  "fonts": {"display": "League Spartan", "text": "Figtree"},
+  "buttons": "soft",
+  "body_class": "photo-hero"
+}
