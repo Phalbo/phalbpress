@@ -18,7 +18,7 @@
       <h2><?= e($t['name'] ?? $slug) ?> <?= $on ? '<span class="badge badge--ok">attivo</span>' : '' ?></h2>
       <p><?= e($t['description'] ?? '') ?></p>
       <?php if (!empty($t['best_for'])): ?><p class="small muted">Per: <?= e($t['best_for']) ?></p><?php endif; ?>
-      <?php if ($pal): ?><p class="swatches" aria-label="Colori suggeriti"><?php foreach ($pal as $k => $c): ?><span style="background:<?= e($c) ?>" title="<?= e($k . ' ' . $c) ?>"></span><?php endforeach; ?></p><?php endif; ?>
+      <?php if ($pal): ?><p class="theme-swatches" aria-label="Colori suggeriti"><?php foreach ($pal as $k => $c): ?><span style="background:<?= e($c) ?>" title="<?= e($k . ' ' . $c) ?>"></span><?php endforeach; ?></p><?php endif; ?>
       <?php if (!empty($t['fonts'])): ?><p class="small">Font suggeriti: <?= e(implode(' + ', array_unique(array_filter([$t['fonts']['display'] ?? '', $t['fonts']['text'] ?? ''])))) ?></p><?php endif; ?>
       <div class="row">
         <a class="btn btn--small" href="<?= e(Admin::u('preview') . '?theme=' . rawurlencode($slug)) ?>" target="_blank" rel="noopener">Anteprima con i tuoi colori ↗</a>
