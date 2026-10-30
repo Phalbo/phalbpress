@@ -12,6 +12,7 @@ $kind = Blocks::kinds()[$b['template']]['label'] ?? $b['template'];
     <div class="row">
       <a class="btn btn--small" href="<?= e(Admin::u('entry/' . (int)$b['id'] . '/' . I18n::$master)) ?>">Modifica i testi</a>
       <button type="button" class="btn btn--small" data-vis-toggle><?= $b['status'] === 'published' ? 'Nascondi' : 'Mostra' ?></button>
+      <button type="button" class="btn btn--small btn--danger" data-vis-delete>Elimina</button>
     </div>
   </div>
   <fieldset class="vis-tones"><legend>Fondo</legend>

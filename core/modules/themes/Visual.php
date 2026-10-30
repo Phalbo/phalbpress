@@ -18,6 +18,7 @@ final class Visual
                     'order' => self::order(),
                     'status' => self::status($id),
                     'add' => self::add(),
+                    'delete' => self::delete($id),
                     default => Admin::json(['error' => 'Azione sconosciuta'], 404),
                 };
             } catch (Throwable $e) {
@@ -109,6 +110,16 @@ final class Visual
         Auth::log('visual ' . ($new === 'published' ? 'show' : 'hide'), 'block #' . $id);
         Admin::changed('visual');
         Admin::json(['ok' => true, 'status' => $new]);
+    }
+
+    /** Elimina la fascia in tutte le lingue. */
+    private static function delete(int $id): void
+    {
+        self::block($id);
+        Content::deleteItem('entry', $id);
+        Auth::log('visual delete', 'block #' . $id);
+        Admin::changed('visual');
+        Admin::json(['ok' => true]);
     }
 
     /** Nuova fascia, nascosta finché non si scrivono i testi. Va dopo quella indicata (o in fondo). */

@@ -132,6 +132,18 @@
         if (p) { imgInput.value = p; imgInput.dispatchEvent(new Event('change', { bubbles: true })); }
       }));
     }
+    const del = form.querySelector('[data-vis-delete]');
+    if (del) del.addEventListener('click', async () => {
+      if (!window.confirm('Eliminare questa fascia in tutte le lingue? Non si può annullare.')) return;
+      try {
+        await post('delete/' + id);
+        current = 0;
+        panel.innerHTML = '<p class="hint">Fascia eliminata.</p>';
+        say('Fascia eliminata.');
+        await refreshList();
+        loadFrame();
+      } catch (e) { say(e.message, true); }
+    });
     const toggle = form.querySelector('[data-vis-toggle]');
     if (toggle) toggle.addEventListener('click', async () => {
       try { const r = await post('status/' + id); say(r.status === 'published' ? 'La fascia ora si vede sul sito.' : 'Fascia nascosta: sul sito non si vede più.'); await refreshList(); open(id); loadFrame(); }
