@@ -1,0 +1,13 @@
+# sito di prova in locale: nel repo c'è solo il motore
+/site/
+/uploads/
+/data/
+/dist/
+/search/
+/[a-z][a-z]/
+/[a-z][a-z]-[A-Za-z]*/
+/404.html
+/sitemap.xml
+/robots.txt
+/llms*.txt
+.DS_Store

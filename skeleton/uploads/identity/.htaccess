@@ -1,0 +1,7 @@
+# Loghi SVG (già ripuliti al caricamento): serviti senza possibilità di eseguire script
+<FilesMatch "\.svg$">
+  Require all granted
+  <IfModule mod_headers.c>
+    Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+  </IfModule>
+</FilesMatch>

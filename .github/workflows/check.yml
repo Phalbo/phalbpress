@@ -1,0 +1,19 @@
+name: Controllo
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: sodium, zip
+          coverage: none
+      - name: Sintassi PHP e zip di prova (senza firma)
+        run: php tools/build.php

@@ -1,0 +1,31 @@
+name: Release
+# Parte quando si crea un tag vX.Y.Z (anche dalla pagina Releases di GitHub → "Draft a new release" → nuovo tag).
+on:
+  push:
+    tags: ['v*.*.*']
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: sodium, zip
+          coverage: none
+      - name: Controlla, crea gli zip e firma
+        env:
+          PP_SIGNING_KEY: ${{ secrets.PP_SIGNING_KEY }}
+        run: php tools/build.php --tag "$GITHUB_REF_NAME"
+      - name: Pubblica la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" dist/*.zip dist/*.sig --clobber
+            gh release edit "$GITHUB_REF_NAME" --notes-file dist/notes.md
+          else
+            gh release create "$GITHUB_REF_NAME" dist/*.zip dist/*.sig --title "PhalbPress ${GITHUB_REF_NAME#v}" --notes-file dist/notes.md
+          fi

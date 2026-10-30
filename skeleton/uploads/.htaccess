@@ -1,0 +1,5 @@
+# Nessuno script eseguibile tra i file caricati
+<FilesMatch "\.(php\d?|phtml|phar|pl|py|cgi|sh|shtml|html?|js|svg)$">
+  Require all denied
+</FilesMatch>
+Options -Indexes -ExecCGI

@@ -1,0 +1,52 @@
+# PhalbPress
+Options -Indexes
+DirectoryIndex index.html index.php
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # Forza https (togli il commento quando il certificato è attivo)
+  # RewriteCond %{HTTPS} off
+  # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Cartelle e file mai raggiungibili dal web
+  RewriteRule ^(core|data)(/|$) - [F,L]
+  RewriteRule ^site/(config|config\.sample|strings|seed)\.php$ - [F,L]
+  RewriteRule ^site/(modules|theme/templates|theme/partials)/ - [F,L]
+  RewriteRule ^pp-themes/.+\.(php|json)$ - [F,L]
+  RewriteRule ^cron\.php$ - [F,L]
+  RewriteRule (^|/)\.(?!well-known) - [F,L]
+  RewriteRule \.(md|lock|sqlite|log|bak|sql|zip)$ - [F,L]
+  # file .json bloccati, tranne gli indici della ricerca
+  RewriteCond %{REQUEST_URI} !/search/[a-z-]+\.json$
+  RewriteRule \.json$ - [F,L]
+
+  # Pagine statiche già generate: Apache le serve direttamente, senza PHP
+  RewriteCond %{REQUEST_METHOD} GET
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteCond %{REQUEST_FILENAME}/index.html -f
+  RewriteRule ^ - [L]
+
+  # Tutto il resto che non è un file reale va a index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+  # HSTS: togli il commento solo quando https funziona su tutto il dominio
+  # Header always set Strict-Transport-Security "max-age=31536000"
+  <FilesMatch "\.html$">
+    Header set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+    Header set Cache-Control "public, max-age=300"
+  </FilesMatch>
+  <FilesMatch "\.(woff2|css|js|svg|png|jpe?g|webp|gif)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain application/javascript application/json image/svg+xml application/xml
+</IfModule>
