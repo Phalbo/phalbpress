@@ -16,5 +16,11 @@ Ogni tema è una cartella con:
 | Documentario | The place carries it | Newsreader |
 | Minimalista | The quiet instrument | Work Sans |
 | Tech / Futurista | The well-kept board | League Spartan + Figtree |
+| ACE | Faces and fields | Saira Condensed + Work Sans |
+| Adrestia | The open door | Figtree |
+| Ares 2.0 | Sail and sea | Instrument Sans |
+| FINE | The label on the photo | Bricolage Grotesque + Source Serif 4 |
+| Rebus | Lights down | Anton + Atkinson Hyperlegible Next |
+| Sic2Sic | Route journal | Jost + Newsreader |
 
 Un sito non modifica mai i temi: le sue personalizzazioni stanno in `site/theme/` (stessi percorsi) e in `site/theme/assets/site.css`.

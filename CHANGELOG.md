@@ -2,6 +2,16 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.4.0
+- **Sei temi nuovi** (Gestione → Temi, prova con "Anteprima con i tuoi colori" prima di attivarli):
+  - **ACE**: ritratti in bianco e nero, il colore solo dai campi pieni rosso, verde e azzurro; titoli condensati grandi. Per progetti sui diritti e contro le discriminazioni.
+  - **Adrestia**: blu notte e verde menta, riquadri arrotondati, foto incorniciate. Per associazioni e reti civiche con più aree di attività.
+  - **Ares 2.0**: foto virate nel blu, un taglio diagonale come una vela tra apertura, pagine e footer, griglie da portfolio. Per comunicazione, ricerca e formazione.
+  - **FINE**: blu reale e arancio, titolo in un pannello pieno sopra la foto, serif da libro per leggere. Per istruzione, università e orientamento.
+  - **Rebus**: fondo scuro, foto a tutta pagina, maiuscolo condensato, una riga evidenziata in magenta. Per campagne di sensibilizzazione e progetti con video e fumetti.
+  - **Sic2Sic**: carta color paglia, rosso da segnaletica, le tappe su una strada tratteggiata. Per ambiente, territorio, cammini e itinerari.
+- Nuovi font nel motore: Anton e Saira Condensed (licenza OFL).
+
 ## 1.3.2
 - **Modifica visuale**: pulsante **Elimina** nel pannello della fascia (chiede conferma, toglie la fascia in tutte le lingue).
 

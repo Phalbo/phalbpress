@@ -1,0 +1,149 @@
+/* Sic2Sic — "Route journal".
+   Un diario di viaggio a tappe: carta color paglia, rosso da segnaletica, verde dei campi.
+   L'unico segno grafico è la strada tratteggiata che unisce le tappe (passi, elenchi, documenti).
+   Corregge il riferimento: niente titoli sottili sopra la foto, niente testo corrente in grigio chiaro, niente schede grigie con icone tonde. */
+:root {
+  --weight-head: 600;
+  --tracking-head: 0.01em;
+  --leading-head: 1;
+  --step-body: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+  --step-lead: clamp(1.3rem, 1.12rem + 0.75vw, 1.75rem);
+  --step-head: clamp(2rem, 1.3rem + 2.8vw, 4rem);
+  --step-display: clamp(2.8rem, 1.2rem + 6vw, 7.5rem);
+  --radius: 0px;
+  --radius-box: 0px;
+  --head-h: 78px;
+  --road: repeating-linear-gradient(90deg, var(--accent) 0 22px, transparent 22px 36px);
+  --road-v: repeating-linear-gradient(180deg, var(--accent) 0 22px, transparent 22px 36px);
+}
+h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
+.prose h2, .prose h3 { text-transform: none; letter-spacing: -0.01em; }
+
+/* testata */
+.brand__name { font-weight: 600; font-size: 1.25rem; letter-spacing: 0.04em; }
+.nav__link { font-family: var(--font-display); font-weight: 500; font-size: 0.9375rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.nav__link:hover { text-decoration: none; color: var(--accent); }
+.nav__link[aria-current], .is-current > .nav__link { text-decoration: none; color: var(--accent); box-shadow: inset 0 -3px 0 var(--accent); border-radius: 0; }
+.langs__btn, .nav-toggle { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; }
+
+/* pulsanti: segnaletica */
+.btn { font-family: var(--font-display); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.9375rem; min-height: 52px; padding: 0 26px; }
+.btn--dark { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.chapter--accent .btn--dark { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); }
+.chapter--ink .btn--dark, .chapter--green .btn--dark { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+.hero--img .btn--dark { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.hero--img .btn:not(.btn--dark) { background: #fff; color: #111; border-color: #fff; }
+
+/* fasce */
+.chapter > * { margin-left: max(0px, calc((100% - var(--container)) / 2)); margin-right: auto; }
+.chapter--paper + .chapter--paper { padding-top: 0; }
+
+/* riquadri dentro le fasce colorate: il fondo dei riquadri segue il colore della fascia */
+.chapter--accent { --surface: color-mix(in srgb, var(--accent-ink) 12%, var(--accent)); }
+.chapter--green { --surface: color-mix(in srgb, var(--field-1-ink) 9%, var(--field-1)); }
+.chapter--blue { --surface: color-mix(in srgb, var(--field-2-ink) 7%, var(--field-2)); }
+.chapter--ink { --surface: color-mix(in srgb, var(--black-ink) 10%, var(--black)); }
+
+/* apertura: paesaggio a tutta pagina, titolo pieno e leggibile */
+.hero { min-height: min(92svh, 960px); padding-bottom: clamp(2.5rem, 5vw, 4.5rem); gap: 26px; }
+.hero__title { font-size: var(--step-display); line-height: 0.95; max-width: 16ch; }
+.photo-hero .hero--img .hero__img::after { background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.25) 50%, rgba(0,0,0,0) 80%), linear-gradient(to right, rgba(0,0,0,.35), rgba(0,0,0,0) 60%); }
+.photo-hero .hero--img .hero__title { text-shadow: 0 1px 2px rgba(0,0,0,.25); }
+.hero__aside { max-width: 52ch; gap: 24px; }
+.hero__sentence { font-size: var(--step-lead); line-height: 1.38; font-weight: 500; }
+.hero__say button { font-family: var(--font-display); border-width: 1px; }
+
+/* dichiarazione */
+.statement__head { max-width: 20ch; }
+.statement__text { font-size: var(--step-lead); line-height: 1.45; max-width: 40ch; }
+.statement__fact { font-size: var(--step-lead); line-height: 1.4; max-width: 34ch; padding-left: 22px; border-left: 6px solid var(--accent); }
+.chapter:not(.chapter--paper) .statement__fact { border-left-color: currentColor; }
+
+/* passi: tappe sulla strada tratteggiata */
+.steps__list { position: relative; gap: 40px var(--gutter); padding-top: 34px; }
+.steps__list::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 4px; background: var(--road); }
+.step { position: relative; display: grid; align-content: start; gap: 12px; }
+.step::before { content: ""; position: absolute; top: -34px; left: 0; width: 18px; height: 18px; border-radius: 50%; background: var(--bg); border: 4px solid var(--accent); }
+.chapter:not(.chapter--paper) .steps__list::before { background: repeating-linear-gradient(90deg, currentColor 0 22px, transparent 22px 36px); }
+.chapter:not(.chapter--paper) .step::before { border-color: currentColor; background: transparent; }
+.step__line { font-family: var(--font-display); font-weight: 600; text-transform: uppercase; font-size: clamp(1.25rem, 1rem + 0.9vw, 1.75rem); line-height: 1.08; letter-spacing: 0.01em; }
+.step__text { line-height: 1.55; }
+
+/* elenchi: tappe in verticale */
+.collection__list { position: relative; padding-left: 40px; }
+.collection__list::before { content: ""; position: absolute; left: 7px; top: 0; bottom: 0; width: 4px; background: var(--road-v); }
+.chapter:not(.chapter--paper) .collection__list::before { background: repeating-linear-gradient(180deg, currentColor 0 22px, transparent 22px 36px); }
+.collection__item { position: relative; padding: 20px 0; border-bottom: 1px solid var(--line); }
+.collection__item::before { content: ""; position: absolute; left: -40px; top: 26px; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); }
+.chapter:not(.chapter--paper) .collection__item::before { background: currentColor; }
+.collection__name { font-size: clamp(1.4rem, 1.1rem + 1.1vw, 2.2rem); text-transform: uppercase; }
+.collection__who { opacity: 1; color: var(--muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8125rem; }
+
+/* numeri: chilometri e tappe */
+.figure__val { font-weight: 500; letter-spacing: -0.02em; }
+.chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .figure__val { color: var(--accent); }
+.figure__cap { font-weight: 500; font-size: var(--step-body); }
+
+/* ultime notizie */
+.latest__sub { text-transform: uppercase; font-weight: 600; font-size: 1.125rem; letter-spacing: 0.06em; padding-bottom: 14px; margin-bottom: 8px; border-bottom: 4px solid transparent; border-image: var(--road) 1; }
+.chapter:not(.chapter--paper) .latest__sub { border-image: none; border-bottom-color: currentColor; }
+.rows2 li { border-bottom: 1px solid var(--line); }
+.rows2 li > span:last-child { opacity: 1; color: var(--muted); }
+
+/* testo, invito */
+@media (min-width: 961px) {
+  .textblock { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: calc(var(--gutter) * 2.5); align-items: start; }
+  .textblock > * { margin: 0; }
+}
+.textblock__body { font-size: var(--step-lead); line-height: 1.5; }
+.textblock__body mark { background: var(--field-2); color: var(--field-2-ink); padding: 0 0.15em; }
+.cta__head { max-width: 20ch; }
+
+/* galleria: paesaggi larghi */
+.gallery__list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.gallery__item--1 { grid-column: 1 / -1; }
+.gallery__item--1 img { aspect-ratio: 5 / 2; }
+.gallery__item img { aspect-ratio: 3 / 2; }
+
+/* pagine interne */
+.band__title { font-size: clamp(2.4rem, 1.3rem + 4vw, 5.6rem); max-width: 20ch; }
+.band__kicker, .band__meta { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.875rem; }
+.prose h2 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem); line-height: 1.1; }
+.prose h2, .prose h3 { font-family: var(--font); font-weight: 600; }
+.prose blockquote { border-left-width: 6px; font-style: italic; }
+.toc__head { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.875rem; }
+.toc__list a { border-left: 4px solid transparent; border-image: var(--road-v) 1; }
+
+/* schede */
+.cards { gap: 48px var(--gutter); }
+.card__img { aspect-ratio: 3 / 2; }
+.card__meta { opacity: 1; color: var(--muted); font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.8125rem; }
+.card__cat { color: var(--accent); }
+.card__title { font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.6rem); line-height: 1.12; }
+.filter button { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; border-width: 2px; }
+.filter button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+/* storie, documenti, partner */
+.story__initial { background: var(--field-1); color: var(--field-1-ink); }
+.story__where { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
+.doctable th, .doctable td { border-top-color: var(--line); }
+.doctable__code { font-family: var(--font-display); color: var(--accent); }
+.doctable__ex, .doctable__date, .doctable__fmt { opacity: 1; color: var(--muted); }
+.partner { border-top: 4px solid transparent; border-image: var(--road) 1; }
+.partner__where { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
+.partner__name { text-transform: uppercase; }
+.contact__mail { color: var(--accent); text-transform: none; }
+
+/* footer */
+.foot__name { font-size: var(--step-lead); letter-spacing: 0.03em; }
+.foot__head { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.06em; font-size: 0.875rem; }
+.site-foot { border-top: 6px solid transparent; border-image: var(--road) 1; }
+
+@media (max-width: 760px) {
+  .steps__list { padding-top: 0; padding-left: 40px; }
+  .steps__list::before { left: 7px; right: auto; top: 0; bottom: 0; width: 4px; height: auto; background: var(--road-v); }
+  .chapter:not(.chapter--paper) .steps__list::before { background: repeating-linear-gradient(180deg, currentColor 0 22px, transparent 22px 36px); }
+  .step::before { top: 2px; left: -40px; }
+  .gallery__list { grid-template-columns: 1fr; }
+  .gallery__item--1 img { aspect-ratio: 3 / 2; }
+}

@@ -1,0 +1,140 @@
+/* Ares 2.0 — "Sail and sea".
+   Un solo gesto: il taglio diagonale della vela sul bordo delle aperture. Le foto sono virate nel blu del campo 1,
+   così qualunque immagine sta nel tema. Griglie fitte come un portfolio, testo nero pieno, menu in maiuscolo piccolo.
+   Corregge il riferimento: niente icone decorative sopra i servizi, niente testo centrato e grigio, niente pagina in 960 px. */
+:root {
+  --weight-head: 650;
+  --tracking-head: -0.03em;
+  --leading-head: 1;
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-head: clamp(2.1rem, 1.3rem + 3vw, 4.25rem);
+  --step-display: clamp(3rem, 1.2rem + 7vw, 8.5rem);
+  --radius: 0px;
+  --radius-box: 0px;
+  --head-h: 84px;
+  --cut: clamp(36px, 7vw, 120px);
+}
+
+/* testata: menu in maiuscolo piccolo, voce attiva sottolineata dal blu */
+.site-head__in { max-width: none; }
+.brand__name { font-weight: 700; font-size: 1.3rem; letter-spacing: -0.03em; }
+.nav__link { font-size: 0.8125rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.08em; }
+.nav__link:hover { text-decoration: none; box-shadow: inset 0 -3px 0 var(--accent); }
+.nav__link[aria-current], .is-current > .nav__link { text-decoration: none; box-shadow: inset 0 -3px 0 var(--accent); border-radius: 0; }
+.langs__btn { font-size: 0.8125rem; letter-spacing: 0.08em; }
+
+/* pulsanti */
+.btn { font-weight: 650; min-height: 52px; padding: 0 26px; border-width: 2px; }
+.btn--dark { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.chapter--accent .btn--dark { background: var(--accent-ink); color: var(--accent); border-color: var(--accent-ink); }
+.chapter--ink .btn--dark, .chapter--green .btn--dark { background: var(--hero-2); color: var(--black); border-color: var(--hero-2); }
+
+/* fasce */
+.chapter > * { margin-left: max(0px, calc((100% - var(--container)) / 2)); margin-right: auto; }
+.chapter--paper + .chapter--paper { padding-top: 0; }
+
+/* riquadri dentro le fasce colorate: il fondo dei riquadri segue il colore della fascia */
+.chapter--accent { --surface: color-mix(in srgb, var(--accent-ink) 12%, var(--accent)); }
+.chapter--green { --surface: color-mix(in srgb, var(--field-1-ink) 9%, var(--field-1)); }
+.chapter--blue { --surface: color-mix(in srgb, var(--field-2-ink) 7%, var(--field-2)); }
+.chapter--ink { --surface: color-mix(in srgb, var(--black-ink) 10%, var(--black)); }
+
+/* apertura: foto virata nel blu, bordo basso tagliato in diagonale come una vela */
+.hero { min-height: min(90svh, 920px); padding-bottom: calc(var(--section) * 0.6 + var(--cut)); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut)), 0 100%); gap: 28px; z-index: 2; }
+.hero + .chapter { margin-top: calc(var(--cut) * -1); padding-top: calc(var(--section) + var(--cut)); }
+.hero__title { font-size: var(--step-display); line-height: 0.92; letter-spacing: -0.045em; max-width: 13ch; }
+.hero__aside { max-width: 52ch; }
+.hero__sentence { font-size: var(--step-lead); line-height: 1.35; }
+.photo-hero .hero--img .hero__img img { filter: grayscale(1) contrast(1.1); }
+.photo-hero .hero--img .hero__img::after { background: var(--field-1); mix-blend-mode: multiply; opacity: 0.82; }
+.photo-hero .hero--img .hero__img::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgba(0,0,0,.45), rgba(0,0,0,0) 60%); }
+.hero__say button { border-width: 1px; }
+
+/* dichiarazione: titolo a sinistra, testo a destra */
+@media (min-width: 961px) {
+  .statement { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: calc(var(--gutter) * 2.5); align-items: start; }
+  .statement > * { margin: 0; }
+  .statement__body { grid-template-columns: 1fr; }
+}
+.statement__text { font-size: var(--step-lead); line-height: 1.4; max-width: 42ch; }
+.statement__fact { font-style: normal; font-weight: 600; max-width: 46ch; padding-left: 20px; border-left: 4px solid var(--accent); }
+.chapter:not(.chapter--paper) .statement__fact { border-left-color: currentColor; }
+
+/* passi: righe tagliate dalla linea, testo a destra */
+.steps__list { grid-template-columns: 1fr; gap: 0; }
+.step { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 8px calc(var(--gutter) * 2.5); padding: clamp(22px, 2.6vw, 34px) 0; border-top: 2px solid currentColor; }
+.step:last-child { border-bottom: 2px solid currentColor; }
+.step__line { font-family: var(--font-display); font-weight: 650; font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.5rem); line-height: 1.04; letter-spacing: -0.03em; }
+.step__text { font-size: var(--step-lead); line-height: 1.4; max-width: 46ch; }
+
+/* elenchi: piastrelle da portfolio */
+.collection__list { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 4px; }
+.collection__item { display: flex; flex-direction: column; gap: 10px; padding: clamp(20px, 2.4vw, 30px); min-height: 220px; background: var(--surface); }
+.collection__name { font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2.2rem); }
+.collection__who { margin-top: auto; text-align: left; opacity: 1; color: var(--muted); font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; }
+
+/* numeri */
+.figures__list { gap: 4px; }
+.figure { padding: clamp(22px, 2.6vw, 34px); background: var(--surface); }
+.figure__val { font-weight: 600; letter-spacing: -0.06em; font-size: clamp(3.5rem, 2rem + 5vw, 7rem); }
+.chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .figure__val { color: var(--accent); }
+.chapter--green:not(.chapter--custom):not(.chapter--has-bg) .figure__val, .chapter--ink:not(.chapter--custom):not(.chapter--has-bg) .figure__val { color: var(--hero-2); }
+.figure__cap { font-weight: 500; }
+
+/* ultime notizie */
+.latest__sub { font-weight: 650; text-transform: uppercase; font-size: 0.875rem; letter-spacing: 0.08em; padding-bottom: 12px; border-bottom: 2px solid currentColor; }
+.rows2 li { border-bottom: 1px solid var(--line); }
+.rows2 li > span:last-child { opacity: 1; color: var(--muted); }
+
+/* testo e invito */
+@media (min-width: 961px) {
+  .textblock { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: calc(var(--gutter) * 2.5); align-items: start; }
+  .textblock > * { margin: 0; }
+}
+.textblock__body { font-size: var(--step-lead); line-height: 1.45; }
+.textblock__body mark { background: var(--field-2); color: var(--field-2-ink); padding: 0 0.15em; }
+.cta__head { max-width: 18ch; }
+
+/* galleria: muro fitto di quadrati */
+.gallery__list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 4px; }
+.gallery__item img { aspect-ratio: 1; }
+
+/* pagine interne: intestazione con il taglio */
+.band { position: relative; z-index: 2; clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut) * 0.6), 0 100%); padding-bottom: calc(clamp(2.5rem, 5vw, 4rem) + var(--cut) * 0.6); }
+.band__title { font-size: clamp(2.6rem, 1.3rem + 4.5vw, 6rem); letter-spacing: -0.045em; max-width: 18ch; }
+.band__kicker, .band__meta { font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.band__img img { filter: none; }
+.prose h2 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2.2rem); letter-spacing: -0.03em; }
+.toc__head { text-transform: uppercase; font-size: 0.8125rem; letter-spacing: 0.08em; }
+.toc__list a { border-left-width: 2px; }
+
+/* schede: griglia fitta da portfolio */
+.cards { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 40px 4px; }
+.card__img { aspect-ratio: 1; }
+.card > :not(.card__img) { padding-right: 16px; }
+.card__meta { opacity: 1; color: var(--muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; }
+.card__cat { color: var(--accent); }
+.card__title { font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.55rem); letter-spacing: -0.02em; }
+.filter button { border-width: 1px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; }
+.filter button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+
+/* storie, documenti, partner */
+.story__initial { background: var(--field-1); color: var(--field-1-ink); }
+.doctable th, .doctable td { border-top-width: 2px; border-top-color: currentColor; }
+.doctable__ex, .doctable__date, .doctable__fmt { opacity: 1; color: var(--muted); }
+.doctable__code { color: var(--accent); }
+.partners { gap: 4px; }
+.partner { padding: clamp(22px, 2.6vw, 32px); border-top: 0; background: var(--surface); }
+.partner__where { font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+.contact__mail { color: var(--accent); letter-spacing: -0.03em; }
+
+/* footer */
+.site-foot { clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%); padding-top: calc(clamp(3rem, 6vw, 5rem) + var(--cut)); margin-top: calc(var(--cut) * -0.5); }
+.foot__name { font-size: var(--step-head); font-weight: 650; letter-spacing: -0.045em; line-height: 1; }
+.foot__head { text-transform: uppercase; font-size: 0.8125rem; letter-spacing: 0.08em; }
+
+@media (max-width: 760px) {
+  .step { grid-template-columns: 1fr; }
+  .gallery__list { grid-template-columns: 1fr 1fr; }
+}
