@@ -167,7 +167,7 @@ final class Updater
             }
             self::rmdir($stage);
             self::cleanup($to, $from);
-            if (function_exists('opcache_reset')) @opcache_reset();
+            self::fresh(self::ITEMS);
 
             $r = ['from' => $from, 'to' => $to, 'at' => Content::now(), 'backup' => $backup, 'prev' => basename($prev), 'htaccess' => $ht ? basename($ht) : ''];
             Settings::set('update_last', $r);
@@ -190,7 +190,7 @@ final class Updater
         mkdir($bad, 0755, true);
         self::swap($prev, $bad, array_values(array_filter(self::ITEMS, fn($it) => file_exists("$prev/$it"))));
         self::rmdir($prev);
-        if (function_exists('opcache_reset')) @opcache_reset();
+        self::fresh(self::ITEMS);
         $r = ['from' => $last['to'] ?? PP::VERSION, 'to' => $last['from'] ?? '', 'at' => Content::now()];
         Settings::set('update_last', ['rolled_back' => true] + $r);
         Settings::set('update_after', true);
@@ -225,6 +225,33 @@ final class Updater
             }
             throw new RuntimeException($e->getMessage() . '. Il sito è rimasto alla versione di prima.');
         }
+    }
+
+    /**
+     * PHP tiene in memoria il codice già letto (OPcache) e lo rilegge solo se la data del file cambia.
+     * Sugli hosting condivisi svuotare OPcache è spesso vietato: si dà la data di adesso a ogni file nuovo, così viene riletto.
+     */
+    private static function fresh(array $items): void
+    {
+        $now = time();
+        foreach ($items as $it) {
+            $p = PP_ROOT . '/' . $it;
+            if (is_file($p)) { @touch($p, $now); if (function_exists('opcache_invalidate')) @opcache_invalidate($p, true); continue; }
+            if (!is_dir($p)) continue;
+            foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($p, FilesystemIterator::SKIP_DOTS)) as $f) {
+                @touch($f->getPathname(), $now);
+                if ($f->getExtension() === 'php' && function_exists('opcache_invalidate')) @opcache_invalidate($f->getPathname(), true);
+            }
+        }
+        clearstatcache(true);
+        if (function_exists('opcache_reset')) @opcache_reset();
+    }
+
+    /** Il codice in uso è ancora quello di prima? (aggiornamento fatto ma PHP non l'ha ancora riletto) */
+    public static function stale(): bool
+    {
+        $last = (array)Settings::get('update_last', []);
+        return !empty($last['to']) && empty($last['rolled_back']) && version_compare(PP::VERSION, (string)$last['to'], '<');
     }
 
     /** Dopo un aggiornamento (al primo caricamento con il codice nuovo): pagine statiche rigenerate. */
@@ -319,7 +346,7 @@ final class Updater
         if ($after) Admin::flash('Aggiornamento completato: ' . $after . '.');
         $error = '';
         try { self::check(); } catch (Throwable $e) { $error = $e->getMessage(); }
-        Admin::view(__DIR__ . '/admin.php', ['title' => 'Aggiornamenti', 'info' => self::info(), 'available' => self::available(), 'error' => $error,
+        Admin::view(__DIR__ . '/admin.php', ['title' => 'Aggiornamenti', 'info' => self::info(), 'available' => self::available(), 'error' => $error, 'stale' => self::stale(),
             'last' => (array)Settings::get('update_last', []), 'reqs' => self::requirements(), 'flash_after' => $after]);
     }
 }

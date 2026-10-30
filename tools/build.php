@@ -17,6 +17,8 @@ $fail = function (string $m) { fwrite(STDERR, "ERRORE: $m\n"); exit(1); };
 
 preg_match("~const VERSION = '(\d+\.\d+\.\d+)'~", (string)file_get_contents('core/PP.php'), $m) || $fail('versione non trovata in core/PP.php');
 $ver = $m[1];
+// data dei file negli zip: quella della release. Mai una data fissa: PHP (OPcache) rilegge un file solo se la sua data cambia
+define('BUILT', time());
 $tag = '';
 foreach ($argv as $i => $a) if ($a === '--tag') $tag = (string)($argv[$i + 1] ?? '');
 if ($tag !== '' && ltrim($tag, 'v') !== $ver) $fail("il tag $tag non corrisponde alla versione $ver di core/PP.php");
@@ -58,8 +60,8 @@ $manifest = ['name' => 'phalbpress', 'version' => $ver, 'php_min' => '8.1', 'bui
 $write = function (string $zipName, array $list, array $extra = []) {
     $z = new ZipArchive();
     if ($z->open($zipName, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) throw new RuntimeException("impossibile creare $zipName");
-    foreach ($list as $f) { $z->addFile($f, $f); $z->setMtimeName($f, 315532800); }
-    foreach ($extra as $name => $content) { $z->addFromString($name, $content); $z->setMtimeName($name, 315532800); }
+    foreach ($list as $f) { $z->addFile($f, $f); $z->setMtimeName($f, BUILT); }
+    foreach ($extra as $name => $content) { $z->addFromString($name, $content); $z->setMtimeName($name, BUILT); }
     $z->close();
 };
 $coreZip = "dist/phalbpress-core-$ver.zip";

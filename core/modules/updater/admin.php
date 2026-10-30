@@ -4,6 +4,8 @@
     <h2>Motore</h2>
     <p>Installata: <strong>PhalbPress <?= e(PP::VERSION) ?></strong>
       <?php if (!empty($info['version'])): ?> · ultima disponibile: <strong><?= e($info['version']) ?></strong><?= $info['published'] ? ' del ' . e($info['published']) : '' ?><?php endif; ?></p>
+    <?php if (!empty($stale)): ?><div class="flash flash--error"><p><strong>I file sono aggiornati, ma il server usa ancora la versione di prima che tiene in memoria.</strong>
+      Di solito si sistema da solo in pochi minuti. Se no, su SiteGround: Site Tools → Devs → PHP Manager → cambia versione di PHP e poi rimetti quella di prima: la memoria si svuota.</p></div><?php endif; ?>
     <?php if ($error): ?><p><span class="badge badge--outdated">Non raggiungibile</span> <span class="small"><?= e($error) ?></span></p><?php endif; ?>
     <?php if ($available): ?>
       <p><span class="badge badge--outdated">Da aggiornare</span></p>

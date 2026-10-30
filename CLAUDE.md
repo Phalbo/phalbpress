@@ -98,6 +98,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Versione in `core/PP.php` (`VERSION`). Ogni release: alza la versione, aggiungi `## X.Y.Z` in `CHANGELOG.md` (testo mostrato nei siti), commit su `main`, tag `vX.Y.Z`.
 - La Action `release.yml` sul tag lancia `tools/build.php --tag`: `php -l` di tutto, `dist/phalbpress-core-X.Y.Z.zip` (+ `phalbpress.json` con versione e sha256), firma Ed25519 con il secret `PP_SIGNING_KEY` (seme base64), `dist/phalbpress-X.Y.Z.zip` completo per i siti nuovi, release con le note.
 - I siti (Gestione → Aggiornamenti, `core/modules/updater/`) accettano solo zip firmati con la chiave in `core/modules/updater/release.pub`; backup completo prima; sostituiscono solo `Updater::ITEMS`; `.htaccess` non si sovrascrive (copia in `data/updates/htaccess-X.txt`); la versione precedente resta in `data/updates/prev-X/` per il ritorno indietro.
+- **Commit e release: solo il messaggio.** Niente righe `Co-Authored-By`, niente link alle sessioni, niente firme di strumenti: il repo è pubblico.
+- Gli zip non devono mai avere una data fissa nei file: OPcache rilegge un file solo se la data cambia (`BUILT` in `tools/build.php`, `Updater::fresh()`).
 - Le migrazioni del database devono restare additive (colonne e tabelle nuove), così il ritorno alla versione precedente non rompe nulla.
 
 ## Test locale

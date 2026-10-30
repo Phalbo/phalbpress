@@ -2,6 +2,9 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.3.1
+- **Aggiornamenti**: dopo "Aggiorna" alcuni server (SiteGround compreso) continuavano a usare il codice di prima che tenevano in memoria (OPcache), perché i file nuovi avevano la stessa data di quelli vecchi. Ora gli zip delle release hanno la data vera e, dopo la sostituzione, ogni file nuovo prende la data del momento: il server li rilegge subito. Se il sito resta indietro lo stesso, la pagina Aggiornamenti lo dice e spiega come sistemare.
+
 ## 1.3.0
 - **Modifica visuale** (Sito → Modifica visuale, anche dalla pagina Temi): l'anteprima della home a sinistra, il pannello a destra. Clicchi una fascia e ne cambi il fondo (i colori dell'Identità o un colore libero, con il testo che diventa nero o bianco da solo), l'immagine di fondo con il velo scuro o chiaro e la parte da tenere, il **parallasse**, lo spazio sopra e sotto, la larghezza. Le fasce si spostano (frecce o trascinando), si nascondono, se ne aggiungono di nuove. Si salva da solo; anteprima a computer e telefono, in ogni lingua.
 - Le stesse scelte sono anche nella scheda di ogni blocco, e valgono con tutti i temi.
