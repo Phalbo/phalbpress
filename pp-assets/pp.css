@@ -90,3 +90,9 @@
 .chapter.chapter--over-light { color: #111; --muted: rgba(17, 17, 17, 0.76); --surface: rgba(0, 0, 0, 0.05); }
 @media (prefers-reduced-motion: reduce) { .chapter__bg[data-parallax] img { top: 0; height: 100%; transform: none !important; } }
 @media print { .chapter__bg { display: none !important; } }
+
+/* numeri della home: il numero si riduce per stare nella sua colonna (con ogni tema, qualunque dimensione dia il tema) */
+.figure { min-width: 0; container-type: inline-size; }
+.figure__num { display: inline-block; max-width: 100%; font-size: min(1em, 26cqi); white-space: nowrap; }
+/* indirizzi email e link lunghi nel footer vanno a capo invece di uscire dallo schermo */
+.site-foot a { overflow-wrap: anywhere; }

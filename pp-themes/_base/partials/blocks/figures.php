@@ -7,7 +7,7 @@
   <div class="figures__list">
     <?php foreach ($nums as $n => [$v, $l]): ?>
       <figure class="figure figure--<?= $n + 1 ?> reveal">
-        <p class="figure__val" data-count="<?= e(preg_replace('~[^0-9]~', '', (string)$v)) ?>"><?= e($v) ?></p>
+        <p class="figure__val"><span class="figure__num" data-count="<?= e(preg_replace('~[^0-9]~', '', (string)$v)) ?>"><?= e($v) ?></span></p>
         <figcaption class="figure__cap"<?= $b['lg'] ?>><?= e($l) ?></figcaption>
       </figure>
     <?php endforeach; ?>

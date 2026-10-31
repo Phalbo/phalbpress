@@ -2,6 +2,10 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.4.2
+- **Numeri della home** (blocco Numeri): i numeri lunghi come “12.000” o “30.000” uscivano dalla loro colonna e si sovrapponevano a quello accanto, in tutti i temi. Ora il numero si riduce quanto basta per stare nella colonna.
+- **Footer su telefono**: un indirizzo email lungo nei contatti faceva scorrere la pagina di lato; ora va a capo.
+
 ## 1.4.1
 - **Installazione da Windows e macOS**: in `core/modules/themes/` c'erano `Visual.php` e `visual.php`, due file con lo stesso nome a parte la maiuscola. Scompattando lo zip sul computer uno sovrascriveva l'altro e il sito dava errore 500 (`Failed opening required … Visual.php`). La schermata della Modifica visuale ora si chiama `visual-view.php`, e la creazione delle release si blocca se due file hanno lo stesso nome a parte le maiuscole.
 - Chi ha già un sito con l'errore: carica `core/modules/themes/Visual.php` dal pacchetto con il File Manager del server, poi aggiorna da Gestione → Aggiornamenti.
