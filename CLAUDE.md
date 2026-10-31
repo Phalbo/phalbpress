@@ -29,7 +29,7 @@ core/Scheduler.php   contenuti programmati
 core/Translator.php  traduzione automatica (Anthropic / DeepL), anche i campi personalizzati traducibili
 core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms, backup, activity, themes, updater
 pp-themes/_base/     struttura comune a tutti i temi: templates/, partials/ (+ blocks/), assets/base.css, base.js, strings.php
-pp-themes/<tema>/    theme.json + assets/theme.css (+ theme.js, + template/partial che sostituisce) — 7 temi
+pp-themes/<tema>/    theme.json + assets/theme.css (+ theme.js, + template/partial che sostituisce) — 13 temi
 site/config.php      configurazione del progetto (da config.sample.php)
 site/strings.php     testi del progetto; site/seed.php contenuti iniziali; site/seed-media/ immagini del seed
 site/theme/          SOLO personalizzazioni del sito valide con ogni tema (es. partials/footer-extra.php con emblema UE)
@@ -63,7 +63,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Layout di base: testata con logo, menu esteso (`Menus::items('main')`, sottomenu), ricerca, lingue in `<details>`; footer con `partials/footer-extra.php` del sito.
 - CSS in ordine: base.css → theme.css del tema → identity.css (colori e font dell'Identità visiva vincono) → pp.css → `site/theme/assets/site.css` se c'è.
 - **Il tema usa solo le variabili dell'identità** per colori e font: `--bg --ink --surface --muted --accent(-ink) --field-1(-ink) --field-2(-ink) --black(-ink) --hero-1 --hero-2 --font --font-display --radius`.
-- `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`).
+- `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`),
+  `hero_on` (`accent` | `ground`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
 - Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, steps, collection, figures, latest, text, gallery, cta, video), ordine = menu_order.
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
 - **Aspetto delle fasce** (`Blocks::look()`: tone con `custom`, bg_color, bg_image, bg_focus, bg_overlay, parallax, spacing, width; in `meta`, non tradotti):
@@ -103,9 +104,11 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Le migrazioni del database devono restare additive (colonne e tabelle nuove), così il ritorno alla versione precedente non rompe nulla.
 
 ## Test locale
+Sito dimostrativo (progetto inventato "Common Ground", 3 lingue, foto con le misure stampate sopra): `php tools/demo.php` (o `--force` per rifarlo) copia `tools/demo/site` in `site/`,
+poi `php -S 127.0.0.1:8080 index.php` → `/install.php`. Le foto del demo si rifanno con `python3 tools/demo/foto.py <cartella-foto>`. `tools/` non entra negli zip delle release.
 ```
 cp site/config.sample.php site/config.php   # 'driver' => 'sqlite', 'file' => __DIR__.'/../data/site.sqlite', 'debug' => true
 php -S 127.0.0.1:8080 index.php             # /install.php, poi /gestione
 ```
 Verifiche dopo una modifica: `php -l` ovunque, tutte le rotte pubbliche e di gestione 200 senza warning, nessun `Set-Cookie` pubblico,
-installazione pulita su SQLite e MariaDB, `StaticSite::build()` senza errori, i 7 temi in anteprima a 1440 e 390 px senza scroll orizzontale.
+installazione pulita su SQLite e MariaDB, `StaticSite::build()` senza errori, i temi in anteprima a 1440 e 390 px senza scroll orizzontale, anche con l'apertura senza foto.

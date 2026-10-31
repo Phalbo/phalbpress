@@ -2,6 +2,18 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.5.0
+Revisione di tutti i 13 temi (accessibilità, impaginazione a computer e telefono, resa con foto vere).
+- **Apertura senza foto**: in ACE, Adrestia, Ares 2.0, FINE, Sic2Sic e Tipografico la prima riga del titolo era bianca su bianco quando l'apertura non aveva la foto. Ora ogni tema dichiara su che fondo vanno i colori della frase grande, e un'apertura con fondo "Automatico" va lì (di solito il colore principale). Anche il controllo dei contrasti in Identità visiva misura la frase grande sul fondo giusto. In Istituzionale il titolo dell'apertura era verde su verde: corretto.
+- **Testi attenuati sempre leggibili**: il grigio di date, sottotitoli e note ora non scende mai sotto il contrasto minimo WCAG AA, con qualsiasi palette. Sulle fasce colorate è più deciso. In Minimalista i sottotitoli delle pagine interne erano quasi invisibili.
+- **Fasce con immagine di fondo**: nei temi a colonne (Istituzionale, ACE, Rebus…) l'immagine copriva solo una colonna; ora copre tutta la fascia. Con "larghezza stretta" titolo e testo partono dalla stessa linea.
+- **Anello di focus** visibile anche sulle fasce colorate e sulle foto (prende il colore del testo). Selezione del testo nei colori del tema.
+- **Video**: il riquadro d'attesa è scuro in tutti i temi e il pulsante "Play" si legge sempre come pulsante.
+- **Modulo di contatto**: nei temi con pulsanti tondi i campi diventavano pillole e il messaggio un'ellisse; ora hanno angoli morbidi. Casella della privacy più grande.
+- **Risultati**: i documenti senza file mostrano "In arrivo" invece di un cerchietto; date e pulsanti allineati tra un gruppo e l'altro.
+- **Storie**: la foto delle storie alternate non è più più grande delle altre. **Elenco a schede**: con tre contenuti niente colonna vuota. Il dato a lato della Dichiarazione rispetta gli a capo.
+- Correzioni per tema: loghi invisibili in testata (Editoriale, Manifesto, Tech, Tipografico), menu su telefono in Documentario, numeri tagliati in Tipografico, partner e indice in Istituzionale, colonna in Minimalista, galleria e taglio del footer in Ares 2.0 (con le foto virate nel blu come da direzione), invito all'azione in Adrestia, tessere vuote in Tech, evidenziatore in Rebus, strada tratteggiata in Sic2Sic, misura del testo in Manifesto e Tech.
+
 ## 1.4.2
 - **Numeri della home** (blocco Numeri): i numeri lunghi come “12.000” o “30.000” uscivano dalla loro colonna e si sovrapponevano a quello accanto, in tutti i temi. Ora il numero si riduce quanto basta per stare nella colonna.
 - **Footer su telefono**: un indirizzo email lungo nei contatti faceva scorrere la pagina di lato; ora va a capo.
