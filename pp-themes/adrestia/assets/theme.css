@@ -33,7 +33,7 @@
 /* fasce: tutto allineato al bordo sinistro del contenitore */
 .chapter > * { margin-left: max(0px, calc((100% - var(--container)) / 2)); margin-right: auto; }
 /* larghi quanto il contenitore: senza, nelle fasce a griglia ogni blocco si stringe al suo contenuto */
-.chapter > :not(.chapter__bg) { width: min(100%, var(--container)); }
+.chapter > :not(.chapter__bg):not(.sr-only) { width: min(100%, var(--container)); }
 .chapter--paper + .chapter--paper { padding-top: 0; }
 
 /* riquadri dentro le fasce colorate: il fondo dei riquadri segue il colore della fascia */

@@ -33,7 +33,7 @@
 /* fasce */
 .chapter > * { margin-left: max(0px, calc((100% - var(--container)) / 2)); margin-right: auto; }
 /* larghi quanto il contenitore: senza, nelle fasce a griglia ogni blocco si stringe al suo contenuto */
-.chapter > :not(.chapter__bg) { width: min(100%, var(--container)); }
+.chapter > :not(.chapter__bg):not(.sr-only) { width: min(100%, var(--container)); }
 .chapter--paper + .chapter--paper { padding-top: 0; }
 
 /* riquadri dentro le fasce colorate: il fondo dei riquadri segue il colore della fascia */
@@ -146,4 +146,4 @@
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) { position: relative; }
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) img { filter: grayscale(1) contrast(1.1); }
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img)::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; }
-.statement__head { hyphens: manual; }
+main h2.statement__head { hyphens: manual; }

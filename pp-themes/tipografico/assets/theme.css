@@ -437,6 +437,7 @@ html.js .reveal.is-pending { opacity: 0; transform: translateY(26px); }
 
 /* numeri: con tre o quattro cifre le righe in più restavano tagliate dall'altezza fissa */
 @media (min-width: 761px) {
+  .figures { padding-bottom: var(--section); }
   .figures__list { height: auto; overflow: visible; row-gap: 48px; }
   .figure:nth-child(odd) { grid-column: 1 / 7; }
   .figure:nth-child(even) { grid-column: 7 / -1; }

@@ -146,9 +146,13 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 .hero--img .btn--dark { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
 /* l'evidenziatore segue le righe del testo invece di riempire tutta la larghezza del titolo */
-.hero__title { display: block; }
+.hero__title { display: block; line-height: 1.16; }
 .hero__l1 { display: block; }
 .hero__l2:not(:empty) { display: inline; }
 .statement__fact { text-wrap: balance; }
 .band.chapter--ink { border-bottom: 1px solid var(--line); }
 .band:has(.band__img) { padding-bottom: 0; }
+
+/* il magenta pieno è per i testi grandi: sulle etichette piccole si schiarisce verso il testo per restare leggibile */
+.card__cat, .doctable__code { color: color-mix(in srgb, var(--accent) 55%, var(--ink)); }
+.chapter--accent .band__meta { color: var(--accent-ink); }

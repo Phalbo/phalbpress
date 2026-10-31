@@ -42,7 +42,7 @@
 .pp-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .pp-field { margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; }
 .pp-field label { font-weight: 600; }
-.pp-req { font-weight: 400; opacity: .7; font-size: .875em; }
+.pp-req { font-weight: 400; color: var(--muted, #595959); font-size: .875em; }
 .pp-field input, .pp-field textarea { font: inherit; padding: 12px 14px; border: 2px solid var(--muted, #767676); border-radius: min(calc(var(--radius, 4px) / 4), 12px); background: var(--bg, #fff); color: var(--ink, #111); min-height: 48px; }
 .pp-field input:focus-visible, .pp-field textarea:focus-visible { outline: 3px solid var(--accent, #c00); outline-offset: 1px; border-color: var(--ink, #111); }
 .pp-form .pp-check { margin: 0 0 20px; }
