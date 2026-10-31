@@ -35,7 +35,7 @@ final class Legal
     public static function cfg(): array
     {
         $c = PP::$config['legal'] ?? [];
-        $todo = '[da completare in site/config.php]';
+        $todo = '[da completare in Gestione → Privacy e cookie]';
         return array_merge([
             'controller' => $todo, 'address' => $todo, 'email' => PP::$config['contact_email'] ?? $todo, 'dpo' => '',
             'hosting' => 'SiteGround', 'updated' => date('Y-m-d'),

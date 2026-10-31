@@ -35,16 +35,17 @@ final class Demo
     }
 
     /** Ogni lingua del sito riceve il testo dimostrativo nella sua lingua, se c'è, altrimenti quello inglese. */
-    private static function fill(array $seed): void
+    private static function fill(array $seed, ?callable $map = null): void
     {
         $now = Content::now();
+        $map ??= fn(string $v) => self::media($v);
         $pick = fn(array $tr, string $l) => $tr[$l] ?? $tr['en'] ?? reset($tr);
         foreach ($seed['entries'] as $e) {
             $id = DB::insert('pp_entries', [
                 'type' => $e['type'], 'slug' => $e['slug'], 'template' => $e['template'] ?? 'default',
                 'menu_order' => $e['menu_order'] ?? 0, 'in_menu' => $e['in_menu'] ?? 0, 'status' => 'published',
-                'pub_date' => $e['pub_date'] ?? '', 'image' => self::media((string)($e['image'] ?? '')),
-                'meta' => json_encode(array_map(fn($v) => is_string($v) ? self::media($v) : $v, $e['meta'] ?? []), JSON_UNESCAPED_UNICODE),
+                'pub_date' => $e['pub_date'] ?? '', 'image' => $map((string)($e['image'] ?? '')),
+                'meta' => json_encode(array_map(fn($v) => is_string($v) ? $map($v) : $v, $e['meta'] ?? []), JSON_UNESCAPED_UNICODE),
                 'created_at' => $now, 'updated_at' => $now,
             ]);
             foreach (array_merge([I18n::$master], I18n::others()) as $l) {
@@ -60,6 +61,33 @@ final class Demo
             ]);
             foreach (array_merge([I18n::$master], I18n::others()) as $l) Content::saveText('doc', $id, $l, ['excerpt' => '', 'body' => ''] + $pick($d['tr'], $l));
         }
+    }
+
+    /**
+     * Installazione con i contenuti di esempio nel sito vero: gli stessi testi dell'anteprima demo,
+     * con le foto copiate in uploads/media/ come segnaposto (una per contenuto) da sostituire poi una alla volta.
+     */
+    public static function install(): void
+    {
+        $src = PP_ROOT . '/pp-assets/demo/media/';
+        $dir = 'uploads/media/' . date('Y/m');
+        if (!is_dir(PP_ROOT . '/' . $dir)) mkdir(PP_ROOT . '/' . $dir, 0775, true);
+        $copy = function (string $v) use ($src, $dir): string {
+            return implode("\n", array_map(function ($p) use ($src, $dir) {
+                if (!str_starts_with($p, 'seed-media/')) return $p;
+                $name = substr($p, 11);
+                $prefix = str_starts_with($name, 'partner-') ? '' : 'segnaposto-';
+                $rel = $dir . '/' . $prefix . $name;
+                if (!is_file($src . $name)) return '';
+                if (!is_file(PP_ROOT . '/' . $rel)) {
+                    copy($src . $name, PP_ROOT . '/' . $rel);
+                    $small = preg_replace('~(\.webp)$~', '-960$1', $name);
+                    if ($small !== $name && is_file($src . $small)) copy($src . $small, PP_ROOT . '/' . preg_replace('~(\.webp)$~', '-960$1', $rel));
+                }
+                return $rel;
+            }, explode("\n", $v)));
+        };
+        self::fill(require PP_ROOT . '/pp-assets/demo/seed.php', $copy);
     }
 
     /** I link interni della pagina restano nell'anteprima demo, così si può girare per il sito finto. */

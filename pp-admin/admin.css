@@ -231,3 +231,18 @@ fieldset { border: 0; padding: 0; margin: 0; }
 .vis-field .field, .vis-field .check { margin: 0; }
 .vis-field .thumb { max-width: 160px; }
 @media (max-width: 1100px) { .vis { grid-template-columns: 1fr; } .vis__stage, .vis__side { position: static; max-height: none; } .vis__stage { height: 70vh; } }
+/* installazione guidata */
+.login__box.setup { width: min(560px, 100%); }
+.setup h1 { margin: 0; }
+.checks { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.checks li { display: flex; gap: 8px; align-items: baseline; }
+.checks span { width: 1.2em; flex: none; font-weight: 700; text-align: center; }
+.checks .is-ok span { color: #1f7a3a; } .checks .is-bad { color: #8f1d0a; font-weight: 600; } .checks .is-warn span { color: #8a5a00; }
+.langs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 4px 12px; }
+fieldset.field { border: 0; padding: 0; margin: 0; } fieldset.field legend { font-weight: 600; margin-bottom: 6px; padding: 0; }
+.todo { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+.todo li { border-top: 1px solid var(--line); padding-top: 12px; }
+.todo li form, .todo li code { display: block; margin-top: 6px; }
+.todo code { word-break: break-all; }
+.choices { display: grid; gap: 8px; }
+.choices .check { align-items: flex-start; font-weight: 400; } .choices .check strong { display: block; }

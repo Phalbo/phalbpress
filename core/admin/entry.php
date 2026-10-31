@@ -74,7 +74,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
         <p class="hint">Stato: <strong><?= $row['status'] === 'published' ? 'Pubblicato' : 'Bozza' ?></strong>. Un redattore lo pubblicherà.</p>
       <?php endif; ?>
       <button class="btn btn--primary" name="action" value="save" type="submit">Salva</button>
-      <button class="btn" name="action" value="save_translate" type="submit" <?= Translator::enabled() ? '' : 'disabled title="Configura la chiave API in site/config.php"' ?>>Salva e traduci in tutte le lingue</button>
+      <button class="btn" name="action" value="save_translate" type="submit" <?= Translator::enabled() ? '' : 'disabled title="Inserisci la chiave API in Sistema → Impostazioni del sito"' ?>>Salva e traduci in tutte le lingue</button>
       <?php if (!Translator::enabled()): ?><p class="hint">Traduzione automatica non configurata.</p><?php endif; ?>
     </div>
     <div class="panel stack">

@@ -1,4 +1,4 @@
-# PhalbPress 1.3
+# PhalbPress
 
 Motore leggero in PHP per siti di progetto multilingua. Primo sito: **VOICE Europe**.
 PHP 8.1+ e MySQL/MariaDB (SiteGround). Niente WordPress, niente plugin di terzi, niente librerie esterne.
@@ -28,26 +28,20 @@ PHP 8.1+ e MySQL/MariaDB (SiteGround). Niente WordPress, niente plugin di terzi,
 
 ## Installazione su SiteGround
 
-1. **Database**: Site Tools → Site → MySQL. Crea database e utente e assegna l'utente al database.
-2. **PHP**: Site Tools → Devs → PHP Manager → versione 8.2 o più recente.
-3. **File**: carica il contenuto di `phalbpress/` nella cartella del sito (dominio, sottodominio o sottocartella).
-4. **Configurazione**: copia `site/config.sample.php` in `site/config.php` e compila:
-   - `db`: nome, utente, password del database;
-   - `site_url`: l'indirizzo definitivo, es. `https://voice-project.eu`. Serve per i link assoluti di sitemap, canonical e social;
-   - `admin_slug`: l'indirizzo della gestione. Scegline uno non ovvio, es. `gestione-k7q`;
-   - `contact_email`, `social`.
-5. **HTTPS**: Site Tools → Security → SSL. Poi togli il commento a "Forza https" in `.htaccess` e, quando tutto funziona, alla riga HSTS.
-6. Apri **`/install.php`** e crea il primo amministratore. Vengono caricati i contenuti iniziali e generate le pagine statiche.
-7. Entra in **`/<admin_slug>/`** e completa queste pagine:
-   - **Utenti** → attiva l'accesso in due passaggi;
-   - **Temi** → scegli il tema (prima guarda le anteprime);
-   - **Menu** → se il menu automatico non basta;
-   - **Privacy e cookie** → titolare del trattamento, indirizzo, email;
-   - **Sistema** → controlla che sia tutto verde;
-   - **cancella `install.php`** dal server.
-8. Permessi di `site/config.php`: 640, dal File Manager.
-9. **Operazione pianificata** (per i contenuti programmati): Site Tools → Devs → Cron Jobs → ogni 15 minuti → `php /percorso/del/sito/cron.php` (il percorso esatto è in Gestione → Sistema).
-10. `mail_from` in `config.php` (es. `noreply@voice-project.eu`): serve per le email del modulo di contatto e del recupero password.
+1. **PHP**: Site Tools → Devs → PHP Manager → versione 8.2 o più recente; `upload_max_filesize` e `post_max_size` almeno 64M (per caricare lo zip del sito).
+2. **Database**: Site Tools → Site → MySQL. Crea un database **nuovo e vuoto** e un utente con tutti i privilegi su quel database.
+3. **File**: carica nella cartella del sito (vuota) **solo `phalbpress-installa.php`** (lo trovi in ogni release su GitHub) e aprilo nel browser:
+   scarica l'ultima versione, controlla la firma, scompatta tutto e ti porta all'installazione. In alternativa carica il contenuto di `phalbpress/` dal pacchetto completo.
+4. **Installazione guidata** (`/install.php`):
+   - controllo del server, con quello che manca;
+   - **il sito del progetto**: carichi lo zip del sito (la cartella `site/` preparata per il progetto), oppure ne fai uno nuovo scegliendo nome, lingue e tema;
+   - **database**: host, nome, utente, password (con il prefisso SiteGround), indirizzo della gestione. Prova la connessione e scrive da sola `site/config.php`;
+   - **contenuti e amministratore**: i contenuti del progetto, quelli di esempio, un modello o niente; foto segnaposto dove mancano; il primo amministratore.
+5. Alla fine ti propone, tutto facoltativo: il comando per i lavori programmati (cron), un'email di prova, l'accesso in due passaggi, le impostazioni, e cancella `install.php`.
+6. **HTTPS**: Site Tools → Security → SSL. Poi togli il commento a "Forza https" in `.htaccess` e, quando tutto funziona, alla riga HSTS.
+7. Dalla gestione: **Sistema → Impostazioni del sito** (email di contatto e mittente, social, finanziatore, traduzione automatica), **Privacy e cookie**, **Identità visiva**, **Temi**.
+
+Durante l'installazione il sito è aperto a chi conosce l'indirizzo: fai i passi di seguito, senza lasciarlo a metà.
 
 Per provarlo in locale senza MySQL: `'driver' => 'sqlite'` in `config.php`, poi `php -S localhost:8000 index.php`.
 
@@ -97,9 +91,8 @@ La gestione mostra prima e dopo, per esempio "4032×3024 5,1 MB → 2400×1800 3
 
 ## Attivare la traduzione automatica
 
-In `site/config.php` → `translation`: `api_key` di console.anthropic.com (oppure di DeepL con `'provider' => 'deepl'`).
-- `glossary`: i termini da non tradurre.
-- `publish_machine_translations => false`: nasconde le traduzioni automatiche finché qualcuno non le rivede.
+Gestione → Sistema → **Impostazioni del sito** → Traduzione automatica: servizio (Claude di Anthropic oppure DeepL), chiave API, glossario dei termini da non tradurre.
+In `site/config.php` resta `publish_machine_translations => false` per nascondere le traduzioni automatiche finché qualcuno non le rivede.
 
 ---
 
@@ -130,14 +123,9 @@ A mano: sostituisci le stesse cartelle e i file via FTP; le modifiche al databas
 
 **Il modo veloce**: dal sito di partenza, Gestione → Backup e modelli → crea un **Modello**. Sul nuovo sito, in `install.php`, apri "Parti da un modello" e carica il .zip: arrivano contenuti, testi, menu, identità e immagini, senza utenti né richieste.
 
-**Da zero**:
-1. Copia la cartella. Svuota `uploads/` (lascia i `.htaccess`) e `data/`, e togli le cartelle delle lingue generate (`en/`, `it/`…).
-2. In `site/` cambia:
-   - `config.sample.php`: lingue, tipi di contenuto, sezioni, categorie dei documenti, identità, tema, dati legali, glossario;
-   - `strings.php` e `seed.php` (con le foto in `seed-media/`);
-   - in `theme/partials/` solo ciò che è del progetto (es. emblema UE nel footer);
-   - il logo in `assets/logo.svg`.
-3. Nuovo database → `install.php`.
+**Da zero**: si prepara solo la cartella `site/` del progetto (con la skill phalbpress-nuovo-sito, o a mano partendo da `tools/demo/site/` del repo):
+`config.sample.php` (lingue, tipi, sezioni, categorie dei documenti, identità, tema), `strings.php`, `seed.php` con le foto in `seed-media/`,
+in `theme/partials/` solo ciò che è del progetto (es. emblema UE nel footer), il logo in `assets/logo.svg`. Si comprime in uno zip e si carica al passo "il sito del progetto" dell'installazione.
 
 `CLAUDE.md` spiega tutta la struttura: passalo a Claude e riparte senza spiegazioni.
 

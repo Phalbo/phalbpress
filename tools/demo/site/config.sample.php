@@ -63,7 +63,7 @@ return [
     ],
     'revisions_keep' => 10,
     'static' => false,
-    'translation' => ['provider' => '', 'key' => '', 'glossary' => ['Common Ground', 'CERV']],
+    'translation' => ['provider' => '', 'api_key' => '', 'glossary' => ['Common Ground', 'CERV']],
     'publish_machine_translations' => true,
 
     'contact_email' => 'hello@example.org',

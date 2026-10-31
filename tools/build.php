@@ -103,6 +103,8 @@ if ($seed) {
     if ($pub !== $expected) $fail("la chiave di firma non corrisponde a core/modules/updater/release.pub (atteso $expected, chiave $pub)");
     $sig = sodium_crypto_sign_detached((string)file_get_contents($coreZip), sodium_crypto_sign_secretkey($kp));
     file_put_contents("$coreZip.sig", base64_encode($sig) . "\n");
+    // anche il pacchetto completo è firmato: lo usa l'installatore in un file (phalbpress-installa.php)
+    file_put_contents("$fullZip.sig", base64_encode(sodium_crypto_sign_detached((string)file_get_contents($fullZip), sodium_crypto_sign_secretkey($kp))) . "\n");
     sodium_memzero($seedRaw);
     echo "Firmato $coreZip\n";
 } elseif ($tag !== '') {
@@ -110,6 +112,13 @@ if ($seed) {
 } else {
     echo "Nessuna PP_SIGNING_KEY: zip non firmato (va bene solo per provare in locale)\n";
 }
+
+// installatore in un file: la chiave pubblica di firma dentro, così verifica il pacchetto prima di scompattarlo
+$pub = trim((string)@file_get_contents('core/modules/updater/release.pub'));
+file_put_contents('dist/phalbpress-installa.php', str_replace('__PUBKEY__', $pub, (string)file_get_contents('tools/installa.php')));
+exec(escapeshellarg(PHP_BINARY) . ' -l dist/phalbpress-installa.php 2>&1', $o2, $c2);
+if ($c2 !== 0) $fail('errore di sintassi in tools/installa.php');
+echo "Creato dist/phalbpress-installa.php\n";
 
 file_put_contents('dist/notes.md', $notes . "\n");
 echo "Note della versione $ver pronte\n";

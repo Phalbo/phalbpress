@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.7.0';
+    public const VERSION = '1.8.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -23,6 +23,9 @@ final class PP
         else { ini_set('display_errors', '0'); }
         I18n::init(self::$config);
         DB::connect(self::$config['db']);
+        // impostazioni cambiate dalla gestione (contatti, social, traduzione): valgono sopra il file
+        require_once PP_ROOT . '/core/modules/settings/SiteSettings.php';
+        SiteSettings::apply();
         Modules::boot();
     }
 

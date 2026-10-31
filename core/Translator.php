@@ -1,7 +1,7 @@
 <?php
 /**
  * Traduzione automatica. Provider: "anthropic" (Claude, copre tutte le lingue del progetto) o "deepl".
- * Le chiavi stanno in site/config.php. Senza chiave, il pulsante "Traduci" avvisa e non fa nulla.
+ * Le chiavi si inseriscono in Sistema → Impostazioni del sito (o in site/config.php). Senza chiave, il pulsante "Traduci" avvisa e non fa nulla.
  */
 final class Translator
 {

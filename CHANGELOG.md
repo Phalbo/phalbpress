@@ -2,6 +2,13 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.8.0
+- **Installazione guidata**: niente più `config.php` da copiare e compilare a mano. `install.php` controlla il server (versione di PHP, estensioni, cartelle scrivibili) e dice cosa manca; poi chiede lo **zip del sito del progetto** (o fa un sito nuovo con nome, lingue e tema), i dati del **database** con la prova della connessione e messaggi chiari (prefisso SiteGround, permessi), e l'indirizzo della gestione. Scrive da sola `site/config.php`.
+- **Con cosa parte il sito**: i contenuti del progetto, i **contenuti di esempio** con le foto segnaposto, un modello di un altro sito, o vuoto. Più l'opzione per mettere le foto segnaposto dove mancano.
+- **Dopo l'installazione**, tutto facoltativo: comando del cron da copiare, email di prova, link all'accesso in due passaggi e alle impostazioni, e un pulsante che cancella `install.php`.
+- **Installatore in un file** (`phalbpress-installa.php`, allegato a ogni release): si carica solo quello nella cartella vuota del sito. Scarica l'ultima versione da GitHub, controlla la firma, scompatta tutto e porta all'installazione guidata.
+- **Impostazioni del sito** (Sistema → Impostazioni del sito): email di contatto e del mittente, social, finanziatore, traduzione automatica (servizio, chiave, glossario) si cambiano dalla gestione, senza toccare il file. Nel file restano database e struttura.
+
 ## 1.7.0
 - **Foto segnaposto nel sito vero** (Immagini e file → "Metti le foto segnaposto"): ogni posto ancora senza foto (apertura, news, storie, gallerie) riceve una foto di esempio con le misure giuste stampate sopra. Ognuna è un file a sé, con il nome che inizia per "segnaposto": la cambi una alla volta con **Sostituisci** e la foto vera compare dove stava il segnaposto. Le foto già messe non si toccano mai.
 - **Titoli senza trattino**: le parole dei titoli non vanno più a capo spezzate ("bam-/bini"). Se una parola è più larga della colonna, il titolo si riduce quanto basta per farla stare intera (senza JavaScript, come ultima risorsa la parola va a capo senza allargare la pagina).

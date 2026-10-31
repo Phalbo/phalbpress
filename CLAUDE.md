@@ -17,7 +17,8 @@ Rispondi ad Andrea in italiano, diretto, con codice completo e pronto.
 ## Struttura
 ```
 index.php            ingresso unico; in sviluppo: php -S localhost:8000 index.php
-install.php          tabelle, site/seed.php (o "parti da un modello" .zip), primo admin; si blocca se esiste un utente
+install.php          senza site/config.php → core/Setup.php (controllo server, zip del sito o sito nuovo, database → scrive config.php);
+                     poi tabelle, contenuti (progetto / esempio / modello / vuoto), segnaposto, primo admin, cose da fare dopo; si blocca se esiste un utente
 cron.php             solo CLI: contenuti programmati → rigenera lo statico (Scheduler::tick), poi hook `cron` (es. controllo aggiornamenti)
 core/PP.php          config, URL, sezioni per lingua (PP::section), router (run → page → resolve), temi (themeFile/asset), render, shortcode, helper
 core/DB.php          PDO MySQL/SQLite, migrate(), addColumn(), t() tipi portabili
@@ -27,10 +28,11 @@ core/Auth.php        sessione, login, TOTP, ruoli (can/canLang/canEdit), CSRF, l
 core/Media.php       upload (nomi puliti, WebP, -960, SVG ripulito, PDF), replace() stesso percorso, usage() dove è usato
 core/Scheduler.php   contenuti programmati
 core/Translator.php  traduzione automatica (Anthropic / DeepL), anche i campi personalizzati traducibili
-core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms, backup, activity, themes, updater
+core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms, backup, activity, themes, updater, settings
+                     (settings: contact_email, mail_from, social, funder, translation modificabili in gestione, applicati sopra il config in PP::boot)
 pp-themes/_base/     struttura comune a tutti i temi: templates/, partials/ (+ blocks/), assets/base.css, base.js, strings.php
 pp-themes/<tema>/    theme.json + assets/theme.css (+ theme.js, + template/partial che sostituisce) — 13 temi
-site/config.php      configurazione del progetto (da config.sample.php)
+site/config.php      scritto dall'installazione: `array_replace(require config.sample.php, [db, admin_slug, site_url, debug])`
 site/strings.php     testi del progetto; site/seed.php contenuti iniziali; site/seed-media/ immagini del seed
 site/theme/          SOLO personalizzazioni del sito valide con ogni tema (es. partials/footer-extra.php con emblema UE)
 site/modules/        moduli solo di questo sito ("_" davanti = disattivato; _esempio è il modello)
@@ -101,7 +103,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 ## Repo e release
 - Repo pubblico `Phalbo/phalbpress`: SOLO il motore (+ `tools/`, `skeleton/` per il pacchetto completo, `.github/`). Mai `site/`, `uploads/`, `data/`.
 - Versione in `core/PP.php` (`VERSION`). Ogni release: alza la versione, aggiungi `## X.Y.Z` in `CHANGELOG.md` (testo mostrato nei siti), commit su `main`, tag `vX.Y.Z`.
-- La Action `release.yml` sul tag lancia `tools/build.php --tag`: `php -l` di tutto, `dist/phalbpress-core-X.Y.Z.zip` (+ `phalbpress.json` con versione e sha256), firma Ed25519 con il secret `PP_SIGNING_KEY` (seme base64), `dist/phalbpress-X.Y.Z.zip` completo per i siti nuovi, release con le note.
+- La Action `release.yml` sul tag lancia `tools/build.php --tag`: `php -l` di tutto, `dist/phalbpress-core-X.Y.Z.zip` (+ `phalbpress.json` con versione e sha256), firma Ed25519 con il secret `PP_SIGNING_KEY` (seme base64), `dist/phalbpress-X.Y.Z.zip` completo per i siti nuovi (firmato anche lui), `dist/phalbpress-installa.php` (da `tools/installa.php` con la chiave pubblica dentro: scarica il pacchetto completo, verifica la firma, scompatta), release con le note.
 - I siti (Gestione → Aggiornamenti, `core/modules/updater/`) accettano solo zip firmati con la chiave in `core/modules/updater/release.pub`; backup completo prima; sostituiscono solo `Updater::ITEMS`; `.htaccess` non si sovrascrive (copia in `data/updates/htaccess-X.txt`); la versione precedente resta in `data/updates/prev-X/` per il ritorno indietro.
 - **Commit e release: solo il messaggio.** Niente righe `Co-Authored-By`, niente link alle sessioni, niente firme di strumenti: il repo è pubblico.
 - Gli zip non devono mai avere una data fissa nei file: OPcache rilegge un file solo se la data cambia (`BUILT` in `tools/build.php`, `Updater::fresh()`).

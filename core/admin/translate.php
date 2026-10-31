@@ -2,7 +2,7 @@
 <?php if (!$enabled): ?>
   <section class="panel">
     <h2>Traduzione automatica non attiva</h2>
-    <p>Per attivarla inserisci la chiave API in <code>site/config.php</code> → <code>translation.api_key</code>. Senza chiave puoi comunque tradurre a mano da ogni contenuto (schede lingua) e da “Testi del sito”.</p>
+    <p>Per attivarla inserisci la chiave API in <a href="<?= e(Admin::u('settings')) ?>">Sistema → Impostazioni del sito</a>. Senza chiave puoi comunque tradurre a mano da ogni contenuto (schede lingua) e da “Testi del sito”.</p>
   </section>
 <?php endif; ?>
 <section class="panel" data-queue>
