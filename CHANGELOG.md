@@ -2,6 +2,16 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.9.0
+- **Siti personali e portfolio**: in Sistema → Impostazioni del sito, nuova parte "Chi c'è dietro il sito": un'organizzazione (come prima) o **una persona**. Per una persona i dati strutturati che leggono Google e i motori AI diventano quelli di un profilo (`Person` con professione, per chi lavora, città, formazione, competenze e i social come profili collegati) e la home diventa una pagina profilo. Si può impostare anche da `config['owner']`.
+- **Siti con l'originale non in inglese** (es. un sito personale scritto in italiano): l'avviso per un testo non ancora tradotto diceva sempre "stai leggendo la versione inglese", e i documenti senza file tradotto dicevano "in inglese". Ora dicono la lingua originale vera ("stai leggendo la versione originale (Italiano)", "in Italiano"). Testi nuovi `fallback_notice_lang` e `doc_in_lang` in Testi del sito; sui siti in inglese non cambia niente.
+- **Elenco di storie nella home**: segue lo stesso ordine della pagina Storie (l'ordine messo a mano, poi la data), invece della sola data.
+- **Banner dei cookie senza motivo**: un semplice link a YouTube (nel testo o nel pulsante di una fascia, es. "Apri il canale") faceva credere alla scansione che nel sito ci fossero video incorporati, e compariva il banner. Ora contano solo i video veri (`[video:…]`, il campo Video delle storie e la fascia Video). Rifai la scansione da Privacy e cookie.
+- **Ricerca**: il tipo di ogni risultato è nella lingua della pagina ("Page", "News", il nome della sezione Storie…) invece del nome italiano della gestione ("pagina", "storia"), e le date sono scritte per esteso come nel resto del sito invece che "2026-10-12".
+- **Impostazioni del sito e sito statico**: dopo aver salvato (email, social…) le pagine statiche venivano rigenerate con i valori di prima, e il footer restava vecchio fino al salvataggio successivo. Ora escono subito con quelli nuovi.
+- **Titoli con una parola lunga** (es. "Showroomdummies") nelle storie: in Istituzionale la parola allargava la colonna e la pagina scorreva di lato; con "riduci il movimento" attivo nel sistema (o in un tema con transizioni) il titolo non si riduceva affatto e usciva dalla pagina. Ora le colonne delle griglie non si allargano per una parola, il calcolo ignora le transizioni e si rifà quando cambiano la larghezza della colonna o i font.
+- Cookie policy: il cookie della gestione è "usato da chi cura il sito" invece che "dal gruppo di progetto", così il testo va bene anche per un sito personale.
+
 ## 1.8.0
 - **Installazione guidata**: niente più `config.php` da copiare e compilare a mano. `install.php` controlla il server (versione di PHP, estensioni, cartelle scrivibili) e dice cosa manca; poi chiede lo **zip del sito del progetto** (o fa un sito nuovo con nome, lingue e tema), i dati del **database** con la prova della connessione e messaggi chiari (prefisso SiteGround, permessi), e l'indirizzo della gestione. Scrive da sola `site/config.php`.
 - **Con cosa parte il sito**: i contenuti del progetto, i **contenuti di esempio** con le foto segnaposto, un modello di un altro sito, o vuoto. Più l'opzione per mettere le foto segnaposto dove mancano.

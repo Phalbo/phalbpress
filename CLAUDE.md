@@ -29,7 +29,8 @@ core/Media.php       upload (nomi puliti, WebP, -960, SVG ripulito, PDF), replac
 core/Scheduler.php   contenuti programmati
 core/Translator.php  traduzione automatica (Anthropic / DeepL), anche i campi personalizzati traducibili
 core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms, backup, activity, themes, updater, settings
-                     (settings: contact_email, mail_from, social, funder, translation modificabili in gestione, applicati sopra il config in PP::boot)
+                     (settings: contact_email, mail_from, social, funder, owner, translation modificabili in gestione, applicati sopra il config in PP::boot;
+                     owner = organizzazione o persona per i dati strutturati, `Seo::owner()`: Person + ProfilePage per i siti personali)
 pp-themes/_base/     struttura comune a tutti i temi: templates/, partials/ (+ blocks/), assets/base.css, base.js, strings.php
 pp-themes/<tema>/    theme.json + assets/theme.css (+ theme.js, + template/partial che sostituisce) — 13 temi
 site/config.php      scritto dall'installazione: `array_replace(require config.sample.php, [db, admin_slug, site_url, debug])`

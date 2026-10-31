@@ -258,6 +258,9 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .stories__soon { font-size: var(--step-lead); max-width: 40ch; }
 .stories__facts { list-style: none; padding: 0; margin-top: 32px; display: grid; gap: 16px; max-width: 60ch; }
 .storylist { display: grid; gap: clamp(48px, 8vw, 96px); }
+/* nelle griglie una parola lunga in un titolo non deve allargare la colonna (e la pagina): la colonna resta, il titolo si riduce (base.js) */
+.chapter > *, .storylist > *, .story > *, .cards > * { min-width: 0; }
+.pp-fitting, .pp-fitting * { transition: none !important; }
 .story { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--gutter); align-items: center; }
 .story--flip { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
 .story--flip .story__pic { order: 2; }

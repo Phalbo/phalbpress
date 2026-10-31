@@ -4,6 +4,14 @@ final class Search
     private const SLUGS = ['en' => 'search', 'it' => 'cerca', 'es' => 'buscar', 'fr' => 'recherche', 'de' => 'suche', 'pt' => 'pesquisa',
         'sl' => 'iskanje', 'sr' => 'pretraga', 'hr' => 'pretraga', 'bs' => 'pretraga', 'sq' => 'kerko', 'ro' => 'cautare', 'el' => 'anazitisi'];
 
+    /** Etichetta del tipo nei risultati, nella lingua della pagina (il nome del tipo nel config è quello della gestione, in italiano). */
+    private static function kind(string $type, string $lang): string
+    {
+        $key = ['page' => 'search_kind_page', 'news' => 'news_title', 'story' => 'stories_title'][$type] ?? '';
+        $v = $key !== '' ? I18n::t($key, $lang) : '';
+        return $v !== '' && $v !== $key ? $v : (string)(PP::$config['types'][$type]['one'] ?? $type);
+    }
+
     public static function slug(string $lang): string
     {
         $c = PP::$config['sections']['search'] ?? null;
@@ -32,12 +40,12 @@ final class Search
             $u = PP::entryUrl($e, $lang);
             if (!$u || $e['title'] === '') continue;
             $rows[] = ['t' => $e['title'], 'u' => $u, 'x' => self::plain($e['excerpt'], 240), 'b' => self::plain($e['body'], 4000),
-                'k' => PP::$config['types'][$e['type']]['one'] ?? $e['type'], 'd' => in_array($e['type'], ['news', 'story'], true) ? $e['pub_date'] : ''];
+                'k' => self::kind($e['type'], $lang), 'd' => $e['type'] === 'news' && $e['pub_date'] ? fmt_date($e['pub_date'], $lang) : ''];
         }
         foreach (Content::docs($lang) as $d) {
             if (!$d['file_active']) continue;
             $rows[] = ['t' => ($d['code'] ? $d['code'] . ' · ' : '') . $d['title'], 'u' => PP::docUrl($d, $lang), 'x' => self::plain($d['excerpt'], 240),
-                'b' => self::plain($d['body'], 1500), 'k' => I18n::t('search_kind_doc', $lang) ?: 'doc', 'd' => $d['pub_date']];
+                'b' => self::plain($d['body'], 1500), 'k' => I18n::t('search_kind_doc', $lang) ?: 'doc', 'd' => $d['pub_date'] ? fmt_date($d['pub_date'], $lang) : ''];
         }
         I18n::$current = $saved;
         return json_encode(Hooks::filter('search_index', $rows, $lang), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);

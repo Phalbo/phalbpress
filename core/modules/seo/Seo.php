@@ -76,17 +76,12 @@ final class Seo
         $home = PP::abs(PP::link('', $L));
         $id = class_exists('Identity') ? Identity::get() : [];
         $site = class_exists('Identity') ? Identity::name() : PP::$config['site_name'];
-        $org = ['@type' => 'Organization', '@id' => $home . '#org', 'name' => $site, 'url' => $home];
-        if (trim(t('claim')) !== '') $org['slogan'] = t('claim');
-        $logo = $id['logo'] ?? '';
-        if ($logo) $org['logo'] = PP::abs(PP::url($logo));
-        $same = array_values(array_filter(PP::$config['social'] ?? []));
-        if ($same) $org['sameAs'] = $same;
-        if (!empty(PP::$config['funder'])) $org['funder'] = ['@type' => 'GovernmentOrganization', 'name' => PP::$config['funder']];
-        if (!empty(PP::$config['contact_email'])) $org['email'] = PP::$config['contact_email'];
-        $graph = [$org, ['@type' => 'WebSite', '@id' => $home . '#site', 'url' => $home, 'name' => $site, 'inLanguage' => I18n::hreflang($L), 'publisher' => ['@id' => $home . '#org']]];
+        $org = self::owner($home, $site, $id);
+        $pub = ['@id' => $org['@id']];
+        $graph = [$org, ['@type' => 'WebSite', '@id' => $home . '#site', 'url' => $home, 'name' => $site, 'inLanguage' => I18n::hreflang($L), 'publisher' => $pub]];
         $page = ['@type' => ($ctx['type'] ?? '') === 'article' ? 'NewsArticle' : 'WebPage', '@id' => $url, 'url' => $url, 'name' => $title, 'headline' => $ctx['title'] ?? $title,
-            'description' => $desc, 'inLanguage' => I18n::hreflang($L), 'isPartOf' => ['@id' => $home . '#site'], 'publisher' => ['@id' => $home . '#org']];
+            'description' => $desc, 'inLanguage' => I18n::hreflang($L), 'isPartOf' => ['@id' => $home . '#site'], 'publisher' => $pub];
+        if (($org['@type'] ?? '') === 'Person') { $page['author'] = $pub; if (PP::$route['name'] === 'home') $page = ['@type' => 'ProfilePage', 'mainEntity' => $pub] + $page; }
         if ($img) $page['image'] = PP::abs(PP::url($img));
         if (!empty($ctx['date'])) $page['datePublished'] = $ctx['date'];
         $graph[] = $page;
@@ -97,6 +92,43 @@ final class Seo
             ]];
         }
         return ['@context' => 'https://schema.org', '@graph' => $graph];
+    }
+
+    /**
+     * Chi c'è dietro il sito, per i dati strutturati: un'organizzazione (progetti, enti) o una persona (sito personale, portfolio).
+     * config['owner'] = ['type' => 'organization'|'person', 'job_title', 'works_for', 'location', 'alumni_of', 'knows_about' => [...], 'image']
+     * (modificabile in Sistema → Impostazioni del sito).
+     */
+    public static function owner(string $home, string $site, array $id): array
+    {
+        $o = (array)(PP::$config['owner'] ?? []);
+        $person = ($o['type'] ?? '') === 'person';
+        $same = array_values(array_filter(PP::$config['social'] ?? []));
+        $email = PP::$config['contact_email'] ?? '';
+        $claim = trim(t('claim'));
+        if (!$person) {
+            $org = ['@type' => 'Organization', '@id' => $home . '#org', 'name' => $site, 'url' => $home];
+            if ($claim !== '') $org['slogan'] = $claim;
+            if (!empty($id['logo'])) $org['logo'] = PP::abs(PP::url($id['logo']));
+            if ($same) $org['sameAs'] = $same;
+            if (!empty(PP::$config['funder'])) $org['funder'] = ['@type' => 'GovernmentOrganization', 'name' => PP::$config['funder']];
+            if ($email) $org['email'] = $email;
+            return $org;
+        }
+        $p = ['@type' => 'Person', '@id' => $home . '#person', 'name' => trim((string)($o['name'] ?? '')) ?: $site, 'url' => $home];
+        if ($claim !== '') $p['description'] = $claim;
+        $str = fn(string $k) => trim(strip_tags((string)($o[$k] ?? '')));
+        if ($str('job_title') !== '') $p['jobTitle'] = $str('job_title');
+        if ($str('works_for') !== '') $p['worksFor'] = ['@type' => 'Organization', 'name' => $str('works_for')];
+        if ($str('alumni_of') !== '') $p['alumniOf'] = ['@type' => 'EducationalOrganization', 'name' => $str('alumni_of')];
+        if ($str('location') !== '') $p['address'] = ['@type' => 'PostalAddress', 'addressLocality' => $str('location')];
+        $knows = array_values(array_filter(array_map(fn($x) => trim(strip_tags((string)$x)), (array)($o['knows_about'] ?? []))));
+        if ($knows) $p['knowsAbout'] = $knows;
+        $img = $str('image') ?: ($id['share_image'] ?? '');
+        if ($img) $p['image'] = PP::abs(PP::url($img));
+        if ($same) $p['sameAs'] = $same;
+        if ($email) $p['email'] = $email;
+        return $p;
     }
 
     public static function sitemap(): string

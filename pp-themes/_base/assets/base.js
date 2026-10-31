@@ -133,16 +133,32 @@
 
   /* ---------- titoli: niente parole spezzate; se una parola non entra nella colonna, il titolo si riduce un po' ---------- */
   const heads = Array.from(document.querySelectorAll('main h1, main h2, main h3')).filter((h) => !h.classList.contains('figure__val') && !h.classList.contains('sr-only'));
+  // durante il calcolo niente transizioni (un tema con "transition: all" o il movimento ridotto le farebbero leggere in ritardo)
   const fitHeads = () => heads.forEach((h) => {
+    h.classList.add('pp-fitting');
     h.style.fontSize = '';
-    if (h.scrollWidth <= h.clientWidth + 1) return;
-    let size = parseFloat(getComputedStyle(h).fontSize);
-    const min = size * 0.5;
-    while (h.scrollWidth > h.clientWidth + 1 && size > min) { size *= 0.94; h.style.fontSize = size + 'px'; }
+    if (h.scrollWidth > h.clientWidth + 1) {
+      let size = parseFloat(getComputedStyle(h).fontSize);
+      const min = size * 0.5;
+      while (h.scrollWidth > h.clientWidth + 1 && size > min) { size *= 0.94; h.style.fontSize = size + 'px'; }
+    }
+    h.classList.remove('pp-fitting');
   });
   fitHeads();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeads);
   let fitTimer;
   window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitHeads, 150); });
   document.addEventListener('pp-hero-swap', fitHeads);
+  // la colonna di un titolo può cambiare dopo il primo calcolo (foto che arrivano tardi, font, rivelazioni): si ricalcola quando cambia la sua larghezza
+  if ('ResizeObserver' in window) {
+    const widths = new WeakMap();
+    let roTimer;
+    const ro = new ResizeObserver((entries) => {
+      const changed = entries.some((en) => { const w = Math.round(en.contentRect.width); const old = widths.get(en.target); widths.set(en.target, w); return old !== undefined && old !== w; });
+      if (changed) { clearTimeout(roTimer); roTimer = setTimeout(fitHeads, 100); }
+    });
+    heads.forEach((h) => ro.observe(h));
+  }
+  window.addEventListener('load', fitHeads);
+  if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitHeads, 50); });
 })();

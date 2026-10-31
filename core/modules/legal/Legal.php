@@ -63,7 +63,10 @@ final class Legal
         $svc = self::services();
         $texts = [];
         foreach (DB::all('SELECT e.id, e.type, e.meta, t.lang, t.body FROM pp_entries e LEFT JOIN pp_entry_tr t ON t.entry_id = e.id') as $r) {
-            $texts['entry:' . $r['id']][] = (string)$r['body'] . ' ' . (string)$r['meta'];
+            // i link (href, campi *_url come il pulsante di una fascia) non caricano niente: un link al canale YouTube non è un video incorporato
+            $meta = json_decode((string)$r['meta'], true);
+            $meta = is_array($meta) ? json_encode(array_filter($meta, fn($k) => !preg_match('~(^|_)url$~', (string)$k), ARRAY_FILTER_USE_KEY)) : (string)$r['meta'];
+            $texts['entry:' . $r['id']][] = preg_replace('~\shref\s*=\s*("[^"]*"|\'[^\']*\')~i', '', (string)$r['body']) . ' ' . $meta;
         }
         foreach (DB::all('SELECT skey, value FROM pp_strings') as $r) $texts['testo:' . $r['skey']][] = (string)$r['value'];
         foreach ($texts as $ref => $chunks) {

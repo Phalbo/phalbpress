@@ -18,6 +18,7 @@ return [
             'search_count' => ['group' => 'Ricerca', 'note' => '{n} = numero di risultati', 'text' => ['en' => '{n} results', 'it' => '{n} risultati']],
             'search_none' => ['group' => 'Ricerca', 'text' => ['en' => 'Nothing found. Try a different word.', 'it' => 'Nessun risultato. Prova con un’altra parola.']],
             'search_nojs' => ['group' => 'Ricerca', 'text' => ['en' => 'Search needs JavaScript. You can browse the menu instead.', 'it' => 'La ricerca richiede JavaScript. Puoi usare il menu.']],
+            'search_kind_page' => ['group' => 'Ricerca', 'text' => ['en' => 'Page', 'it' => 'Pagina']],
             'search_kind_doc' => ['group' => 'Ricerca', 'text' => ['en' => 'Document', 'it' => 'Documento']],
         ]);
         Hooks::on('route', fn($lang, $rest) => count($rest) === 1 && $rest[0] === Search::slug($lang) ? ['name' => 'search', 'tpl' => 'search'] : null);

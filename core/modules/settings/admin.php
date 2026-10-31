@@ -12,6 +12,26 @@
         <textarea name="social" rows="5" placeholder="Instagram | https://www.instagram.com/progetto&#10;LinkedIn | https://www.linkedin.com/company/progetto"><?= e($social) ?></textarea></label>
       <label class="field">Finanziatore <span class="muted">(es. European Union: va nei dati strutturati per i motori di ricerca)</span>
         <input type="text" name="funder" value="<?= e($c['funder'] ?? '') ?>"></label>
+      <?php $o = (array)($c['owner'] ?? []); $person = ($o['type'] ?? '') === 'person'; ?>
+      <h2>Chi c'è dietro il sito</h2>
+      <p class="hint">Serve ai dati strutturati che leggono Google e i motori di ricerca AI.</p>
+      <label class="field">È il sito di
+        <select name="owner_type">
+          <option value="organization"<?= $person ? '' : ' selected' ?>>Un'organizzazione o un progetto</option>
+          <option value="person"<?= $person ? ' selected' : '' ?>>Una persona (sito personale, portfolio)</option>
+        </select></label>
+      <label class="field">Nome e cognome <span class="muted">(solo per una persona; vuoto = nome del sito)</span>
+        <input type="text" name="owner_name" value="<?= e($o['name'] ?? '') ?>"></label>
+      <label class="field">Professione <span class="muted">(es. Regista e motion designer)</span>
+        <input type="text" name="owner_job_title" value="<?= e($o['job_title'] ?? '') ?>"></label>
+      <label class="field">Lavora per <span class="muted">(organizzazione attuale, facoltativo)</span>
+        <input type="text" name="owner_works_for" value="<?= e($o['works_for'] ?? '') ?>"></label>
+      <label class="field">Città <span class="muted">(facoltativo)</span>
+        <input type="text" name="owner_location" value="<?= e($o['location'] ?? '') ?>"></label>
+      <label class="field">Formazione <span class="muted">(scuola o università, facoltativo)</span>
+        <input type="text" name="owner_alumni_of" value="<?= e($o['alumni_of'] ?? '') ?>"></label>
+      <label class="field">Competenze <span class="muted">(una per riga)</span>
+        <textarea name="owner_knows_about" rows="4"><?= e(implode("\n", (array)($o['knows_about'] ?? []))) ?></textarea></label>
       <p class="hint">Nome del sito, logo e colori: <a href="<?= e(Admin::u('identity')) ?>">Identità visiva</a>. Titolare del trattamento e dati per la privacy: <a href="<?= e(Admin::u('privacy')) ?>">Privacy e cookie</a>.</p>
     </section>
     <section class="panel stack">

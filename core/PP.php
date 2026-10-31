@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.8.0';
+    public const VERSION = '1.9.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -389,6 +389,13 @@ function asset(string $p): string { return PP::asset($p); }
 function upload_url(string $p): string { return PP::upload($p); }
 function setting(string $k, $d = null) { return Settings::get($k, $d); }
 function partial(string $name, array $vars = []): string { return PP::partial($name, $vars); }
+/** Avviso "stai leggendo l'originale" e nota "file in …": in inglese se l'originale è inglese, altrimenti col nome della lingua originale. */
+function fallback_note(string $fromLang = ''): string
+{
+    $l = $fromLang ?: I18n::$master;
+    return $l === 'en' ? t('fallback_notice') : str_replace('{lang}', I18n::name($l), t('fallback_notice_lang'));
+}
+function doc_lang_note(): string { return I18n::$master === 'en' ? t('doc_in_english') : str_replace('{lang}', I18n::name(I18n::$master), t('doc_in_lang')); }
 
 /**
  * <img> con versione ridotta per gli schermi piccoli (srcset), dimensioni e caricamento pigro.

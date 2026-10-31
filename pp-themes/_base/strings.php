@@ -13,12 +13,17 @@ return [
         'en' => 'This text is not yet available in your language: you are reading the English version.',
         'it' => 'Questo testo non è ancora disponibile nella tua lingua: stai leggendo la versione inglese.',
     ]],
+    'fallback_notice_lang' => ['group' => 'Generale', 'note' => 'come sopra, quando l’originale non è in inglese; {lang} = lingua originale', 'text' => [
+        'en' => 'This text is not yet available in your language: you are reading the original version ({lang}).',
+        'it' => 'Questo testo non è ancora disponibile nella tua lingua: stai leggendo la versione originale ({lang}).',
+    ]],
     'read_more' => ['group' => 'Generale', 'text' => ['en' => 'Read', 'it' => 'Leggi']],
     'all_news' => ['group' => 'Generale', 'text' => ['en' => 'All news', 'it' => 'Tutte le notizie']],
     'all_results' => ['group' => 'Generale', 'text' => ['en' => 'All results', 'it' => 'Tutti i risultati']],
     'download' => ['group' => 'Generale', 'text' => ['en' => 'Download', 'it' => 'Scarica']],
     'doc_soon' => ['group' => 'Generale', 'text' => ['en' => 'Coming soon', 'it' => 'In arrivo']],
     'doc_in_english' => ['group' => 'Generale', 'text' => ['en' => 'in English', 'it' => 'in inglese']],
+    'doc_in_lang' => ['group' => 'Generale', 'note' => 'file solo nella lingua originale, quando non è l’inglese; {lang} = lingua', 'text' => ['en' => 'in {lang}', 'it' => 'in {lang}']],
     'back_to' => ['group' => 'Generale', 'text' => ['en' => 'Back to', 'it' => 'Torna a']],
     'play_video' => ['group' => 'Generale', 'text' => ['en' => 'Play video', 'it' => 'Guarda il video']],
     'video_note' => ['group' => 'Generale', 'text' => [

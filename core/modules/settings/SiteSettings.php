@@ -2,7 +2,7 @@
 final class SiteSettings
 {
     /** Chiavi della configurazione che si possono cambiare dalla gestione (salvate in pp_settings, chiave "site_config"). */
-    public const KEYS = ['contact_email', 'mail_from', 'social', 'funder', 'translation'];
+    public const KEYS = ['contact_email', 'mail_from', 'social', 'funder', 'owner', 'translation'];
 
     /** Le impostazioni salvate vincono su site/config.php. Si chiama dopo la connessione al database. */
     public static function apply(): void
@@ -15,6 +15,17 @@ final class SiteSettings
             if ($k === 'translation') PP::$config['translation'] = array_replace(PP::$config['translation'] ?? [], array_filter((array)$v, fn($x) => $x !== '' && $x !== null && $x !== []));
             elseif ($v !== '' && $v !== null) PP::$config[$k] = $v;
         }
+    }
+
+    /** Chi c'è dietro il sito (dati strutturati per Google e i motori AI): organizzazione o persona. */
+    private static function ownerFromPost(): array
+    {
+        $txt = fn(string $k, int $max = 160) => mb_substr(trim(strip_tags((string)Admin::post('owner_' . $k))), 0, $max);
+        $knows = array_values(array_filter(array_map(fn($x) => mb_substr(trim(strip_tags($x)), 0, 80), preg_split('~\R~', (string)Admin::post('owner_knows_about')))));
+        return ['type' => Admin::post('owner_type') === 'person' ? 'person' : 'organization',
+            'name' => $txt('name'), 'job_title' => $txt('job_title'), 'works_for' => $txt('works_for'),
+            'location' => $txt('location'), 'alumni_of' => $txt('alumni_of'), 'knows_about' => array_slice($knows, 0, 20),
+            'image' => (string)(PP::$config['owner']['image'] ?? '')];
     }
 
     public static function admin(): void
@@ -40,11 +51,13 @@ final class SiteSettings
                     'mail_from' => $email('mail_from'),
                     'social' => $social,
                     'funder' => trim(strip_tags((string)Admin::post('funder'))),
+                    'owner' => self::ownerFromPost(),
                     // la chiave non si rimostra: campo vuoto = resta quella di prima
                     'translation' => ['provider' => $provider, 'glossary' => $glossary,
                         'api_key' => Admin::post('forget_key') ? '' : ($key !== '' ? $key : (string)($old['translation']['api_key'] ?? ''))],
                 ]);
                 Auth::log('site settings');
+                self::apply();   // i valori nuovi valgono già per le pagine statiche rigenerate qui sotto
                 Admin::changed('settings');
                 Admin::flash('Impostazioni salvate.');
             } catch (Throwable $e) { Admin::flash($e->getMessage(), 'error'); }

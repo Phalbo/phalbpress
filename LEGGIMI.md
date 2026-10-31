@@ -39,7 +39,7 @@ PHP 8.1+ e MySQL/MariaDB (SiteGround). Niente WordPress, niente plugin di terzi,
    - **contenuti e amministratore**: i contenuti del progetto, quelli di esempio, un modello o niente; foto segnaposto dove mancano; il primo amministratore.
 5. Alla fine ti propone, tutto facoltativo: il comando per i lavori programmati (cron), un'email di prova, l'accesso in due passaggi, le impostazioni, e cancella `install.php`.
 6. **HTTPS**: Site Tools → Security → SSL. Poi togli il commento a "Forza https" in `.htaccess` e, quando tutto funziona, alla riga HSTS.
-7. Dalla gestione: **Sistema → Impostazioni del sito** (email di contatto e mittente, social, finanziatore, traduzione automatica), **Privacy e cookie**, **Identità visiva**, **Temi**.
+7. Dalla gestione: **Sistema → Impostazioni del sito** (email di contatto e mittente, social, finanziatore, chi c’è dietro il sito: organizzazione o persona, traduzione automatica), **Privacy e cookie**, **Identità visiva**, **Temi**.
 
 Durante l'installazione il sito è aperto a chi conosce l'indirizzo: fai i passi di seguito, senza lasciarlo a metà.
 

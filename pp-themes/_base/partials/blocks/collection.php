@@ -1,7 +1,8 @@
 <?php
 $src = (string)($m['source'] ?? 'news');
 $limit = (int)($m['limit'] ?? 0);
-$order = in_array($src, ['news', 'story'], true) ? 'pub_date DESC, id DESC' : 'menu_order ASC, id ASC';
+// storie nello stesso ordine della loro pagina (ordine a mano, poi data); news per data
+$order = match ($src) { 'news' => 'pub_date DESC, id DESC', 'story' => 'menu_order ASC, pub_date DESC, id DESC', default => 'menu_order ASC, id ASC' };
 $items = isset(PP::$config['types'][$src]) ? Content::entries($src, lang(), $limit, $order) : [];
 $style = ($m['style'] ?? '') === 'cards' ? 'cards' : 'list';
 $more = trim((string)($x['more_label'] ?? ''));

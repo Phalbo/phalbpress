@@ -28,11 +28,11 @@ return [
     ]],
 
     'legal_cookies_body' => ['group' => 'Legale', 'html' => 'block', 'text' => [
-        'en' => '<h2>Our cookies</h2><p>{site} does not set any cookie for visitors. The only cookie is a technical session cookie used by the project team when signing in to the content management area; it is never set on public pages.</p>'
+        'en' => '<h2>Our cookies</h2><p>{site} does not set any cookie for visitors. The only cookie is a technical session cookie used by the site editors when signing in to the content management area; it is never set on public pages.</p>'
             . '<p>To remember your choice about external content, your browser stores a small preference (“pp-consent”) in its local storage. It contains no personal data and is never sent to us. After 6 months we ask you again.</p>'
             . '<h2>External services</h2><p>These services are embedded in some pages. They load, and may set their own cookies, only after your consent:</p>{services}'
             . '<h2>Change your choice</h2><p>You can change or withdraw your consent at any time.</p><p>{prefs_button}</p><p>You can also delete cookies and site data from your browser settings. More about how we process data in the {privacy_link}.</p>',
-        'it' => '<h2>I nostri cookie</h2><p>{site} non installa nessun cookie ai visitatori. L’unico cookie è un cookie tecnico di sessione usato dal gruppo di progetto per accedere all’area di gestione dei contenuti; non viene mai impostato sulle pagine pubbliche.</p>'
+        'it' => '<h2>I nostri cookie</h2><p>{site} non installa nessun cookie ai visitatori. L’unico cookie è un cookie tecnico di sessione usato da chi cura il sito per accedere all’area di gestione dei contenuti; non viene mai impostato sulle pagine pubbliche.</p>'
             . '<p>Per ricordare la tua scelta sui contenuti esterni, il browser salva una piccola preferenza (“pp-consent”) nella sua memoria locale. Non contiene dati personali e non ci viene mai inviata. Dopo 6 mesi te lo chiediamo di nuovo.</p>'
             . '<h2>Servizi esterni</h2><p>Questi servizi sono incorporati in alcune pagine. Si caricano, e possono installare i loro cookie, solo dopo il tuo consenso:</p>{services}'
             . '<h2>Cambiare la scelta</h2><p>Puoi cambiare o revocare il consenso in qualsiasi momento.</p><p>{prefs_button}</p><p>Puoi anche cancellare cookie e dati dei siti dalle impostazioni del browser. Come trattiamo i dati è spiegato nella {privacy_link}.</p>',
