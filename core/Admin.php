@@ -573,6 +573,14 @@ final class Admin
                     self::flash('File eliminato.');
                     PP::redirect(self::u('media'));
                 }
+                if ($act === 'placeholders' && class_exists('Demo')) {
+                    if (!Auth::can('site')) throw new RuntimeException('Solo i redattori possono mettere le foto segnaposto.');
+                    $n = Demo::placeholders();
+                    Auth::log('placeholders', (string)$n);
+                    if ($n) self::changed('media');
+                    self::flash($n ? "Messe $n foto segnaposto, con le misure stampate sopra. Si sostituiscono una alla volta qui sotto (nome che inizia con “segnaposto”) con Sostituisci." : 'Nessun posto vuoto: apertura, news, storie e gallerie hanno già le loro foto.');
+                    PP::redirect(self::u('media') . '?q=segnaposto');
+                }
                 if ($act === 'replace') {
                     if (!Auth::can('site')) throw new RuntimeException('Solo i redattori possono sostituire i file.');
                     Media::replace($path, $_FILES['file'] ?? []);

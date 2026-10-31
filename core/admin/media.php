@@ -1,4 +1,13 @@
 <header class="head"><h1>Immagini e file</h1></header>
+<?php if (class_exists('Demo') && Auth::can('site')): ?>
+<section class="panel">
+  <form method="post" class="row" style="align-items:center">
+    <?= Admin::csrfField() ?><input type="hidden" name="action" value="placeholders">
+    <p class="grow"><strong>Foto segnaposto.</strong> Mette una foto di esempio, con le misure giuste stampate sopra, in ogni posto ancora senza foto: apertura, news, storie, gallerie. Le foto già messe non si toccano. Poi le sostituisci una alla volta (cerca “segnaposto”).</p>
+    <button class="btn" type="submit">Metti le foto segnaposto</button>
+  </form>
+</section>
+<?php endif; ?>
 <section class="panel">
   <form method="post" enctype="multipart/form-data" class="row">
     <?= Admin::csrfField() ?>

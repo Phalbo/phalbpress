@@ -146,4 +146,3 @@
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) { position: relative; }
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) img { filter: grayscale(1) contrast(1.1); }
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img)::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; }
-main h2.statement__head { hyphens: manual; }

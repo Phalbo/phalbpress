@@ -70,7 +70,7 @@
       const x = lines[code];
       if (!x) return;
       hero.querySelectorAll('[data-say]').forEach((b) => b.setAttribute('aria-pressed', b.dataset.say === code ? 'true' : 'false'));
-      const swap = () => { l1.textContent = x.l1; if (l2) l2.textContent = x.l2; title.setAttribute('lang', x.lang); title.classList.remove('is-swapping'); };
+      const swap = () => { l1.textContent = x.l1; if (l2) l2.textContent = x.l2; title.setAttribute('lang', x.lang); title.classList.remove('is-swapping'); document.dispatchEvent(new Event('pp-hero-swap')); };
       if (reduce) return swap();
       title.classList.add('is-swapping');
       setTimeout(swap, 220);
@@ -130,4 +130,19 @@
     window.addEventListener('resize', ask);
     move();
   }
+
+  /* ---------- titoli: niente parole spezzate; se una parola non entra nella colonna, il titolo si riduce un po' ---------- */
+  const heads = Array.from(document.querySelectorAll('main h1, main h2, main h3')).filter((h) => !h.classList.contains('figure__val') && !h.classList.contains('sr-only'));
+  const fitHeads = () => heads.forEach((h) => {
+    h.style.fontSize = '';
+    if (h.scrollWidth <= h.clientWidth + 1) return;
+    let size = parseFloat(getComputedStyle(h).fontSize);
+    const min = size * 0.5;
+    while (h.scrollWidth > h.clientWidth + 1 && size > min) { size *= 0.94; h.style.fontSize = size + 'px'; }
+  });
+  fitHeads();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitHeads);
+  let fitTimer;
+  window.addEventListener('resize', () => { clearTimeout(fitTimer); fitTimer = setTimeout(fitHeads, 150); });
+  document.addEventListener('pp-hero-swap', fitHeads);
 })();

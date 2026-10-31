@@ -2,6 +2,10 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.7.0
+- **Foto segnaposto nel sito vero** (Immagini e file → "Metti le foto segnaposto"): ogni posto ancora senza foto (apertura, news, storie, gallerie) riceve una foto di esempio con le misure giuste stampate sopra. Ognuna è un file a sé, con il nome che inizia per "segnaposto": la cambi una alla volta con **Sostituisci** e la foto vera compare dove stava il segnaposto. Le foto già messe non si toccano mai.
+- **Titoli senza trattino**: le parole dei titoli non vanno più a capo spezzate ("bam-/bini"). Se una parola è più larga della colonna, il titolo si riduce quanto basta per farla stare intera (senza JavaScript, come ultima risorsa la parola va a capo senza allargare la pagina).
+
 ## 1.6.0
 - **Temi con contenuti e foto di esempio**: in Gestione → Temi ogni tema ha il pulsante "con contenuti e foto di esempio". Si apre l'anteprima del tema con news, storie, partner, documenti, galleria e foto di un progetto inventato, così si vede com'è il tema anche su un sito che ha ancora poche foto. Nell'anteprima si può girare per le pagine e cambiare lingua. Il sito non cambia: i contenuti di esempio stanno in un database a parte (`data/demo-preview.sqlite`), creato al primo uso.
 

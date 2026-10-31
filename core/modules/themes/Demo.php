@@ -71,4 +71,42 @@ final class Demo
             return 'href="' . e(Admin::u('preview') . '?' . $query . '&path=' . rawurlencode(html_entity_decode($m[1]))) . '"';
         }, $html);
     }
+
+    /**
+     * Foto segnaposto nel sito vero: ogni posto senza foto (apertura, news, storie, galleria) riceve una foto di esempio
+     * con le misure stampate sopra, copiata in uploads/media/ come file a sé ("segnaposto-…"), così si sostituisce una alla volta
+     * da Immagini e file → Sostituisci. Le foto già messe non si toccano mai. Restituisce quante foto ha messo.
+     */
+    public static function placeholders(): int
+    {
+        $src = PP_ROOT . '/pp-assets/demo/media/';
+        $dir = 'uploads/media/' . date('Y/m');
+        if (!is_dir(PP_ROOT . '/' . $dir)) mkdir(PP_ROOT . '/' . $dir, 0775, true);
+        $copy = function (string $from, string $name) use ($src, $dir): string {
+            $base = $dir . '/segnaposto-' . Media::slug($name);
+            $rel = $base . '.webp';
+            for ($i = 2; is_file(PP_ROOT . '/' . $rel); $i++) $rel = $base . '-' . $i . '.webp';
+            copy($src . $from . '.webp', PP_ROOT . '/' . $rel);
+            if (is_file($src . $from . '-960.webp')) copy($src . $from . '-960.webp', PP_ROOT . '/' . substr($rel, 0, -5) . '-960.webp');
+            return $rel;
+        };
+        $n = 0;
+        $count = ['news' => 0, 'story' => 0];
+        foreach (DB::all("SELECT id, type, slug, template, image, meta FROM pp_entries WHERE type IN ('block', 'news', 'story') ORDER BY type, menu_order, pub_date DESC, id") as $e) {
+            $m = json_decode((string)$e['meta'], true) ?: [];
+            $set = [];
+            if ($e['type'] === 'block' && $e['template'] === 'hero' && $e['image'] === '') {
+                $set['image'] = $copy('hero-1', 'apertura-' . $e['slug']); $n++;
+            } elseif ($e['type'] === 'block' && $e['template'] === 'gallery' && trim((string)($m['images'] ?? '')) === '') {
+                $m['images'] = implode("\n", array_map(fn($i) => $copy('galleria-' . $i, 'galleria-' . $i), range(1, 6)));
+                $set['meta'] = json_encode($m, JSON_UNESCAPED_UNICODE); $n += 6;
+            } elseif ($e['type'] === 'news' && $e['image'] === '') {
+                $set['image'] = $copy('news-' . ($count['news']++ % 6 + 1), 'news-' . $e['slug']); $n++;
+            } elseif ($e['type'] === 'story' && $e['image'] === '' && empty($m['anonymous'])) {
+                $set['image'] = $copy('storia-' . ($count['story']++ % 3 + 1), 'storia-' . $e['slug']); $n++;
+            }
+            if ($set) DB::update('pp_entries', $set + ['updated_at' => Content::now()], 'id = ?', [(int)$e['id']]);
+        }
+        return $n;
+    }
 }

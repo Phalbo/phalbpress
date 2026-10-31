@@ -76,6 +76,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Anteprima: `/{admin}/preview?path=/it/…&theme=slug[&palette=1]` (bozze e programmati visibili, palette del tema al posto di quella dell'identità).
   Con `&demo=1` l'anteprima usa i contenuti dimostrativi (`pp-assets/demo/seed.php` + `media/`, gli stessi del sito di `tools/demo`): `Demo::use()` passa a `data/demo-preview.sqlite`
   (rifatto quando cambiano seed, lingue o versione) con `DB::reconnect()`; ogni lingua del sito prende il testo nella sua lingua o in inglese; `Demo::links()` tiene i link interni nell'anteprima.
+- Foto segnaposto nel sito vero: `Demo::placeholders()` (Immagini e file, azione `placeholders`) copia `pp-assets/demo/media` in `uploads/media/…/segnaposto-*.webp` solo nei posti vuoti (apertura, news, storie, gallerie), un file per contenuto.
+- Titoli: niente `hyphens: auto`; `base.js` riduce il carattere di un titolo se una parola non entra (`overflow-wrap: anywhere` solo senza JS).
 - Nuovi temi: skill design-taste-frontend (draw → direction sheet, inspect). Le direzioni usate sono in ogni theme.json.
 
 ## Hook

@@ -354,5 +354,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .latest__col, .rows2 li > a { min-width: 0; }
 .rows2 li > a { overflow-wrap: anywhere; }
 .site-main { min-width: 0; }
-/* parole più larghe dello schermo (titoli enormi su telefono): vanno a capo con il trattino invece di allargare la pagina */
-main :is(h1, h2, h3):not(.figure__val) { overflow-wrap: anywhere; hyphens: auto; }
+/* titoli: le parole non si spezzano mai col trattino. Con JavaScript, se una parola è più larga della colonna il titolo si riduce
+   quanto basta (base.js); senza, come ultima risorsa la parola va a capo senza allargare la pagina */
+main :is(h1, h2, h3):not(.figure__val) { overflow-wrap: anywhere; hyphens: manual; }
+.js main :is(h1, h2, h3):not(.figure__val) { overflow-wrap: normal; }
