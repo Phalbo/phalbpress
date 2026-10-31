@@ -16,22 +16,26 @@
 .pp-btn--ghost { background: transparent; color: inherit; }
 .pp-btn:active { transform: scale(.97); }
 .pp-btn:focus-visible, .pp-banner__x:focus-visible { outline: 3px solid var(--accent, #fe5a36); outline-offset: 2px; }
-.pp-embed { margin: 0 0 32px; }
-.pp-embed__box { position: relative; aspect-ratio: 16 / 9; background: var(--ink, #111); color: var(--bg, #fff); display: grid; place-items: center; overflow: hidden; }
+/* solo il margine sotto: margin-left/right restano quelli del tema (colonne centrate) */
+.pp-embed { margin-bottom: 32px; }
+.pp-embed__box { position: relative; aspect-ratio: 16 / 9; background: var(--black, #111); color: var(--black-ink, #fff); display: grid; place-items: center; overflow: hidden; }
 .pp-embed__box iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
 .pp-embed__play { display: grid; place-items: center; width: 100%; height: 100%; color: inherit; text-decoration: none; }
 .pp-embed__play span { min-height: 56px; display: inline-flex; align-items: center; padding: 0 28px; border-radius: var(--radius, 999px); background: var(--accent, #fe5a36); color: var(--accent-ink, #000); font-weight: 700; transition: transform .15s ease; }
+/* il bordo chiaro lo fa leggere come pulsante anche quando l'accento è vicino al fondo del riquadro */
+.pp-embed__play span { box-shadow: 0 0 0 2px var(--black-ink, #fff); }
 .pp-embed__play:hover span { transform: scale(1.05); }
 .pp-embed__ask { padding: 24px; max-width: 46ch; text-align: center; }
 .pp-embed__ask p { margin: 0 0 14px; }
-.pp-embed__ask .pp-btn { background: var(--bg, #fff); color: var(--ink, #111); }
-.pp-embed__ask .pp-btn--ghost { background: transparent; color: var(--bg, #fff); }
+.pp-embed__ask .pp-btn { background: var(--black-ink, #fff); color: var(--black, #111); }
+.pp-embed__ask .pp-btn--ghost { background: transparent; color: var(--black-ink, #fff); }
 .pp-embed__btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
 .pp-embed figcaption { font-size: .875rem; margin-top: 8px; opacity: .8; }
 @media (prefers-reduced-motion: reduce) { .pp-btn, .pp-embed__play span { transition: none; } }
 .pp-banner__choices[hidden] { display: none; }
 /* modulo di contatto: l'esito arriva nell'ancora (#pp-form-ok / #pp-form-err), anche sulle pagine statiche */
-.pp-form { margin: 0 0 32px; max-width: 40rem; }
+.pp-form { margin-bottom: 32px; max-width: 40rem; }
+.prose > .pp-form, .prose + .pp-form { margin-top: 1.5em; }
 .pp-form__msg { display: none; padding: 14px 16px; border-left: 4px solid var(--accent, #c00); background: var(--surface, #f4f4f4); margin: 0 0 20px; }
 .pp-form__msg:target, .pp-form__msg--show { display: block; }
 .pp-form__msg--ok:target ~ form { display: none; }
@@ -44,7 +48,7 @@
 .pp-form .pp-check { margin: 0 0 20px; }
 .pp-btn--solid { background: var(--accent, #c00); color: var(--accent-ink, #fff); border-color: var(--accent, #c00); }
 /* condivisione */
-.pp-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 32px 0; }
+.pp-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 32px; margin-bottom: 32px; }
 .pp-share__label { font-weight: 600; margin-right: 4px; }
 .pp-share a, .pp-share button { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid currentColor; border-radius: var(--radius, 999px); color: inherit; background: transparent; font: inherit; font-size: .875rem; text-decoration: none; cursor: pointer; }
 .pp-share a:hover, .pp-share button:hover { background: var(--ink, #111); color: var(--bg, #fff); border-color: var(--ink, #111); }
@@ -67,20 +71,21 @@
    Una fascia con fondo scuro (colore libero scuro o immagine con velo scuro) ha la classe chapter--ink, con fondo chiaro chapter--paper:
    testi e riquadri seguono le regole che il tema ha già per quei toni. ---------- */
 /* testo attenuato leggibile su ogni fondo: si calcola dal colore del testo della fascia (prima era un grigio pensato solo per il fondo chiaro) */
-.chapter--accent { --muted: color-mix(in srgb, var(--accent-ink) 78%, var(--accent)); }
-.chapter--green { --muted: color-mix(in srgb, var(--field-1-ink) 78%, var(--field-1)); }
-.chapter--blue { --muted: color-mix(in srgb, var(--field-2-ink) 78%, var(--field-2)); }
-.chapter--ink { --muted: color-mix(in srgb, var(--black-ink) 78%, var(--black)); }
+.chapter--accent { --muted: color-mix(in srgb, var(--accent-ink) 90%, var(--accent)); }
+.chapter--green { --muted: color-mix(in srgb, var(--field-1-ink) 90%, var(--field-1)); }
+.chapter--blue { --muted: color-mix(in srgb, var(--field-2-ink) 90%, var(--field-2)); }
+.chapter--ink { --muted: color-mix(in srgb, var(--black-ink) 90%, var(--black)); }
 .chapter.chapter--custom { --surface: color-mix(in srgb, var(--chapter-ink) 9%, transparent); --muted: color-mix(in srgb, var(--chapter-ink) 78%, var(--chapter-bg)); background: var(--chapter-bg) !important; color: var(--chapter-ink) !important; }
 .chapter--custom + .chapter--paper, .chapter--has-bg + .chapter--paper, .chapter--paper + .chapter--custom, .chapter--paper + .chapter--has-bg { padding-top: var(--section, 6rem); }
 .chapter.chapter--sp-compact { padding-top: calc(var(--section, 6rem) * 0.5) !important; padding-bottom: calc(var(--section, 6rem) * 0.5) !important; }
 .chapter.chapter--sp-wide { padding-top: calc(var(--section, 6rem) * 1.6) !important; padding-bottom: calc(var(--section, 6rem) * 1.6) !important; }
-.chapter--w-narrow > :not(.chapter__bg) { max-width: min(48rem, 100%) !important; margin-left: auto !important; margin-right: auto !important; }
+.chapter--w-narrow > :not(.chapter__bg) { width: 100%; max-width: min(48rem, 100%) !important; margin-left: auto !important; margin-right: auto !important; }
 .chapter--w-full > :not(.chapter__bg) { max-width: none !important; }
 
 /* immagine di fondo: dietro al contenuto, sopra il colore della fascia; il velo tiene il testo leggibile */
 .chapter--has-bg { position: relative; isolation: isolate; overflow: hidden; }
-.chapter--has-bg > .chapter__bg { position: absolute !important; inset: 0; z-index: -1; max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; overflow: hidden; pointer-events: none; }
+/* grid-area: nei temi a griglia l'immagine copre tutta la fascia, non solo la colonna del primo figlio */
+.chapter--has-bg > .chapter__bg { position: absolute !important; inset: 0; grid-area: auto !important; z-index: -1; max-width: none !important; width: auto !important; margin: 0 !important; padding: 0 !important; overflow: hidden; pointer-events: none; }
 .chapter__bg img { position: absolute; left: 0; top: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; display: block; }
 .chapter__bg[data-parallax] img { top: -18%; height: 136%; will-change: transform; }
 .chapter__bg::after { content: ""; position: absolute; inset: 0; }

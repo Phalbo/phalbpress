@@ -53,6 +53,16 @@ final class Identity
         return round((max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05), 2);
     }
 
+    /** Testo attenuato: il testo schiarito verso lo sfondo, ma mai sotto 4.6:1 (WCAG AA con un po' di margine). */
+    public static function muted(string $ink, string $ground): string
+    {
+        for ($t = 0.3; $t > 0; $t -= 0.02) {
+            $m = self::mix($ink, $ground, $t);
+            if (self::contrast($m, $ground) >= 4.6) return $m;
+        }
+        return $ink;
+    }
+
     /** Testo leggibile su un colore: nero o bianco, quello con più contrasto. */
     public static function inkOn(string $bg): string
     {
@@ -60,18 +70,27 @@ final class Identity
     }
 
     /** Coppie da verificare (WCAG 2.1: 4,5 testo normale, 3 testo grande). */
-    public static function checks(array $c): array
+    /**
+     * Contrasti della palette. La frase grande dell'apertura si controlla sul fondo dove il tema la mette:
+     * "hero_on" nel theme.json = accent (sul colore principale), ground (sullo sfondo, predefinito) o photo (sempre bianca sulla foto: non dipende dalla palette).
+     */
+    public static function checks(array $c, ?string $heroOn = null): array
     {
+        $heroOn ??= (string)((PP::themes()[PP::theme()] ?? [])['hero_on'] ?? 'ground');
+        $heroBg = $heroOn === 'ground' ? $c['ground'] : $c['accent'];
+        $where = $heroOn === 'ground' ? 'sullo sfondo' : 'sul colore principale';
         $rows = [
             ['Testo sullo sfondo', $c['ink'], $c['ground'], 4.5],
             ['Testo sul colore principale', self::inkOn($c['accent']), $c['accent'], 4.5],
             ['Testo sul campo 1', self::inkOn($c['field1']), $c['field1'], 4.5],
             ['Testo sul campo 2', self::inkOn($c['field2']), $c['field2'], 4.5],
             ['Testo sul campo scuro', self::inkOn($c['dark']), $c['dark'], 4.5],
-            ['Frase grande, prima riga', $c['hero1'], $c['accent'], 3],
-            ['Frase grande, seconda riga', $c['hero2'], $c['accent'], 3],
-            ['Colore principale su sfondo (titoli, link evidenziati)', $c['accent'], $c['ground'], 3],
         ];
+        if ($heroOn !== 'photo') {
+            $rows[] = ['Frase grande, prima riga ' . $where, $c['hero1'], $heroBg, 3];
+            $rows[] = ['Frase grande, seconda riga ' . $where, $c['hero2'], $heroBg, 3];
+        }
+        $rows[] = ['Colore principale su sfondo (titoli, link evidenziati)', $c['accent'], $c['ground'], 3];
         return array_map(function ($r) {
             $ratio = self::contrast($r[1], $r[2]);
             $sug = '';
@@ -126,7 +145,7 @@ final class Identity
         foreach (array_unique([$s['font_display'], $s['font_text']]) as $fam) if (isset($fonts[$fam])) $css .= self::fontFace($fam, $fonts[$fam]);
         $fb = fn($fam) => '"' . $fam . '", ' . ($fonts[$fam]['fallback'] ?? 'system-ui, sans-serif');
         $css .= ":root{\n"
-            . "--bg:{$c['ground']};--ink:{$c['ink']};--surface:" . self::mix($c['ground'], $c['ink'], 0.05) . ";--muted:" . self::mix($c['ink'], $c['ground'], 0.3) . ";\n"
+            . "--bg:{$c['ground']};--ink:{$c['ink']};--surface:" . self::mix($c['ground'], $c['ink'], 0.05) . ";--muted:" . self::muted($c['ink'], $c['ground']) . ";\n"
             . "--accent:{$c['accent']};--accent-ink:" . self::inkOn($c['accent']) . ";\n"
             . "--field-1:{$c['field1']};--field-1-ink:" . self::inkOn($c['field1']) . ";\n"
             . "--field-2:{$c['field2']};--field-2-ink:" . self::inkOn($c['field2']) . ";\n"

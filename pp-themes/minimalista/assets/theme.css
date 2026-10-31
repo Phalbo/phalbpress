@@ -1,5 +1,5 @@
 /* Minimalista — "The quiet instrument" (tasteskill, seed 1601906513).
-   Una colonna di 520px che parte al 22% della larghezza e scorre per tutta la pagina; niente fasce di colore,
+   Una colonna di 640px al centro che scorre per tutta la pagina; niente fasce di colore,
    le sezioni sono separate solo dallo spazio. Suggeriti: sabbia e muschio, Work Sans. */
 :root {
   --col: min(640px, 100%);
@@ -17,9 +17,15 @@
 @media (max-width: 700px) { :root { --col-left: 0px; } }
 /* tutti i toni diventano lo sfondo: il colore resta solo sui pulsanti */
 .chapter--accent, .chapter--green, .chapter--blue, .chapter--ink { background: var(--bg); color: var(--ink); }
+/* pp.css ricalcola il testo attenuato dal colore del tono (che qui non c'è): torna quello dello sfondo */
+.chapter.chapter--accent, .chapter.chapter--green, .chapter.chapter--blue, .chapter.chapter--ink { --muted: color-mix(in srgb, var(--ink) 80%, var(--bg)); --surface: color-mix(in srgb, var(--ink) 5%, var(--bg)); }
 .chapter, .chapter--paper + .chapter--paper { padding: var(--section) var(--margin) 0; }
 .site-main > :last-child { padding-bottom: var(--section); }
 .chapter > *, .band > *, .article > * { max-width: var(--col); margin-left: var(--col-left); margin-right: var(--col-left); }
+/* nelle fasce a griglia i margini automatici stringerebbero ogni elemento al suo contenuto: tutti larghi come la colonna */
+.chapter > :not(.chapter__bg), .band > *, .article > * { width: 100%; }
+.chapter.chapter--w-narrow > :not(.chapter__bg) { max-width: var(--col) !important; }
+.videoblock .pp-embed, .pp-share { max-width: var(--col); margin-left: var(--col-left); margin-right: var(--col-left); }
 .site-head__in { max-width: none; }
 .brand__logo { height: 32px; }
 .brand__name { font-weight: 500; font-size: 1rem; }
@@ -30,7 +36,7 @@
 
 /* apertura: il titolo è l'unica cosa grande, la colonna parte al 30% dell'altezza */
 .hero { min-height: auto; padding-top: max(14vh, 96px) !important; align-content: start; gap: 24px; }
-.hero__title { font-size: var(--step-display); font-weight: 400; max-width: 16ch !important; line-height: 1; }
+.hero__title { font-size: var(--step-display); font-weight: 400; max-width: var(--col) !important; line-height: 1; }
 .hero__l1, .hero__l2 { color: inherit; }
 .hero__aside { gap: 28px; }
 .hero__sentence { font-size: var(--step-body); }
@@ -94,18 +100,20 @@
 .contact > * + * { margin-top: 40px; }
 .partner { border-top: 0; padding-top: 0; }
 .partner__name { font-size: 1.25rem; font-weight: 500; }
-.story { grid-template-columns: 120px 1fr; }
+.story, .story--flip { grid-template-columns: 120px 1fr; }
+.story--flip .story__pic { order: 0; }
 .story__name { font-size: 1.5rem; font-weight: 500; }
 .story__quote { font-size: 1.125rem; }
 .storypage { grid-template-columns: 1fr; }
 .doctable__title { font-size: 1rem; }
+.prose h2 { font-weight: 500; letter-spacing: -0.01em; }
 
 /* footer: una riga tranquilla (e i dati obbligatori, piccoli) */
 .site-foot { background: var(--bg); color: var(--ink); padding-top: var(--section); }
 .site-foot > * { max-width: var(--col); margin-left: var(--col-left); margin-right: var(--col-left); }
 .foot__cols { grid-template-columns: 1fr; gap: 20px; }
 .foot__col--brand { grid-column: auto; }
-.foot__col:not(.foot__col--brand) { display: none; }
+.foot__col:not(.foot__col--brand):not(:last-child) { display: none; }
 .foot__name { font-size: 1rem; font-weight: 500; }
 .foot__claim, .foot__legal { color: var(--muted); font-size: 0.875rem; }
 .foot__line { margin-top: 24px; color: var(--muted); }

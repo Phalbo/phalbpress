@@ -21,6 +21,8 @@
 /* sulla home la testata galleggia trasparente sulla foto */
 .has-hero.photo-hero .site-head:not(.is-scrolled) { position: fixed; inset: 0 0 auto 0; background: transparent; color: #fff; --head-ink: #fff; }
 .has-hero .site-main > .hero--img:first-child { margin-top: 0; }
+/* il pulsante Menu sulla testata trasparente: base lo colora con --head-bg, che qui è trasparente */
+.has-hero.photo-hero .site-head:not(.is-scrolled) .nav-toggle { background: #fff; color: #111; }
 
 /* apertura: la foto a tutto schermo, il nome sul bordo in basso */
 .hero { min-height: 100svh; padding-bottom: clamp(16px, 2vw, 24px); align-content: end; }
@@ -30,7 +32,8 @@
 .hero__l2 { font-style: italic; }
 .hero__aside { flex-direction: row; align-items: flex-end; justify-content: space-between; max-width: none; width: 100%; gap: 24px; flex-wrap: wrap; }
 .hero__sentence { max-width: 46ch; font-size: var(--step-body); }
-.photo-hero .hero--img .hero__img::after { background: linear-gradient(to top, rgba(0,0,0,.6), rgba(0,0,0,0) 55%); }
+/* velo in alto per menu e nome, in basso per il titolo */
+.photo-hero .hero--img .hero__img::after { background: linear-gradient(to bottom, rgba(0,0,0,.5), rgba(0,0,0,0) 22%), linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.18) 75%); }
 .btn { border-width: 1px; font-weight: 500; min-height: 48px; }
 .hero--img .btn--dark { background: #fff; color: #111; border-color: #fff; }
 .hero__say button { border-width: 1px; font-weight: 400; }
@@ -38,11 +41,13 @@
 /* poche parole: colonna stretta, tanto margine */
 .statement, .textblock, .cta, .videoblock__top { justify-items: center; text-align: left; }
 .statement__head, .textblock__head, .collection__head, .figures__head, .latest__head, .cta__head, .gallery__head, .videoblock__head { font-size: clamp(2rem, 1.3rem + 2.6vw, 3.5rem); font-weight: 400; max-width: 22ch; }
-.statement__head { width: min(100%, 52ch); }
-.statement__body { grid-template-columns: 1fr; width: min(100%, 52ch); }
+/* stessa larghezza in rem per titolo e testo: in ch dipenderebbe dalla dimensione del carattere e le due righe non partirebbero insieme */
+.statement__head { width: min(100%, 38rem); }
+.statement__body { grid-template-columns: 1fr; width: min(100%, 38rem); }
 .statement__text { font-size: var(--step-lead); max-width: none; }
 .statement__fact { font-size: var(--step-body); max-width: none; }
-.textblock__head, .textblock__body { width: min(100%, 52ch); }
+.textblock__head, .textblock__body { width: min(100%, 38rem); }
+.videoblock .pp-embed { margin-left: auto; margin-right: auto; }
 .textblock__body { font-size: var(--step-body); line-height: 1.65; }
 .textblock__body mark { background: transparent; color: inherit; font-style: italic; }
 
@@ -77,6 +82,7 @@
 
 /* pagine interne */
 .band { padding-top: clamp(4rem, 9vw, 8rem); }
+.band > * { margin-left: 0; }
 .band__title { font-weight: 300; font-size: clamp(3rem, 1rem + 6vw, 8rem); letter-spacing: -0.05em; }
 .band--img { position: relative; padding-top: 0; }
 .band__img { order: -1; margin: 0 calc(var(--margin) * -1) 24px; max-width: none !important; width: auto !important; }
@@ -87,6 +93,7 @@
 .card__img { aspect-ratio: 3 / 2; border-radius: 0; }
 .card__title { font-weight: 400; font-size: clamp(1.5rem, 1rem + 1vw, 2.2rem); }
 .story__name, .storypage__name { font-weight: 300; }
+.prose h2 { font-weight: 400; font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); }
 .story__quote, .storypage__quote { font-style: italic; }
 .partner { border-top-width: 1px; }
 .partner__name { font-weight: 400; }

@@ -4,7 +4,8 @@
   "description": "Come un rapporto annuale stampato bene: un asse verticale a sinistra, titoli in un serif classico, testo in colonna, pagine intere di colore pieno.",
   "best_for": "progetti europei, enti, fondazioni, programmi con risultati e documenti da mostrare con autorevolezza",
   "direction": "The printed annual (tasteskill, seed 205672542)",
-  "palette": {"ground": "#133621", "ink": "#f4d96c", "accent": "#f4d96c", "field1": "#1a4429", "field2": "#f4d96c", "dark": "#0b2215", "hero1": "#133621", "hero2": "#133621"},
+  "hero_on": "ground",
+  "palette": {"ground": "#133621", "ink": "#f4d96c", "accent": "#f4d96c", "field1": "#1a4429", "field2": "#f4d96c", "dark": "#0b2215", "hero1": "#f4d96c", "hero2": "#f4d96c"},
   "fonts": {"display": "Bodoni Moda", "text": "Jost"},
   "buttons": "square"
 }

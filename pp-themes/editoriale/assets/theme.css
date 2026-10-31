@@ -18,7 +18,7 @@ body { background: var(--black); }
 .chapter { box-shadow: none; }
 .chapter--paper + .chapter--paper { padding-top: var(--section); }
 .site-head__in { max-width: none; }
-.brand__logo { background: var(--bg); border-radius: 50%; padding: 2px; }
+.brand__logo { background: var(--bg); color: var(--ink); border-radius: 50%; padding: 2px; }
 .nav__link { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.875rem; font-family: var(--font-display); }
 .nav-toggle { background: var(--black-ink); color: var(--black); }
 h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-display); }
@@ -55,7 +55,7 @@ h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-d
 @media (max-width: 760px) { .collection__item { grid-template-columns: 1fr; } .collection__item::after { display: none; } .collection__who { grid-column: 1; grid-row: auto; text-align: left; } }
 
 /* numeri: lo scontrino con il totale */
-.figures__list { grid-template-columns: 1fr; max-width: 720px; gap: 0; }
+.figures__list { grid-template-columns: 1fr; max-width: 720px; gap: 0; margin-left: 0; }
 .figure { flex-direction: row; justify-content: space-between; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 4px dotted currentColor; }
 .figure__val { font-size: clamp(2.5rem, 1.5rem + 3vw, 4.5rem); order: 2; }
 .figure__cap { font-size: var(--step-lead); max-width: 28ch; }
@@ -71,7 +71,7 @@ h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-d
 
 /* foto incollate sul foglio come tavole fuori testo */
 .gallery__list { grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); gap: 28px; }
-.gallery__item { background: var(--bg); padding: 10px 10px 34px; }
+.gallery__item { background: var(--surface); padding: 10px 10px 34px; }
 .gallery__item:nth-child(odd) { transform: rotate(-1.2deg); } .gallery__item:nth-child(even) { transform: rotate(1deg); }
 .cta { justify-items: center; text-align: center; }
 
@@ -91,3 +91,8 @@ h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-d
 .foot__word text { text-transform: uppercase; }
 .foot__line { border-top: 6px dotted currentColor; padding-top: 18px; }
 .site-main { grid-template-columns: minmax(0, 1fr); }
+
+/* le intestazioni scure delle pagine interne restano fogli anche sul fondo scuro della pagina */
+.site-main > .chapter--ink { background: color-mix(in srgb, var(--black-ink) 8%, var(--black)); }
+/* il pulsante dell'apertura sulla foto velata */
+.hero--img .btn--dark { background: var(--bg); color: var(--ink); border-color: var(--bg); }

@@ -13,11 +13,14 @@
 }
 h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, .btn, .langs__btn, .nav-toggle, .filter button, .card__title, .latest__sub, .foot__name { font-family: var(--font-display); text-transform: uppercase; }
 .chapter > * { max-width: none; margin-left: 0; margin-right: 0; }
+/* i pannelli vanno a tutta larghezza, il testo lungo no */
+.chapter > .prose, .article > .prose { max-width: 68ch; }
+.results__group { max-width: 72rem; }
 .site-head { background: var(--ink); color: var(--bg); --head-ink: var(--bg); --head-bg: var(--ink); }
 .site-head__in { max-width: none; }
 .brand__name { font-size: 1.5rem; font-weight: 800; white-space: nowrap; }
 @media (max-width: 760px) { .brand__name { white-space: normal; font-size: 1.05rem; line-height: 1; } }
-.brand__logo { background: var(--bg); padding: 2px; border-radius: 50%; }
+.brand__logo { background: var(--bg); color: var(--ink); padding: 2px; border-radius: 50%; }
 .nav__link { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.02em; padding: 0 6px; }
 .nav__link:hover, .nav__link[aria-current] { background: var(--accent); color: var(--accent-ink); text-decoration: none; }
 .nav-toggle { background: var(--accent); color: var(--accent-ink); font-size: 1.1rem; }
@@ -47,6 +50,7 @@ h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, 
 
 /* un verbo alla volta: pannelli di larghezza diversa, ognuno di un colore */
 .steps { padding: 0; }
+.steps.chapter--paper + .chapter--paper { padding-top: var(--section); }
 .steps__list { gap: 0; grid-template-columns: repeat(12, 1fr); }
 .step { padding: clamp(2rem, 4vw, 4rem) var(--margin); }
 .step--1 { grid-column: span 7; background: var(--accent); color: var(--accent-ink); }
@@ -110,3 +114,5 @@ h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, 
 .foot__word { display: block; }
 .foot__word text { text-transform: uppercase; font-weight: 800; }
 .foot__col a:hover { background: var(--ink); color: var(--bg); text-decoration: none; }
+
+.partners { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); }

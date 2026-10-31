@@ -17,15 +17,15 @@ $entries = [
 
     // ---------- pagine ----------
     ['type' => 'page', 'slug' => 'home', 'template' => 'home', 'tr' => ['en' => ['title' => 'Common Ground'], 'it' => ['title' => 'Common Ground']]],
-    ['type' => 'page', 'slug' => 'the-project', 'in_menu' => 1, 'menu_order' => 1, 'image' => 'seed-media/news-1.webp', 'tr' => [
+    ['type' => 'page', 'slug' => 'the-project', 'in_menu' => 1, 'menu_order' => 1, 'image' => 'seed-media/hero-2.webp', 'tr' => [
         'en' => ['title' => 'The project', 'excerpt' => 'Twenty-four months to test a simple idea: the people who use a square should help decide what it becomes.',
-            'image_alt' => 'Partners around a table during a project meeting',
+            'image_alt' => 'Rooftops of Rome seen from above, with a dome in the distance',
             'body' => $p('Common Ground brings together youth workers, small municipalities and researchers from four countries. In each town a group of young people between 16 and 25 works with the local council on one real public space: a square, a disused school yard, a riverside path.',
                 'The project runs in three phases. First we listen: walks, interviews and mapping with residents. Then we build: low-cost temporary changes tested for a few weeks. Finally we share: what worked becomes a toolkit that any small town can use.')
                 . '<h2>Who it is for</h2>' . $p('Young people who rarely take part in local decisions, the officers who manage public spaces, and the associations that already work with both.')
                 . '<h2>What we will leave behind</h2><ul><li>Six transformed public spaces</li><li>An open toolkit in five languages</li><li>A network of towns willing to try again</li></ul>'],
         'it' => ['title' => 'Il progetto', 'excerpt' => 'Ventiquattro mesi per mettere alla prova un’idea semplice: chi vive una piazza dovrebbe aiutare a decidere cosa diventa.',
-            'image_alt' => 'I partner attorno a un tavolo durante una riunione di progetto',
+            'image_alt' => 'I tetti di Roma visti dall’alto, con una cupola in lontananza',
             'body' => $p('Common Ground mette insieme educatori, piccoli comuni e ricercatori di quattro paesi. In ogni comune un gruppo di ragazze e ragazzi tra i 16 e i 25 anni lavora con l’amministrazione su uno spazio pubblico vero: una piazza, un cortile scolastico abbandonato, un argine.',
                 'Il progetto ha tre fasi. Prima ascoltiamo: passeggiate, interviste e mappe con chi ci abita. Poi costruiamo: piccoli interventi temporanei e a basso costo, provati per qualche settimana. Infine condividiamo: quello che ha funzionato diventa un toolkit che qualsiasi piccolo comune può usare.')
                 . '<h2>Per chi è</h2>' . $p('Per i giovani che di solito non partecipano alle decisioni locali, per i funzionari che gestiscono gli spazi pubblici e per le associazioni che già lavorano con entrambi.')
@@ -51,9 +51,9 @@ $entries = [
     // ---------- blocchi della home ----------
     ['type' => 'block', 'slug' => 'home-hero', 'template' => 'hero', 'menu_order' => 1, 'image' => 'seed-media/hero-1.webp',
         'meta' => ['cta_url' => 'the-project'], 'tr' => [
-        'en' => ['title' => 'Common ground', 'excerpt' => 'Young people and small towns, shaping public space together.', 'image_alt' => 'Young people working around a table with sheets and sticky notes',
+        'en' => ['title' => 'Common ground', 'excerpt' => 'Young people and small towns, shaping public space together.', 'image_alt' => 'A square in Rome with a fountain and a bell tower',
             'extra' => ['line2' => 'starts in the square', 'cta_label' => 'Discover the project']],
-        'it' => ['title' => 'Il terreno comune', 'excerpt' => 'Giovani e piccoli comuni, insieme per gli spazi pubblici.', 'image_alt' => 'Ragazzi al lavoro attorno a un tavolo con fogli e post-it',
+        'it' => ['title' => 'Il terreno comune', 'excerpt' => 'Giovani e piccoli comuni, insieme per gli spazi pubblici.', 'image_alt' => 'Una piazza di Roma con una fontana e un campanile',
             'extra' => ['line2' => 'parte dalla piazza', 'cta_label' => 'Scopri il progetto']],
     ]],
     ['type' => 'block', 'slug' => 'home-statement', 'template' => 'statement', 'menu_order' => 2, 'tr' => [
@@ -95,9 +95,9 @@ $entries = [
     ['type' => 'block', 'slug' => 'home-gallery', 'template' => 'gallery', 'menu_order' => 8,
         'meta' => ['images' => implode("\n", array_map(fn($i) => "seed-media/galleria-$i.webp", range(1, 6)))], 'tr' => [
         'en' => ['title' => 'From the labs', 'excerpt' => 'Moments from the first season of local labs.',
-            'extra' => ['alts' => "Hands sorting coloured cards on a table\nA hand-drawn map of the square pinned to a wall\nParticipants laughing during a break\nA young woman presenting a sketch\nA wooden bench being assembled\nSticky notes grouped on a window"]],
+            'extra' => ['alts' => "Colleagues celebrating in an open-plan office\nA teacher smiling with students working behind her\nPeople walking on a wooden boardwalk, seen at ground level\nA hand pinning a sticky note to a wall\nA young woman working on a laptop\nTwo girls looking at a smartphone under the trees"]],
         'it' => ['title' => 'Dai cantieri', 'excerpt' => 'Momenti dalla prima stagione dei cantieri locali.',
-            'extra' => ['alts' => "Mani che ordinano cartoncini colorati su un tavolo\nUna mappa disegnata a mano della piazza appesa al muro\nPartecipanti che ridono durante una pausa\nUna ragazza presenta uno schizzo\nUna panchina di legno in montaggio\nPost-it raggruppati su una finestra"]],
+            'extra' => ['alts' => "Colleghi che festeggiano in un ufficio open space\nUn’insegnante sorride con gli studenti al lavoro dietro di lei\nPersone che camminano su una passerella di legno, viste da terra\nUna mano attacca un post-it al muro\nUna ragazza al lavoro sul portatile\nDue bambine guardano uno smartphone sotto gli alberi"]],
     ]],
     ['type' => 'block', 'slug' => 'home-video', 'template' => 'video', 'menu_order' => 9, 'meta' => ['video' => 'aqz-KE-bpKQ'], 'tr' => [
         'en' => ['title' => 'Watch', 'excerpt' => 'A sample video: it loads only after you accept YouTube.'],
@@ -114,19 +114,19 @@ $entries = [
 $news = [
     [1, '2026-10-12', 1, 'Kick-off in Rome: five partners, one table', 'Kick-off a Roma: cinque partner, un tavolo',
         'Two days to agree on the method, the calendar and the six towns.', 'Due giorni per accordarsi su metodo, calendario e i sei comuni.',
-        'Partners from four countries around a meeting table', 'Partner di quattro paesi attorno a un tavolo di riunione'],
+        'Colleagues working together around a desk', 'Colleghi che lavorano insieme attorno a una scrivania'],
     [2, '2026-10-02', 2, 'Training the facilitators', 'La formazione dei facilitatori',
         'Twenty youth workers learned how to run a listening walk.', 'Venti educatori hanno imparato a condurre una passeggiata di ascolto.',
-        'A trainer speaking to a group of adults in a classroom', 'Una formatrice parla a un gruppo di adulti in aula'],
+        'A trainer standing in a classroom while participants work', 'Un formatore in aula mentre i partecipanti lavorano'],
     [3, '2026-09-18', 2, 'Mapping the square, one laptop at a time', 'Mappare la piazza, un portatile alla volta',
         'How the first lab turned interviews into a shared digital map.', 'Come il primo cantiere ha trasformato le interviste in una mappa digitale condivisa.',
-        'Young people working together on laptops', 'Ragazzi che lavorano insieme ai portatili'],
+        'A young woman working on a laptop by the window', 'Una ragazza al portatile vicino alla finestra'],
     [4, '2026-09-05', 1, 'A public evening in the town hall', 'Una serata pubblica in municipio',
         'Over a hundred residents came to hear what the young people proposed.', 'Più di cento residenti sono venuti ad ascoltare le proposte dei ragazzi.',
         'An audience listening to a speaker', 'Un pubblico che ascolta un relatore'],
     [5, '2026-08-21', 2, 'Testing shade on the riverside path', 'Prove d’ombra sull’argine',
         'Three weeks of temporary canopies and what the counters told us.', 'Tre settimane di coperture temporanee e cosa ci hanno detto i conteggi.',
-        'A group activity outdoors', 'Un’attività di gruppo all’aperto'],
+        'Hands joined together in a circle on the grass', 'Mani unite in cerchio sul prato'],
     [6, '2026-07-30', 1, 'The first progress report is out', 'È uscito il primo rapporto di avanzamento',
         'What we did in the first ten months, in twelve readable pages.', 'Cosa abbiamo fatto nei primi dieci mesi, in dodici pagine leggibili.',
         'Documents and a cup of coffee on a desk', 'Documenti e una tazza di caffè su una scrivania'],

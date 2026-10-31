@@ -60,7 +60,7 @@
 
 /* passi: schede bianche con il titolo grande */
 .steps__list { gap: var(--gutter); }
-.step { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 2.8vw, 36px); background: var(--surface); border-radius: var(--radius-box); border-top: 6px solid var(--accent); }
+.step { display: grid; align-content: start; gap: 14px; padding: clamp(24px, 2.8vw, 36px); background: var(--surface); border-radius: var(--radius-box); border-top: 3px solid var(--accent); }
 .step__line { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.45rem, 1.1rem + 1.1vw, 2.1rem); line-height: 1.02; letter-spacing: -0.03em; }
 .step__text { line-height: 1.55; }
 .chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .step { background: var(--field-2); color: var(--field-2-ink); }
@@ -97,6 +97,7 @@
 .gallery__item--1 img { height: 100%; aspect-ratio: auto; }
 .gallery__item--4 { grid-column: span 6; }
 .gallery__item--4 img { aspect-ratio: 3 / 1; }
+.gallery__item--5, .gallery__item--6 { grid-column: span 3; }
 .gallery__item img { border-radius: var(--radius-box); }
 
 /* pagine interne: intestazione nel campo blu */
@@ -135,7 +136,10 @@
 @media (max-width: 760px) {
   .hero { min-height: 0; padding-top: 42svh; }
   .gallery__list { grid-template-columns: 1fr 1fr; }
-  .gallery__item, .gallery__item--4 { grid-column: span 1; }
-  .gallery__item--1 { grid-column: 1 / -1; grid-row: auto; }
+  .gallery__item, .gallery__item--5, .gallery__item--6 { grid-column: span 1; }
+  .gallery__item--1, .gallery__item--4 { grid-column: 1 / -1; grid-row: auto; }
   .gallery__item--1 img, .gallery__item--4 img { aspect-ratio: 4 / 3; height: auto; }
 }
+
+/* larghezza "stretta" scelta nella Modifica visuale: il blocco testo diventa una colonna sola */
+.textblock.chapter--w-narrow { grid-template-columns: minmax(0, 1fr); }

@@ -4,6 +4,7 @@
   "description": "Sala buia, schermo grande: fondo scuro, foto a tutta pagina, titoli alti e stretti in maiuscolo, una parola evidenziata in magenta come un sottotitolo che non si può ignorare.",
   "best_for": "campagne di sensibilizzazione (bullismo, violenza, dipendenze), progetti con video, fumetti e materiali per le scuole",
   "direction": "Lights down: fondo scuro da sala, maiuscolo condensato, l'accento magenta come evidenziatore su una sola riga",
+  "hero_on": "ground",
   "palette": {"ground": "#141518", "ink": "#f2efe9", "accent": "#d0306f", "field1": "#134a52", "field2": "#1d2c5b", "dark": "#0a0b0d", "hero1": "#ffffff", "hero2": "#ffffff"},
   "fonts": {"display": "Anton", "text": "Atkinson Hyperlegible Next"},
   "buttons": "square",

@@ -4,6 +4,7 @@
   "description": "Studio di comunicazione: foto virate nel blu del tema, un taglio diagonale come una vela tra le fasce, griglie fitte come un portfolio. Preciso, pulito, istituzionale senza essere grigio.",
   "best_for": "agenzie e progetti di comunicazione, ricerca e formazione, siti con molti lavori, campagne e documenti da mostrare",
   "direction": "Sail and sea: il taglio della vela come gesto unico, foto in bicromia blu, griglia da portfolio",
+  "hero_on": "accent",
   "palette": {"ground": "#ffffff", "ink": "#0d2236", "accent": "#0a6c9e", "field1": "#0b3a5b", "field2": "#d3edf8", "dark": "#0f1c2b", "hero1": "#ffffff", "hero2": "#bfe9fa"},
   "fonts": {"display": "Instrument Sans", "text": "Instrument Sans"},
   "buttons": "square",

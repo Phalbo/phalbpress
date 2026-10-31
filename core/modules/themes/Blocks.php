@@ -65,7 +65,9 @@ final class Blocks
     public static function render(array $b, int $i = 0): string
     {
         $kind = preg_replace('~[^a-z0-9_-]~', '', (string)$b['template']) ?: 'text';
-        $tone = (string)($b['meta_arr']['tone'] ?? '') ?: 'paper';
+        // tono "Automatico": l'apertura va sul fondo per cui il tema ha pensato i colori della frase grande ("hero_on" nel theme.json)
+        $auto = $kind === 'hero' && ((PP::themes()[PP::theme()] ?? [])['hero_on'] ?? 'ground') === 'accent' ? 'accent' : 'paper';
+        $tone = (string)($b['meta_arr']['tone'] ?? '') ?: $auto;
         $b['tone'] = in_array($tone, ['paper', 'accent', 'field1', 'field2', 'dark'], true) ? $tone : 'paper';
         $b['lg'] = $b['_fallback'] ? ' lang="' . e(I18n::hreflang($b['_lang'])) . '"' : '';
         $b['id_attr'] = ($a = Media::slug((string)($b['meta_arr']['anchor'] ?? ''))) ? $a : 'b' . (int)$b['id'];

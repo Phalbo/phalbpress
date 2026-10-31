@@ -4,6 +4,7 @@
   "description": "Diario di un percorso: fondo color paglia, rosso da segnaletica, verde dei campi. Le tappe sono punti su una strada tratteggiata, titoli in maiuscolo geometrico, testo da leggere in serif.",
   "best_for": "progetti su ambiente, territorio, mobilità lenta e cammini, itinerari a tappe, aree naturali",
   "direction": "Route journal: la strada tratteggiata che unisce le tappe, carta paglia, segnaletica rossa, foto di paesaggio grandi",
+  "hero_on": "accent",
   "palette": {"ground": "#f4eedf", "ink": "#1f1a14", "accent": "#9b1b1b", "field1": "#2f5d3a", "field2": "#e2d3a8", "dark": "#1f1a14", "hero1": "#ffffff", "hero2": "#ffffff"},
   "fonts": {"display": "Jost", "text": "Newsreader"},
   "buttons": "square",
