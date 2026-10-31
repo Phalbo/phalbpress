@@ -290,6 +290,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .doctable__get { text-align: right !important; }
 .doctable__get .btn { min-height: 40px; padding: 0 16px; font-size: var(--step-small); }
 .doctable__fmt { font-weight: 400; opacity: 0.8; }
+.doctable__soon { font-size: var(--step-small); color: var(--muted); white-space: nowrap; }
 @media (max-width: 760px) { .doctable tr { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; padding: 12px 0; border-top: 1px solid var(--line); } .doctable th, .doctable td { border: 0; padding: 0; } .doctable__date, .doctable__get { grid-column: 2; text-align: left !important; } }
 .doclink { margin: 1.25em 0; }
 .doclink__a { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; border: 2px solid currentColor; border-radius: var(--radius-box); text-decoration: none; max-width: 56ch; }

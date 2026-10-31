@@ -17,6 +17,7 @@ return [
     'all_news' => ['group' => 'Generale', 'text' => ['en' => 'All news', 'it' => 'Tutte le notizie']],
     'all_results' => ['group' => 'Generale', 'text' => ['en' => 'All results', 'it' => 'Tutti i risultati']],
     'download' => ['group' => 'Generale', 'text' => ['en' => 'Download', 'it' => 'Scarica']],
+    'doc_soon' => ['group' => 'Generale', 'text' => ['en' => 'Coming soon', 'it' => 'In arrivo']],
     'doc_in_english' => ['group' => 'Generale', 'text' => ['en' => 'in English', 'it' => 'in inglese']],
     'back_to' => ['group' => 'Generale', 'text' => ['en' => 'Back to', 'it' => 'Torna a']],
     'play_video' => ['group' => 'Generale', 'text' => ['en' => 'Play video', 'it' => 'Guarda il video']],

@@ -20,7 +20,7 @@ foreach ($all as $d) $groups[$d['category']][] = $d;
             <td class="doctable__get">
               <?php if ($has): ?>
                 <a class="btn btn--dark" href="<?= e(PP::docUrl($d)) ?>"><?= e(t('download')) ?> <span class="doctable__fmt"><?= e($d['file_ext']) ?> <?= e(Media::human((int)$d['file_size'])) ?><?= !$d['file_is_translated'] && lang() !== I18n::$master ? ' · ' . e(t('doc_in_english')) : '' ?></span></a>
-              <?php else: ?><span class="doctable__soon" aria-hidden="true">○</span><?php endif; ?>
+              <?php else: ?><span class="doctable__soon"><?= e(t('doc_soon')) ?></span><?php endif; ?>
             </td>
           </tr>
         <?php endforeach; ?>

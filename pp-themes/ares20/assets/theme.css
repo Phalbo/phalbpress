@@ -32,6 +32,8 @@
 
 /* fasce */
 .chapter > * { margin-left: max(0px, calc((100% - var(--container)) / 2)); margin-right: auto; }
+/* larghi quanto il contenitore: senza, nelle fasce a griglia ogni blocco si stringe al suo contenuto */
+.chapter > :not(.chapter__bg) { width: min(100%, var(--container)); }
 .chapter--paper + .chapter--paper { padding-top: 0; }
 
 /* riquadri dentro le fasce colorate: il fondo dei riquadri segue il colore della fascia */
@@ -97,14 +99,14 @@
 .cta__head { max-width: 18ch; }
 
 /* galleria: muro fitto di quadrati */
-.gallery__list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 4px; }
+.gallery__list { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
 .gallery__item img { aspect-ratio: 1; }
 
 /* pagine interne: intestazione con il taglio */
 .band { position: relative; z-index: 2; clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut) * 0.6), 0 100%); padding-bottom: calc(clamp(2.5rem, 5vw, 4rem) + var(--cut) * 0.6); }
 .band__title { font-size: clamp(2.6rem, 1.3rem + 4.5vw, 6rem); letter-spacing: -0.045em; max-width: 18ch; }
 .band__kicker, .band__meta { font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.08em; }
-.band__img img { filter: none; }
+
 .prose h2 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2.2rem); letter-spacing: -0.03em; }
 .toc__head { text-transform: uppercase; font-size: 0.8125rem; letter-spacing: 0.08em; }
 .toc__list a { border-left-width: 2px; }
@@ -113,24 +115,25 @@
 .cards { grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 40px 4px; }
 .card__img { aspect-ratio: 1; }
 .card > :not(.card__img) { padding-right: 16px; }
-.card__meta { opacity: 1; color: var(--muted); text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; }
+.card__meta { opacity: 1; color: var(--muted); font-size: 0.875rem; }
 .card__cat { color: var(--accent); }
 .card__title { font-size: clamp(1.25rem, 1.05rem + 0.6vw, 1.55rem); letter-spacing: -0.02em; }
-.filter button { border-width: 1px; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.08em; }
+.filter button { border-width: 1px; font-size: 0.875rem; }
 .filter button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
 /* storie, documenti, partner */
 .story__initial { background: var(--field-1); color: var(--field-1-ink); }
-.doctable th, .doctable td { border-top-width: 2px; border-top-color: currentColor; }
+.doctable th, .doctable td { border-top-width: 2px; border-top-color: var(--ink); }
 .doctable__ex, .doctable__date, .doctable__fmt { opacity: 1; color: var(--muted); }
 .doctable__code { color: var(--accent); }
 .partners { gap: 4px; }
 .partner { padding: clamp(22px, 2.6vw, 32px); border-top: 0; background: var(--surface); }
-.partner__where { font-size: 0.8125rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); }
+.partner__where { font-size: 0.875rem; color: var(--accent); }
 .contact__mail { color: var(--accent); letter-spacing: -0.03em; }
 
 /* footer */
-.site-foot { clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%); padding-top: calc(clamp(3rem, 6vw, 5rem) + var(--cut)); margin-top: calc(var(--cut) * -0.5); }
+.site-foot { clip-path: polygon(0 var(--cut), 100% 0, 100% 100%, 0 100%); padding-top: calc(clamp(3rem, 6vw, 5rem) + var(--cut)); margin-top: calc(var(--cut) * -1); }
+.site-main > :last-child { padding-bottom: calc(var(--section) + var(--cut)); }
 .foot__name { font-size: var(--step-head); font-weight: 650; letter-spacing: -0.045em; line-height: 1; }
 .foot__head { text-transform: uppercase; font-size: 0.8125rem; letter-spacing: 0.08em; }
 
@@ -138,3 +141,9 @@
   .step { grid-template-columns: 1fr; }
   .gallery__list { grid-template-columns: 1fr 1fr; }
 }
+
+/* foto virate nel blu del tema, come dice la direzione: bianco e nero sotto, il campo chiaro sopra in moltiplica */
+:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) { position: relative; }
+:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) img { filter: grayscale(1) contrast(1.1); }
+:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img)::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; }
+.statement__head { hyphens: manual; }

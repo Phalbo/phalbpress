@@ -32,6 +32,8 @@
 
 /* fasce: tutto allineato al bordo sinistro del contenitore */
 .chapter > * { margin-left: max(0px, calc((100% - var(--container)) / 2)); margin-right: auto; }
+/* larghi quanto il contenitore: senza, nelle fasce a griglia ogni blocco si stringe al suo contenuto */
+.chapter > :not(.chapter__bg) { width: min(100%, var(--container)); }
 .chapter--paper + .chapter--paper { padding-top: 0; }
 
 /* riquadri dentro le fasce colorate: il fondo dei riquadri segue il colore della fascia */
@@ -65,7 +67,7 @@
 .step { display: grid; align-content: start; gap: 12px; padding: clamp(24px, 3vw, 36px); background: var(--surface); border-radius: var(--radius-box); }
 .step__line { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.9rem); line-height: 1.12; letter-spacing: -0.02em; }
 .step__text { line-height: 1.55; }
-.chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .step { background: var(--field-2); color: var(--field-2-ink); }
+.chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .step { background: var(--field-2); color: var(--ink); }
 .chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .step:nth-child(2n) { background: color-mix(in srgb, var(--field-1) 35%, var(--bg)); color: var(--ink); }
 
 /* elenchi: schede in griglia, non righe */
@@ -82,7 +84,7 @@
 .chapter--paper:not(.chapter--custom):not(.chapter--has-bg) .figure__val { color: var(--accent); }
 
 /* ultime notizie */
-.latest__cols { gap: var(--gutter); align-items: start; }
+.latest__cols { gap: var(--gutter); align-items: stretch; }
 .latest__col { padding: clamp(22px, 2.6vw, 34px); background: var(--surface); border-radius: var(--radius-box); }
 .latest__sub { font-weight: 750; }
 .rows2 li + li { border-top: 1px solid var(--line); }
@@ -91,8 +93,8 @@
 /* testo, invito */
 .textblock__body { font-size: var(--step-lead); line-height: 1.5; max-width: 52ch; }
 .textblock__body mark { background: color-mix(in srgb, var(--field-1) 55%, transparent); color: inherit; border-radius: 6px; padding: 0 0.2em; }
-.cta { padding: clamp(32px, 5vw, 72px); background: var(--surface); border-radius: calc(var(--radius-box) * 1.5); }
-.chapter--paper:not(.chapter--custom):not(.chapter--has-bg) > .cta { background: var(--field-2); color: var(--field-2-ink); }
+/* l'invito è la fascia stessa: il riquadro arrotondato solo sul fondo carta, a tutta larghezza resta dritto */
+.cta.chapter--paper:not(.chapter--custom):not(.chapter--has-bg) { background: var(--field-2); color: var(--ink); border-radius: calc(var(--radius-box) * 1.5); }
 
 /* galleria: riquadri arrotondati, il primo più grande */
 .gallery__list { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: clamp(200px, 24vw, 360px); }
@@ -146,3 +148,8 @@
   .hero--img .hero__img { order: -1; }
   .hero--img .hero__img img { min-height: 0; aspect-ratio: 4 / 3; }
 }
+
+/* campi del modulo: angoli morbidi, non pillole (il raggio del tema è 999px) */
+.pp-field input, .pp-search input[type=search] { border-radius: 14px; }
+.pp-field textarea { border-radius: var(--radius-box); }
+@media (max-width: 760px) { .gallery__item:nth-child(odd):last-child { grid-column: 1 / -1; } }

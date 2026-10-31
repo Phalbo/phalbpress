@@ -43,9 +43,10 @@
 .pp-field { margin: 0 0 16px; display: flex; flex-direction: column; gap: 6px; }
 .pp-field label { font-weight: 600; }
 .pp-req { font-weight: 400; opacity: .7; font-size: .875em; }
-.pp-field input, .pp-field textarea { font: inherit; padding: 12px 14px; border: 2px solid var(--muted, #767676); border-radius: calc(var(--radius, 4px) / 4); background: var(--bg, #fff); color: var(--ink, #111); min-height: 48px; }
+.pp-field input, .pp-field textarea { font: inherit; padding: 12px 14px; border: 2px solid var(--muted, #767676); border-radius: min(calc(var(--radius, 4px) / 4), 12px); background: var(--bg, #fff); color: var(--ink, #111); min-height: 48px; }
 .pp-field input:focus-visible, .pp-field textarea:focus-visible { outline: 3px solid var(--accent, #c00); outline-offset: 1px; border-color: var(--ink, #111); }
 .pp-form .pp-check { margin: 0 0 20px; }
+.pp-form input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--accent, #c00); flex: none; }
 .pp-btn--solid { background: var(--accent, #c00); color: var(--accent-ink, #fff); border-color: var(--accent, #c00); }
 /* condivisione */
 .pp-share { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 32px; margin-bottom: 32px; }
@@ -55,7 +56,7 @@
 .pp-share a:focus-visible, .pp-share button:focus-visible { outline: 3px solid var(--accent, #c00); outline-offset: 2px; }
 /* ricerca */
 .pp-search form { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 16px; }
-.pp-search input[type=search] { flex: 1 1 260px; font: inherit; font-size: 1.125rem; padding: 12px 16px; min-height: 52px; border: 2px solid var(--ink, #111); border-radius: calc(var(--radius, 4px) / 4); background: var(--bg, #fff); color: var(--ink, #111); }
+.pp-search input[type=search] { flex: 1 1 260px; font: inherit; font-size: 1.125rem; padding: 12px 16px; min-height: 52px; border: 2px solid var(--ink, #111); border-radius: min(calc(var(--radius, 4px) / 4), 12px); background: var(--bg, #fff); color: var(--ink, #111); }
 .pp-search input[type=search]:focus-visible { outline: 3px solid var(--accent, #c00); outline-offset: 2px; }
 .pp-search [data-status] { margin: 0 0 16px; opacity: .8; }
 .pp-hits { list-style: none; padding: 0; margin: 0; }
