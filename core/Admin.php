@@ -402,6 +402,9 @@ final class Admin
         $path = '/' . trim((string)($_GET['path'] ?? '/' . I18n::$master . '/'), '/');
         Content::$preview = true;
         if (!empty($_GET['theme']) && isset(PP::themes()[$_GET['theme']])) PP::$theme = (string)$_GET['theme'];
+        // contenuti dimostrativi al posto di quelli del sito (database a parte: il sito non cambia)
+        $demo = !empty($_GET['demo']) && class_exists('Demo');
+        if ($demo) Demo::use();
         $seg = array_values(array_filter(explode('/', $path), 'strlen'));
         // Modifica visuale: le fasce della home si possono cliccare
         $edit = !empty($_GET['edit']) && Auth::can('publish') && class_exists('Blocks');
@@ -419,7 +422,8 @@ final class Admin
             echo str_replace('</head>', $tools . '</head>', $html);
             return;
         }
-        $bar = '<div role="status" style="position:sticky;top:0;z-index:9999;background:#111;color:#fff;font:600 13px/1 system-ui,sans-serif;padding:8px 16px;text-align:center">Anteprima' . (PP::$theme ? ' · tema ' . e(PP::themes()[PP::$theme]['name'] ?? PP::$theme) : '') . ' · non è il sito pubblico</div>';
+        if ($demo) $html = Demo::links($html, http_build_query(array_filter(['demo' => 1, 'theme' => PP::$theme, 'palette' => $_GET['palette'] ?? ''])));
+        $bar = '<div role="status" style="position:sticky;top:0;z-index:9999;background:#111;color:#fff;font:600 13px/1 system-ui,sans-serif;padding:8px 16px;text-align:center">Anteprima' . (PP::$theme ? ' · tema ' . e(PP::themes()[PP::$theme]['name'] ?? PP::$theme) : '') . ($demo ? ' · contenuti dimostrativi' : '') . ' · non è il sito pubblico</div>';
         echo preg_replace('~<body([^>]*)>~', '<body$1>' . $bar, $html, 1);
     }
 

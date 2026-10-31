@@ -2,6 +2,9 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.6.0
+- **Temi con contenuti e foto di esempio**: in Gestione → Temi ogni tema ha il pulsante "con contenuti e foto di esempio". Si apre l'anteprima del tema con news, storie, partner, documenti, galleria e foto di un progetto inventato, così si vede com'è il tema anche su un sito che ha ancora poche foto. Nell'anteprima si può girare per le pagine e cambiare lingua. Il sito non cambia: i contenuti di esempio stanno in un database a parte (`data/demo-preview.sqlite`), creato al primo uso.
+
 ## 1.5.0
 Revisione di tutti i 13 temi (accessibilità, impaginazione a computer e telefono, resa con foto vere).
 - **Apertura senza foto**: in ACE, Adrestia, Ares 2.0, FINE, Sic2Sic e Tipografico la prima riga del titolo era bianca su bianco quando l'apertura non aveva la foto. Ora ogni tema dichiara su che fondo vanno i colori della frase grande, e un'apertura con fondo "Automatico" va lì (di solito il colore principale). Anche il controllo dei contrasti in Identità visiva misura la frase grande sul fondo giusto. In Istituzionale il titolo dell'apertura era verde su verde: corretto.

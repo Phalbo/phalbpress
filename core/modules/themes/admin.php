@@ -23,6 +23,7 @@
       <div class="row">
         <a class="btn btn--small" href="<?= e(Admin::u('preview') . '?theme=' . rawurlencode($slug)) ?>" target="_blank" rel="noopener">Anteprima con i tuoi colori ↗</a>
         <?php if ($pal): ?><a class="btn btn--small" href="<?= e(Admin::u('preview') . '?palette=1&theme=' . rawurlencode($slug)) ?>" target="_blank" rel="noopener">con i colori del tema ↗</a><?php endif; ?>
+        <a class="btn btn--small" href="<?= e(Admin::u('preview') . '?demo=1' . ($pal ? '&palette=1' : '') . '&theme=' . rawurlencode($slug)) ?>" target="_blank" rel="noopener" title="Il tema con news, storie e foto di un progetto inventato: il sito non cambia">con contenuti e foto di esempio ↗</a>
         <?php if (!$on || $pal): ?>
         <form method="post" class="row"><?= Admin::csrfField() ?><input type="hidden" name="theme" value="<?= e($slug) ?>">
           <?php if ($pal): ?><label class="check small"><input type="checkbox" name="apply" value="1" <?= $on ? 'checked' : '' ?>> applica colori e font suggeriti</label><?php endif; ?>

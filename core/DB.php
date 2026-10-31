@@ -29,6 +29,13 @@ final class DB
         return self::$pdo;
     }
 
+    /** Passa a un altro database per il resto della richiesta (anteprima demo dei temi). */
+    public static function reconnect(array $cfg): PDO
+    {
+        self::$pdo = null;
+        return self::connect($cfg);
+    }
+
     public static function pdo(): PDO
     {
         if (!self::$pdo) throw new RuntimeException('Database non connesso');

@@ -114,7 +114,7 @@ final class Blocks
         }
         $bg = '';
         $image = (string)($m['bg_image'] ?? '');
-        if ($image !== '' && preg_match('~^uploads/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|avif)$~i', $image) && is_file(PP_ROOT . '/' . $image)) {
+        if ($image !== '' && preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|avif)$~i', $image) && is_file(PP_ROOT . '/' . $image)) {
             $over = in_array($m['bg_overlay'] ?? '', ['light', 'none'], true) ? $m['bg_overlay'] : 'dark';
             $add[] = 'chapter--has-bg';
             $add[] = 'chapter--over-' . $over;

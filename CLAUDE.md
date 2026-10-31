@@ -74,6 +74,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   `chapter--sp-compact|wide`, `chapter--w-narrow|full`: per colori di card e testi usare `--surface` e `--muted`, che quelle classi ridefiniscono.
 - **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
 - Anteprima: `/{admin}/preview?path=/it/…&theme=slug[&palette=1]` (bozze e programmati visibili, palette del tema al posto di quella dell'identità).
+  Con `&demo=1` l'anteprima usa i contenuti dimostrativi (`pp-assets/demo/seed.php` + `media/`, gli stessi del sito di `tools/demo`): `Demo::use()` passa a `data/demo-preview.sqlite`
+  (rifatto quando cambiano seed, lingue o versione) con `DB::reconnect()`; ogni lingua del sito prende il testo nella sua lingua o in inglese; `Demo::links()` tiene i link interni nell'anteprima.
 - Nuovi temi: skill design-taste-frontend (draw → direction sheet, inspect). Le direzioni usate sono in ogni theme.json.
 
 ## Hook
