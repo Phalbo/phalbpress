@@ -29,7 +29,7 @@ final class Visual
         if ($act === 'list') { self::listHtml(); return; }
         $langs = I18n::codes();
         $lang = in_array($_GET['lang'] ?? '', $langs, true) ? $_GET['lang'] : I18n::$master;
-        Admin::view(__DIR__ . '/visual.php', ['title' => 'Modifica visuale', 'lang' => $lang, 'langs' => $langs,
+        Admin::view(__DIR__ . '/visual-view.php', ['title' => 'Modifica visuale', 'lang' => $lang, 'langs' => $langs,
             'kinds' => array_map(fn($k) => $k['label'], Blocks::kinds())]);
     }
 

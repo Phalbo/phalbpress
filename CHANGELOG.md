@@ -2,6 +2,10 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.4.1
+- **Installazione da Windows e macOS**: in `core/modules/themes/` c'erano `Visual.php` e `visual.php`, due file con lo stesso nome a parte la maiuscola. Scompattando lo zip sul computer uno sovrascriveva l'altro e il sito dava errore 500 (`Failed opening required … Visual.php`). La schermata della Modifica visuale ora si chiama `visual-view.php`, e la creazione delle release si blocca se due file hanno lo stesso nome a parte le maiuscole.
+- Chi ha già un sito con l'errore: carica `core/modules/themes/Visual.php` dal pacchetto con il File Manager del server, poi aggiorna da Gestione → Aggiornamenti.
+
 ## 1.4.0
 - **Sei temi nuovi** (Gestione → Temi, prova con "Anteprima con i tuoi colori" prima di attivarli):
   - **ACE**: ritratti in bianco e nero, il colore solo dai campi pieni rosso, verde e azzurro; titoli condensati grandi. Per progetti sui diritti e contro le discriminazioni.

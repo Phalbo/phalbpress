@@ -28,6 +28,19 @@ $cl = is_file('CHANGELOG.md') ? (string)file_get_contents('CHANGELOG.md') : '';
 if (!preg_match('~^## ' . preg_quote($ver, '~') . '\b[^\n]*\n(.*?)(?=^## |\z)~ms', $cl, $n)) $fail("manca la sezione \"## $ver\" in CHANGELOG.md");
 $notes = trim($n[1]);
 
+// 0. nomi che differiscono solo per maiuscole/minuscole: su Windows e macOS uno sovrascrive l'altro quando si scompatta lo zip
+$seen = [];
+$clash = [];
+foreach (['core', 'pp-admin', 'pp-assets', 'pp-themes', 'skeleton', 'tools'] as $dir) {
+    foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::SELF_FIRST) as $f) {
+        $p = str_replace('\\', '/', $f->getPathname());
+        $k = strtolower($p);
+        if (isset($seen[$k]) && $seen[$k] !== $p) $clash[] = $seen[$k] . ' / ' . $p;
+        $seen[$k] = $p;
+    }
+}
+if ($clash) $fail("file con lo stesso nome a parte le maiuscole (si rompono su Windows e macOS):\n  " . implode("\n  ", $clash));
+
 // 1. sintassi di tutti i file PHP
 $items = ['core', 'pp-admin', 'pp-assets', 'pp-themes', 'index.php', 'cron.php', 'install.php', 'tools'];
 $php = [];
