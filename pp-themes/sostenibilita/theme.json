@@ -1,0 +1,12 @@
+{
+  "name": "Sustainability Champion",
+  "order": 15,
+  "description": "Ambiente e territorio, morbido e luminoso: la foto dell'apertura occupa quasi tutto lo schermo e finisce con una curva come una riva, i numeri stanno in tessere arrotondate verde acqua che salgono e contano, schede bianche con angoli larghi e ombre leggere.",
+  "best_for": "progetti su acqua, clima, biodiversità, energia, agricoltura e territori; missioni UE e reti di regioni",
+  "direction": "River bank: foto al vivo con bordo inferiore curvo, titolo bianco di misura in basso a sinistra, tessere dei numeri arrotondate, sezioni centrate con titoli da 40 px, curve morbide tra le fasce; movimento lento e fluttuante",
+  "hero_on": "ground",
+  "palette": {"ground": "#ffffff", "ink": "#16302f", "accent": "#0d7a74", "field1": "#2b9a8f", "field2": "#e7f4f2", "dark": "#0f2e2c", "hero1": "#16302f", "hero2": "#0d7a74"},
+  "fonts": {"display": "Figtree", "text": "Figtree"},
+  "buttons": "pill",
+  "body_class": "photo-hero"
+}

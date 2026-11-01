@@ -1,0 +1,12 @@
+{
+  "name": "People's Choice",
+  "order": 18,
+  "description": "Giovani e partecipazione, caldo e diretto: apertura divisa con la foto dentro una forma organica che respira e il titolo color terracotta accanto, titoli di sezione in maiuscolo centrati, fasce scure attraversate da una parola gigante a contorno che scorre, pulsante verde nella testata.",
+  "best_for": "progetti con giovani, scuole, cittadinanza attiva, cooperazione internazionale, community e piattaforme partecipative",
+  "direction": "Open mic: foto in una forma morbida che cambia lentamente, titolo terracotta a fianco, maiuscole centrate per le sezioni, nastro di testo a contorno che scorre nelle fasce scure, accento verde per agire",
+  "hero_on": "ground",
+  "palette": {"ground": "#ffffff", "ink": "#221a16", "accent": "#9c3a14", "field1": "#245c31", "field2": "#fbf3ec", "dark": "#141110", "hero1": "#9c3a14", "hero2": "#221a16"},
+  "fonts": {"display": "Bricolage Grotesque", "text": "Figtree"},
+  "buttons": "soft",
+  "body_class": "photo-hero"
+}

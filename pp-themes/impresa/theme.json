@@ -1,0 +1,12 @@
+{
+  "name": "SME Star",
+  "order": 16,
+  "description": "Consulenza e impresa, pulito e professionale: apertura divisa con il testo a sinistra e una grande foto a destra appoggiata su un blocco verde bosco, titoli leggeri con un'etichetta piccola sopra, numeri dentro cerchi che si sovrappongono, entrate da destra e dal basso.",
+  "best_for": "progetti con PMI, imprese, innovazione e servizi: incubatori, reti di aziende, formazione professionale, consulenza",
+  "direction": "Studio desk: split hero testo/foto con pannello sfalsato, kicker in maiuscoletto sopra titoli medi, servizi in tre colonne con icona, numeri in cerchi bianchi su fondo grigio, fasce verde bosco; fade-up e fade-right a cascata",
+  "hero_on": "ground",
+  "palette": {"ground": "#ffffff", "ink": "#1b2420", "accent": "#1f5a43", "field1": "#1f5a43", "field2": "#f2f3f2", "dark": "#14231c", "hero1": "#1b2420", "hero2": "#1f5a43"},
+  "fonts": {"display": "Work Sans", "text": "Work Sans"},
+  "buttons": "square",
+  "body_class": "photo-hero"
+}
