@@ -2,6 +2,15 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.10.0
+- **Cinque temi nuovi**, ispirati ai vincitori dei .eu Web Awards 2025: l'apertura ha la **foto protagonista** e il titolo di misura (non più la frase gigante), con animazioni in entrata, comparse a cascata allo scroll, numeri che contano ed effetti al passaggio del mouse. Rispettano "riduci il movimento" e senza JavaScript si vede tutto.
+  - **European Excellence**: foto scura a tutto schermo con zoom lento, titolo centrato, schede di vetro che salgono sopra la foto, card delle news con la data in etichetta (Jost).
+  - **Sustainability Champion**: foto con angoli larghi e bordo inferiore curvo, numeri in tessere verde acqua che galleggiano, fasce e footer che si aprono con una curva (Figtree).
+  - **SME Star**: apertura divisa testo/foto con blocco verde sfalsato, numeri in cerchi, filo verde sopra i titoli, ultima voce del menu come pulsante (Work Sans).
+  - **Cultural Ambassador**: colori pieni, forme geometriche che scorrono sulla foto, titolo in fascia nera, nastro di forme sopra le fasce colorate, ombre colorate sulle foto (League Spartan + Figtree).
+  - **People's Choice**: foto in una forma morbida che cambia lentamente, titoli di sezione in maiuscolo, titolo a contorno che scorre nelle fasce scure, pulsante verde nella testata (Bricolage Grotesque + Figtree).
+- Si provano da Gestione → Temi "con contenuti e foto di esempio"; reggono tutte le scelte della Modifica visuale.
+
 ## 1.9.0
 - **Siti personali e portfolio**: in Sistema → Impostazioni del sito, nuova parte "Chi c'è dietro il sito": un'organizzazione (come prima) o **una persona**. Per una persona i dati strutturati che leggono Google e i motori AI diventano quelli di un profilo (`Person` con professione, per chi lavora, città, formazione, competenze e i social come profili collegati) e la home diventa una pagina profilo. Si può impostare anche da `config['owner']`.
 - **Siti con l'originale non in inglese** (es. un sito personale scritto in italiano): l'avviso per un testo non ancora tradotto diceva sempre "stai leggendo la versione inglese", e i documenti senza file tradotto dicevano "in inglese". Ora dicono la lingua originale vera ("stai leggendo la versione originale (Italiano)", "in Italiano"). Testi nuovi `fallback_notice_lang` e `doc_in_lang` in Testi del sito; sui siti in inglese non cambia niente.

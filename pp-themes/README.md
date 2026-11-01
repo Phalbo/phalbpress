@@ -22,5 +22,10 @@ Ogni tema è una cartella con:
 | FINE | The label on the photo | Bricolage Grotesque + Source Serif 4 |
 | Rebus | Lights down | Anton + Atkinson Hyperlegible Next |
 | Sic2Sic | Route journal | Jost + Newsreader |
+| European Excellence | Night lab (rif. .eu Web Awards 2025) | Jost |
+| Sustainability Champion | River bank (rif. .eu Web Awards 2025) | Figtree |
+| SME Star | Studio desk (rif. .eu Web Awards 2025) | Work Sans |
+| Cultural Ambassador | Color block stage (rif. .eu Web Awards 2025) | League Spartan + Figtree |
+| People's Choice | Open mic (rif. .eu Web Awards 2025) | Bricolage Grotesque + Figtree |
 
 Un sito non modifica mai i temi: le sue personalizzazioni stanno in `site/theme/` (stessi percorsi) e in `site/theme/assets/site.css`.
