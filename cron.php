@@ -8,6 +8,12 @@
 if (PHP_SAPI !== 'cli') { http_response_code(403); exit('Solo da riga di comando.'); }
 define('PP_CLI', true);
 require __DIR__ . '/core/bootstrap.php';
+// comandi dei moduli: php cron.php <comando> … (es. php cron.php wpimport)
+if (!empty($argv[1])) {
+    $done = Hooks::first('cli', array_slice($argv, 1));
+    if (!$done) { echo 'Comando sconosciuto: ' . $argv[1] . PHP_EOL; exit(1); }
+    exit(0);
+}
 $r = Scheduler::tick(true);
 echo date('Y-m-d H:i') . ' ' . ($r ? 'aggiornato: ' . $r : 'niente da fare') . PHP_EOL;
 // moduli con lavori periodici (es. controllo degli aggiornamenti del motore)

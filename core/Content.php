@@ -321,17 +321,38 @@ final class Content
  */
 final class Redirects
 {
-    public static function find(string $path): ?array
+    /** Parametri dell'indirizzo che distinguono un redirect (indirizzi dei vecchi siti WordPress: ?lang=en, ?p=12, ?page_id=34). */
+    public const QUERY_KEYS = ['lang', 'p', 'page_id', 'post_type'];
+
+    /** "lang=en&utm_source=x&p=3" → "lang=en&p=3" (solo i parametri che contano, in ordine) */
+    public static function query(string $q): string
     {
-        try { return DB::one('SELECT * FROM pp_redirects WHERE from_path = ?', ['/' . trim($path, '/') . '/']) ?: DB::one('SELECT * FROM pp_redirects WHERE from_path = ?', ['/' . trim($path, '/')]); }
+        parse_str($q, $a);
+        $a = array_intersect_key(array_filter($a, 'is_scalar'), array_flip(self::QUERY_KEYS));
+        ksort($a);
+        return http_build_query($a);
+    }
+
+    public static function find(string $path, string $query = ''): ?array
+    {
+        $p = '/' . trim($path, '/');
+        $base = $p === '/' ? '/' : $p . '/';
+        $q = self::query($query);
+        try {
+            if ($q !== '' && ($r = DB::one('SELECT * FROM pp_redirects WHERE from_path = ?', [$base . '?' . $q]))) return $r;
+            if ($base === '/') return null;
+            return DB::one('SELECT * FROM pp_redirects WHERE from_path = ?', [$base]) ?: DB::one('SELECT * FROM pp_redirects WHERE from_path = ?', [$p]);
+        }
         catch (Throwable $e) { return null; }
     }
 
     public static function add(string $from, string $to, int $code = 301, bool $auto = false): void
     {
-        $from = '/' . trim(parse_url($from, PHP_URL_PATH) ?: $from, '/') . '/';
+        $q = self::query((string)parse_url($from, PHP_URL_QUERY));
+        $from = '/' . trim((string)(parse_url($from, PHP_URL_PATH) ?: ''), '/');
+        $from = ($from === '/' ? '/' : $from . '/') . ($q !== '' ? '?' . $q : '');
         if (preg_match('~^https?://~', $to) === 0) $to = '/' . ltrim($to, '/');
-        if ($from === $to || $from === '//') return;
+        if ($from === $to || $from === '/') return;
         DB::run('DELETE FROM pp_redirects WHERE from_path = ?', [$to]);   // evita catene e anelli
         DB::upsert('pp_redirects', ['from_path' => $from, 'to_path' => $to, 'code' => in_array($code, [301, 302], true) ? $code : 301, 'auto' => $auto ? 1 : 0, 'created_at' => Content::now()], ['from_path']);
         DB::run('UPDATE pp_redirects SET to_path = ? WHERE to_path = ?', [$to, $from]);

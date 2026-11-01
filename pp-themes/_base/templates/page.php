@@ -5,8 +5,10 @@ $lg = $page['_fallback'] ? ' lang="' . e(I18n::hreflang($page['_lang'])) . '"' :
 // indice della pagina dai titoli H2
 $toc = [];
 $body = preg_replace_callback('~<h2>(.*?)</h2>~s', function ($m) use (&$toc) {
-    $id = Media::slug(strip_tags($m[1])) ?: 's' . count($toc);
-    $toc[] = [$id, strip_tags($m[1])];
+    // il testo del titolo è HTML (es. "&amp;"): si decodifica, perché l'indice lo codifica di nuovo
+    $label = trim(html_entity_decode(strip_tags($m[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+    $id = Media::slug($label) ?: 's' . count($toc);
+    $toc[] = [$id, $label];
     return '<h2 id="' . e($id) . '">' . $m[1] . '</h2>';
 }, PP::body($page['body']));
 $head = Layouts::get('page', 'head', $page);

@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.13.1';
+    public const VERSION = '1.14.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -166,10 +166,17 @@ final class PP
             echo $file['body'];
             return;
         }
-        if (!$seg) self::redirect(self::link('', I18n::detect()), 302);
+        $query = (string)($_SERVER['QUERY_STRING'] ?? '');
+        if (!$seg) {
+            // indirizzi dei vecchi siti con i parametri (/?page_id=12, /?lang=en) portati da un redirect
+            if (Redirects::query($query) !== '' && ($r = Redirects::find('/', $query))) self::redirect(preg_match('~^https?://~', $r['to_path']) ? $r['to_path'] : self::url($r['to_path']), (int)$r['code']);
+            parse_str($query, $qa);
+            if (is_string($qa['lang'] ?? null) && I18n::valid($qa['lang'])) self::redirect(self::link('', $qa['lang']), 301);   // /?lang=en dei vecchi siti con WPML
+            self::redirect(self::link('', I18n::detect()), 302);
+        }
 
         $page = self::page($seg);
-        if ($page['status'] === 404 && ($r = Redirects::find('/' . $path))) {
+        if ($page['status'] === 404 && ($r = Redirects::find('/' . $path, $query))) {
             try { DB::run('UPDATE pp_redirects SET hits = hits + 1 WHERE id = ?', [$r['id']]); } catch (Throwable $e) {}
             self::redirect(preg_match('~^https?://~', $r['to_path']) ? $r['to_path'] : self::url($r['to_path']), (int)$r['code']);
         }

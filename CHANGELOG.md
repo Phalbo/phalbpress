@@ -2,6 +2,18 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.14.0
+- **Importa da WordPress** (Gestione → Importa da WordPress, solo amministratori): porta in PhalbPress pagine, articoli, tipi personalizzati (es. un portfolio), categorie, foto e file, pagine madri, menu, titoli e descrizioni di Yoast.
+  - Si mettono in `data/wp-import/` l'esportazione di WordPress (.xml), e se ci sono il dump del database (.sql) e uno zip della cartella uploads. Dal dump si leggono solo le traduzioni di WPML e i redirect del plugin Redirection, mai utenti e password.
+  - Prima la **prova a secco**: dice cosa verrebbe importato, in che lingue, quali file mancano e cosa del vecchio costruttore di pagine si toglie.
+  - Il testo di WPBakery, Jupiter e Gutenberg diventa HTML pulito: titoli, testo, foto, gallerie, video (col consenso), pulsanti, numeri dei contatori. Righe, colonne, slider ed elenchi automatici si tolgono: l'impaginazione la fa il tema.
+  - Le traduzioni di WPML diventano le lingue dello stesso contenuto. Le foto si importano una volta sola, ridotte e in WebP come al caricamento.
+  - Ogni vecchio indirizzo (anche `?lang=en`, `?p=12`, `?page_id=34`) porta con un redirect 301 a quello nuovo; i link interni nei testi vengono riscritti.
+  - Lavora a passi di 20 secondi e riprende da dove era rimasto; si può rilanciare (aggiorna, non duplica) o annullare. Anche da riga di comando: `php cron.php wpimport plan|run|reset|undo`.
+  - Il sito decide i tipi e cosa saltare in `config['wp_import']`, e può ritoccare ogni contenuto col filtro `wp_import_entry`.
+- Redirect: possono distinguere i parametri dei vecchi siti WordPress (`lang`, `p`, `page_id`, `post_type`); `/?lang=en` porta alla home in quella lingua.
+- Pagine: l'indice "In questa pagina" non mostra più `&amp;` al posto di `&` nei titoli.
+
 ## 1.13.1
 - Gestione: la scheda di pagine, news, storie ed eventi non scrive più avvisi nel registro degli errori di PHP (campi “Pagina madre”, “Punto focale” e “Disposizione” senza i valori di partenza).
 

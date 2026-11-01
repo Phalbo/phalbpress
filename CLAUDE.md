@@ -29,7 +29,8 @@ core/Media.php       upload (nomi puliti, WebP, -960, SVG ripulito, PDF), replac
 core/Scheduler.php   contenuti programmati
 core/Translator.php  traduzione automatica (Anthropic / DeepL), anche i campi personalizzati traducibili
 core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms (+ newsletter), backup, activity, themes, updater, settings,
-                     events (tipo `event`, sezione eventi, file .ics; `'events' => false` nel config lo spegne), feed (RSS `/feed/{lang}.xml`)
+                     events (tipo `event`, sezione eventi, file .ics; `'events' => false` nel config lo spegne), feed (RSS `/feed/{lang}.xml`),
+                     wpimport (importazione da WordPress: vedi sotto)
                      (settings: contact_email, mail_from, social, funder, owner, translation modificabili in gestione, applicati sopra il config in PP::boot;
                      owner = organizzazione o persona per i dati strutturati, `Seo::owner()`: Person + ProfilePage per i siti personali)
 pp-themes/_base/     struttura comune a tutti i temi: templates/, partials/ (+ blocks/), assets/base.css, base.js, strings.php
@@ -64,12 +65,22 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Social**: `partials/social.php` (icone SVG dal nome o dal dominio); `social_place` = footer|header|both nelle Impostazioni.
 - **Newsletter**: `Forms::render('newsletter')` (email + consenso con data), esportazione CSV in Richieste.
 
+## Importa da WordPress (core/modules/wpimport)
+- File in `data/wp-import/`: `.xml` (WXR, obbligatorio), `.sql` (facoltativo: SOLO `icl_translations`, `term_taxonomy`, `redirection_items`), `.zip` di uploads (facoltativo, altrimenti scarica dal vecchio sito con `'download' => true`).
+- `WpSource` legge (XMLReader, una riga SQL alla volta) e salva il modello in `data/wp-import/model.ser`; `WpContent::html()` converte gli shortcode (liste `WRAP`/`DROP`, il resto tiene il testo);
+  `WpImport` lavora a passi `scan → media → terms → entries → links → menu → redirects` con stato in `state.json`, collegamenti in `pp_wp_map` (kind: media|post|entry|term|termgroup).
+- Gruppi di traduzione = `trid` di WPML; senza la lingua principale il contenuto diventa bozza. Slug di WordPress mantenuti. Foto con `Media::upload` (stesso trattamento del caricamento).
+- Config del sito `wp_import`: `types` (wp → pp), `taxonomies` (`['tax' => ['type','field']]`), `drafts`, `skip` (lista o `'slug' => 'home'|chiave sezione|'/percorso/'` per il redirect), `download`, `menu`.
+- Filtri: `wp_import_entry` ($data con type, title, excerpt, body, slug, image, image_alt, meta, extra, skip), `wp_import_term_url` (→ `['from','to']`), `wp_import_menu_item`.
+- CLI: `php cron.php wpimport plan|run|reset|undo` (hook `cli` dei moduli: `Hooks::first('cli', $args)`).
+
 ## Rotte pubbliche
 `/{lang}/` home a blocchi · `/{lang}/{section news}/[slug]` · stories · results · partners · `/{lang}/{slug pagina}/` · legali · ricerca (`/{lang}/cerca/`…)
 · `/{lang}/{section events}/[slug]` · `/ics/{lang}/{id}.ics` · `/feed/{lang}.xml`
 · `/search/{lang}.json` · `/download/{id}/{lang}` · `POST /form/{nome}` (anche `newsletter`) · sitemap, robots, llms · `/{admin_slug}/…`.
 `config['sections']`: stringa o array per lingua. `PP::items()` = tutte le pagine con il percorso per lingua (sitemap, statico, llms); i moduli aggiungono col filtro `paths`.
-404 → `Redirects::find()` prima di mostrare la pagina d'errore (funziona anche col sito statico).
+404 → `Redirects::find($path, $query)` prima di mostrare la pagina d'errore (funziona anche col sito statico). I redirect possono avere i parametri dei vecchi siti
+(`Redirects::QUERY_KEYS`: lang, p, page_id, post_type), es. `/chi-siamo/?lang=en`; `/?lang=xx` porta alla home in quella lingua.
 
 ## Temi
 - Catena dei file: `site/theme/<file>` → `pp-themes/<tema attivo>/<file>` → `pp-themes/_base/<file>` (`PP::themeFile`, `PP::partial`, `PP::asset`).
@@ -121,6 +132,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 | `saved` | fire | dopo ogni salvataggio (scansione cookie 10, statico 50) |
 | `admin.pages` | filter | `slug => ['label','group','handler','perm']` |
 | `cron` | fire | lavori periodici dei moduli, da `cron.php` |
+| `cli` | first($args) | comandi dei moduli: `php cron.php <comando> …` (restituire true se gestito) |
+| `wp_import_entry` / `wp_import_term_url` / `wp_import_menu_item` | filter | ritocchi del sito all'importazione da WordPress |
 
 ## Repo e release
 - Repo pubblico `Phalbo/phalbpress`: SOLO il motore (+ `tools/`, `skeleton/` per il pacchetto completo, `.github/`). Mai `site/`, `uploads/`, `data/`.

@@ -21,6 +21,11 @@
     if (b && !confirm(b.dataset.confirm)) ev.preventDefault();
   });
 
+  /* lavori lunghi a passi (es. importazione): il modulo si rimanda da solo finché il lavoro non è finito */
+  document.querySelectorAll('form[data-autosubmit]').forEach((f) => {
+    setTimeout(() => { if (!f.dataset.sent) { f.dataset.sent = '1'; f.requestSubmit ? f.requestSubmit() : f.submit(); } }, 800);
+  });
+
   /* copia percorso */
   document.querySelectorAll('[data-copy]').forEach((b) => b.addEventListener('click', async () => {
     try { await navigator.clipboard.writeText(b.dataset.copy); b.textContent = 'Copiato'; setTimeout(() => (b.textContent = 'Copia percorso'), 1400); }
