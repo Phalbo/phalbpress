@@ -158,7 +158,7 @@ final class Visual
             $u = substr((string)PP::entryUrl($p, $lang), strlen(PP::base()));
             if ($u !== '' && $u !== '/' . $lang . '/') $out[] = ['Pagina: ' . $p['title'], $u];
         }
-        $sec = ['news' => 'Elenco delle news', 'stories' => 'Elenco delle storie', 'results' => 'Risultati', 'partners' => 'Partner'];
+        $sec = ['news' => 'Elenco delle news', 'stories' => 'Elenco delle storie', 'events' => 'Eventi', 'results' => 'Risultati', 'partners' => 'Partner'];
         foreach ($sec as $k => $label) if (isset(PP::$config['sections'][$k])) $out[] = [$label, substr(PP::link(PP::section($k, $lang), $lang), strlen(PP::base()))];
         $last = Content::entries('news', $lang, 1, 'pub_date DESC, id DESC');
         if ($last && ($u = PP::entryUrl($last[0], $lang))) $out[] = ['Una news: ' . $last[0]['title'], substr($u, strlen(PP::base()))];

@@ -66,10 +66,12 @@ final class Layouts
     {
         return [
             'site' => ['Tutto il sito', ['header']],
-            'page' => ['Pagine', ['head', 'body']],
+            'page' => ['Pagine', ['head', 'body', 'list']],
             'news' => ['Elenco delle news', ['head', 'list']],
             'news-item' => ['Singola news', ['head', 'body']],
             'stories' => ['Elenco delle storie', ['head', 'stories']],
+            'events' => ['Elenco degli eventi', ['head']],
+            'event' => ['Singolo evento', ['head']],
             'results' => ['Risultati', ['head', 'docs']],
             'partners' => ['Partner', ['head', 'partners']],
             'contact' => ['Contatti', ['head']],
@@ -140,12 +142,17 @@ final class Layouts
         DB::update('pp_entries', ['meta' => json_encode($meta, JSON_UNESCAPED_UNICODE), 'updated_at' => Content::now()], 'id = ?', [$id]);
     }
 
-    /** Campi nella scheda di pagine e news: "come le altre" più le disposizioni possibili. */
+    /** Campi nella scheda di pagine e news: "come le altre" più le disposizioni possibili; punto focale della foto; pagina madre. */
     public static function fields(string $type): array
     {
-        $map = ['page' => 'page', 'news' => 'news-item'][$type] ?? '';
-        if (!$map) return [];
         $out = [];
+        if (in_array($type, ['page', 'news', 'story', 'event'], true)) $out['image_focus'] = ['label' => 'Foto: dove sta il soggetto', 'type' => 'select',
+            'options' => ['' => 'Al centro', 'top' => 'In alto', 'bottom' => 'In basso', 'left' => 'A sinistra', 'right' => 'A destra'],
+            'hint' => 'quando la foto viene tagliata (schede, intestazioni, mosaico) resta visibile questa parte'];
+        if ($type === 'page') $out['parent'] = ['label' => 'Pagina madre', 'type' => 'entry', 'entry_type' => 'page',
+            'hint' => 'facoltativa: la pagina compare nell’elenco della madre e nel percorso sopra il titolo (es. Progetti → Progetto 1)'];
+        $map = ['page' => 'page', 'news' => 'news-item'][$type] ?? '';
+        if (!$map) return $out;
         foreach (self::types()[$map][1] as $part) {
             $p = self::parts()[$part];
             $opts = ['' => 'Come le altre (' . $p['options'][self::forType($map, $part)][0] . ')'];

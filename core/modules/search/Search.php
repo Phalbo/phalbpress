@@ -7,7 +7,7 @@ final class Search
     /** Etichetta del tipo nei risultati, nella lingua della pagina (il nome del tipo nel config è quello della gestione, in italiano). */
     private static function kind(string $type, string $lang): string
     {
-        $key = ['page' => 'search_kind_page', 'news' => 'news_title', 'story' => 'stories_title'][$type] ?? '';
+        $key = ['page' => 'search_kind_page', 'news' => 'news_title', 'story' => 'stories_title', 'event' => 'events_title'][$type] ?? '';
         $v = $key !== '' ? I18n::t($key, $lang) : '';
         return $v !== '' && $v !== $key ? $v : (string)(PP::$config['types'][$type]['one'] ?? $type);
     }
@@ -34,7 +34,7 @@ final class Search
         $saved = I18n::$current;
         I18n::$current = $lang;
         $rows = [];
-        $types = Hooks::filter('search_types', ['page', 'news', 'story']);
+        $types = array_values(array_unique(Hooks::filter('search_types', ['page', 'news', 'story'])));
         foreach (DB::all('SELECT * FROM pp_entries WHERE type IN (' . implode(',', array_fill(0, count($types), '?')) . ') AND ' . Content::live() . ' ORDER BY pub_date DESC', $types) as $r) {
             $e = Content::localize('entry', $r, $lang);
             $u = PP::entryUrl($e, $lang);

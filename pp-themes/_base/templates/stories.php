@@ -28,7 +28,7 @@ $list = Layouts::get('stories', 'stories');
     <div class="storylist" data-filter-items>
     <?php foreach ($items as $i => $s): $m = $s['meta_arr']; $anon = !empty($m['anonymous']); $lg = $s['_fallback'] ? ' lang="' . e(I18n::hreflang($s['_lang'])) . '"' : ''; $role = $s['x']['role'] ?? ($m['role'] ?? ''); ?>
       <article class="story reveal<?= $i % 2 && $list === 'zigzag' ? ' story--flip' : '' ?>" data-country="<?= e($m['country'] ?? '') ?>">
-        <a class="story__pic" href="<?= e(entry_url($s)) ?>" tabindex="-1" aria-hidden="true">
+        <a class="story__pic<?= e(focus_class($s)) ?>" href="<?= e(entry_url($s)) ?>" tabindex="-1" aria-hidden="true">
           <?php if ($s['image'] && !$anon): ?><?= img($s['image'], '', '(min-width: 1000px) 40vw, 100vw') ?>
           <?php else: ?><span class="story__initial"><?= e(mb_substr($s['title'], 0, 1)) ?></span><?php endif; ?>
         </a>

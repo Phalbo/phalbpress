@@ -16,7 +16,7 @@ $lead = $list === 'feature' && count($items) > 1 ? array_shift($items) : null;
   <?php if ($lead): $cat = !empty($lead['meta_arr']['category']) ? Content::byId((int)$lead['meta_arr']['category'], lang()) : null; $href = PP::entryUrl($lead);
     $lg = $lead['_fallback'] ? ' lang="' . e(I18n::hreflang($lead['_lang'])) . '"' : ''; ?>
     <article class="lead-item reveal">
-      <?php if ($lead['image']): ?><a class="lead-item__img" href="<?= e($href) ?>" tabindex="-1" aria-hidden="true"><?= img($lead['image'], '', '(min-width: 961px) 55vw, 100vw') ?></a><?php endif; ?>
+      <?php if ($lead['image']): ?><a class="lead-item__img<?= e(focus_class($lead)) ?>" href="<?= e($href) ?>" tabindex="-1" aria-hidden="true"><?= img($lead['image'], '', '(min-width: 961px) 55vw, 100vw') ?></a><?php endif; ?>
       <div class="lead-item__body">
         <p class="lead-item__meta"><span class="lead-item__tag"><?= e(t('latest_label')) ?></span> <time datetime="<?= e($lead['pub_date']) ?>"><?= e(fmt_date($lead['pub_date'])) ?></time><?= $cat ? ' · <span class="card__cat">' . e($cat['title']) . '</span>' : '' ?></p>
         <h2 class="lead-item__title"<?= $lg ?>><a href="<?= e($href) ?>"><?= e($lead['title']) ?></a></h2>

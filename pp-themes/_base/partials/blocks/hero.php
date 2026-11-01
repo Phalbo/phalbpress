@@ -11,10 +11,17 @@ if (!empty($m['switch'])) {
     }
 }
 $cta = Blocks::href((string)($m['cta_url'] ?? ''));
+// altre foto: scorrono nell'apertura (la prima è la foto del blocco)
+$slides = [];
+if ($b['image']) {
+    $alts = array_map('trim', preg_split('~\R~', (string)($x['slides_alts'] ?? '')));
+    foreach (array_values(array_filter(array_map('trim', preg_split('~\R~', (string)($m['slides'] ?? ''))))) as $n => $p)
+        if (preg_match('~^uploads/[A-Za-z0-9/_.-]+$~', $p) && is_file(PP_ROOT . '/' . $p)) $slides[] = [$p, $alts[$n] ?? ''];
+}
 $tag = $i === 0 ? 'h1' : 'h2';
 ?>
 <section class="hero <?= e(Blocks::toneClass($b['tone'])) ?><?= $b['image'] ? ' hero--img' : '' ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>"<?= count($lines) > 1 ? ' data-hero data-lines="' . e(json_encode($lines, JSON_UNESCAPED_UNICODE)) . '"' : '' ?>>
-  <?php if ($b['image']): ?><figure class="hero__img"><?= img($b['image'], $b['image_alt'], '100vw', '', false) ?></figure><?php endif; ?>
+  <?php if ($b['image']): ?><figure class="hero__img<?= $slides ? ' hero__img--slides' : '' ?>"<?= $slides ? ' data-slides' : '' ?>><?= img($b['image'], $b['image_alt'], '100vw', '', false) ?><?php foreach ($slides as [$p, $alt]) echo img($p, $alt, '100vw', 'hero__slide', true); ?></figure><?php endif; ?>
   <<?= $tag ?> class="hero__title" data-hero-title<?= $b['lg'] ?>>
     <span class="hero__l1" data-l1><?= e($b['title']) ?></span>
     <?php if ($line2 !== '' || $lines): ?><span class="hero__l2" data-l2><?= e($line2) ?></span><?php endif; ?>

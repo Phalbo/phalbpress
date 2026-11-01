@@ -21,6 +21,7 @@ $siteCss = is_file(PP_SITE . '/theme/assets/site.css');
 $claim = trim(t('claim'));
 $themeBody = (string)(PP::themes()[$theme]['body_class'] ?? '');   // es. "photo-hero": il tema mostra la foto dell'apertura
 $themeMotion = PP::themes()[$theme]['motion'] ?? [];                // movimento del tema (base.js), false = niente
+$socialPlace = (string)($cfg['social_place'] ?? 'footer');                 // icone dei social: testata, footer o entrambi
 $headerModel = class_exists('Layouts') ? Layouts::forType('site', 'header') : 'bar';   // modello di testata: del sito o del tema
 ?>
 <!doctype html>
@@ -40,7 +41,7 @@ $headerModel = class_exists('Layouts') ? Layouts::forType('site', 'header') : 'b
 <script src="<?= e(PP::url('pp-themes/_base/assets/base.js')) ?>?v=<?= e(substr((string)filemtime(PP_ROOT . '/pp-themes/_base/assets/base.js'), -6)) ?>" defer></script>
 <?php if ($themeJs): ?><script src="<?= e(asset('theme.js')) ?>" defer></script><?php endif; ?>
 </head>
-<body class="theme-<?= e($theme) ?> hm-<?= e($headerModel) ?><?= $themeBody ? ' ' . e($themeBody) : '' ?> route-<?= e($r['name']) ?><?= !empty($bodyClass) ? ' ' . e($bodyClass) : '' ?>" data-motion="<?= e(json_encode($themeMotion, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?>">
+<body class="theme-<?= e($theme) ?> hm-<?= e($headerModel) ?><?= $themeBody ? ' ' . e($themeBody) : '' ?> route-<?= e($r['name']) ?><?= !empty($bodyClass) ? ' ' . e($bodyClass) : '' ?>" data-motion="<?= e(json_encode($themeMotion, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?>" data-ui="<?= e(json_encode(['close' => t('lb_close'), 'prev' => t('lb_prev'), 'next' => t('lb_next'), 'open' => t('lb_open'), 'pause' => t('slides_pause'), 'play' => t('slides_play')], JSON_UNESCAPED_UNICODE)) ?>">
 <a class="skip" href="#content"><?= e(t('skip')) ?></a>
 
 <header class="site-head head-model--<?= e($headerModel) ?>" data-head data-pp-part="header">
@@ -65,6 +66,7 @@ $headerModel = class_exists('Layouts') ? Layouts::forType('site', 'header') : 'b
       </ul>
     </nav>
     <div class="site-head__tools">
+      <?php if (in_array($socialPlace, ['header', 'both'], true)) echo PP::partial('social', ['where' => 'head']); ?>
       <?php if ($searchUrl): ?>
         <a class="tool tool--search" href="<?= e($searchUrl) ?>"<?= $r['name'] === 'search' ? ' aria-current="page"' : '' ?>>
           <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
@@ -103,10 +105,10 @@ $headerModel = class_exists('Layouts') ? Layouts::forType('site', 'header') : 'b
       <ul><?php foreach ($footMenu as $m): ?><li><a href="<?= e($m['href']) ?>"<?= $m['external'] ? ' target="_blank" rel="noopener"' : '' ?>><?= e($m['label']) ?></a></li><?php endforeach; ?></ul>
     </div>
     <?php endif; ?>
-    <?php $social = array_filter($cfg['social'] ?? []); if ($social): ?>
+    <?php $social = array_filter($cfg['social'] ?? []); if ($social && in_array($socialPlace, ['footer', 'both'], true)): ?>
     <div class="foot__col">
       <p class="foot__head"><?= e(t('footer_follow')) ?></p>
-      <ul><?php foreach ($social as $n => $u): ?><li><a href="<?= e($u) ?>" rel="noopener" target="_blank"><?= e($n) ?></a></li><?php endforeach; ?></ul>
+      <?= PP::partial('social', ['where' => 'foot']) ?>
     </div>
     <?php endif; ?>
     <?php if (!empty($cfg['contact_email'])): ?>

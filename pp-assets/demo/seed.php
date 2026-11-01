@@ -33,6 +33,20 @@ $entries = [
                 . '<h2>Per chi è</h2>' . $p('Per i giovani che di solito non partecipano alle decisioni locali, per i funzionari che gestiscono gli spazi pubblici e per le associazioni che già lavorano con entrambi.')
                 . '<h2>Cosa resterà</h2><ul><li>Sei spazi pubblici trasformati</li><li>Un toolkit aperto in cinque lingue</li><li>Una rete di comuni pronti a riprovarci</li></ul>'],
     ]],
+    ['type' => 'page', 'slug' => 'lab-rome', 'menu_order' => 3, 'image' => 'seed-media/galleria-1.webp', 'meta' => ['parent_slug' => 'the-project'], 'tr' => [
+        'en' => ['title' => 'The Rome lab', 'excerpt' => 'A disused school yard becomes a place to meet after class.', 'image_alt' => 'Young people celebrating in a bright room',
+            'body' => $p('This is a demonstration sub-page: it belongs to “The project” and appears in its list and in the path above the title.')
+                . '[gallery:seed-media/galleria-1.webp=Young people celebrating|seed-media/galleria-2.webp=A teacher with students|seed-media/galleria-3.webp=People on a boardwalk|seed-media/galleria-5.webp=A young woman at a laptop]'],
+        'it' => ['title' => 'Il cantiere di Roma', 'excerpt' => 'Un cortile scolastico abbandonato diventa un posto dove ritrovarsi dopo la scuola.', 'image_alt' => 'Ragazzi che festeggiano in una stanza luminosa',
+            'body' => $p('Questa è una sottopagina dimostrativa: appartiene a “Il progetto” e compare nel suo elenco e nel percorso sopra il titolo.')
+                . '[gallery:seed-media/galleria-1.webp=Ragazzi che festeggiano|seed-media/galleria-2.webp=Un’insegnante con gli studenti|seed-media/galleria-3.webp=Persone su una passerella|seed-media/galleria-5.webp=Una ragazza al portatile]'],
+    ]],
+    ['type' => 'page', 'slug' => 'lab-ljubljana', 'menu_order' => 4, 'image' => 'seed-media/galleria-4.webp', 'meta' => ['parent_slug' => 'the-project', 'image_focus' => 'top'], 'tr' => [
+        'en' => ['title' => 'The Slovenian lab', 'excerpt' => 'Shade and benches along a riverside path, tested for three weeks.', 'image_alt' => 'A hand pinning a sticky note to a wall',
+            'body' => $p('A second demonstration sub-page of “The project”.')],
+        'it' => ['title' => 'Il cantiere sloveno', 'excerpt' => 'Ombra e panchine lungo un argine, provate per tre settimane.', 'image_alt' => 'Una mano attacca un post-it al muro',
+            'body' => $p('Una seconda sottopagina dimostrativa de “Il progetto”.')],
+    ]],
     ['type' => 'page', 'slug' => 'how-we-work', 'in_menu' => 1, 'menu_order' => 2, 'tr' => [
         'en' => ['title' => 'How we work', 'excerpt' => 'Listen, build, share: the method behind every local lab.',
             'body' => '<h2>Listen</h2>' . $p('Each lab starts with a month of walks and conversations. The young participants interview residents, shopkeepers and council staff, and draw the space as it is used, not as it appears on the map.')
@@ -52,11 +66,11 @@ $entries = [
 
     // ---------- blocchi della home ----------
     ['type' => 'block', 'slug' => 'home-hero', 'template' => 'hero', 'menu_order' => 1, 'image' => 'seed-media/hero-1.webp',
-        'meta' => ['cta_url' => 'the-project'], 'tr' => [
+        'meta' => ['cta_url' => 'the-project', 'slides' => "seed-media/hero-2.webp\nseed-media/fascia-1.webp"], 'tr' => [
         'en' => ['title' => 'Common ground', 'excerpt' => 'Young people and small towns, shaping public space together.', 'image_alt' => 'A square in Rome with a fountain and a bell tower',
-            'extra' => ['line2' => 'starts in the square', 'cta_label' => 'Discover the project']],
+            'extra' => ['line2' => 'starts in the square', 'cta_label' => 'Discover the project', 'slides_alts' => "Rooftops of Rome seen from above\nPeople talking together"]],
         'it' => ['title' => 'Il terreno comune', 'excerpt' => 'Giovani e piccoli comuni, insieme per gli spazi pubblici.', 'image_alt' => 'Una piazza di Roma con una fontana e un campanile',
-            'extra' => ['line2' => 'parte dalla piazza', 'cta_label' => 'Scopri il progetto']],
+            'extra' => ['line2' => 'parte dalla piazza', 'cta_label' => 'Scopri il progetto', 'slides_alts' => "I tetti di Roma visti dall’alto\nPersone che parlano tra loro"]],
     ]],
     ['type' => 'block', 'slug' => 'home-statement', 'template' => 'statement', 'menu_order' => 2, 'tr' => [
         'en' => ['title' => 'Public space is decided by the people who are already in the room.', 'excerpt' => 'We want to change who is in the room. In six towns, young people sit at the same table as the council and work on one real place.',
@@ -105,7 +119,31 @@ $entries = [
         'en' => ['title' => 'Watch', 'excerpt' => 'A sample video: it loads only after you accept YouTube.'],
         'it' => ['title' => 'Guarda', 'excerpt' => 'Un video di esempio: si carica solo dopo il consenso a YouTube.'],
     ]],
-    ['type' => 'block', 'slug' => 'home-cta', 'template' => 'cta', 'menu_order' => 10,
+    ['type' => 'block', 'slug' => 'home-quote', 'template' => 'quote', 'menu_order' => 7, 'image' => 'seed-media/storia-2.webp', 'tr' => [
+        'en' => ['title' => 'The kids saw things in the square that we adults had stopped seeing years ago.', 'excerpt' => 'Marco', 'extra' => ['role' => 'Youth worker, Italy']],
+        'it' => ['title' => 'I ragazzi hanno visto nella piazza cose che noi adulti non vedevamo più da anni.', 'excerpt' => 'Marco', 'extra' => ['role' => 'Educatore, Italia']],
+    ]],
+    ['type' => 'block', 'slug' => 'home-events', 'template' => 'events', 'menu_order' => 8, 'meta' => ['limit' => 3], 'tr' => [
+        'en' => ['title' => 'Coming up'], 'it' => ['title' => 'In programma'],
+    ]],
+    ['type' => 'block', 'slug' => 'home-faq', 'template' => 'faq', 'menu_order' => 9, 'tr' => [
+        'en' => ['title' => 'Questions', 'excerpt' => 'What towns and young people ask us most often.', 'extra' => [
+            'q1' => 'Who can take part?', 'a1' => 'Young people between 16 and 25 who live or study in one of the six towns.',
+            'q2' => 'Does it cost anything?', 'a2' => 'No. Materials, travel and meals during the labs are covered by the project.',
+            'q3' => 'Can my town join in 2027?', 'a3' => 'Yes: write to us before March. We are looking for three more municipalities.']],
+        'it' => ['title' => 'Domande', 'excerpt' => 'Quello che comuni e ragazzi ci chiedono più spesso.', 'extra' => [
+            'q1' => 'Chi può partecipare?', 'a1' => 'Ragazze e ragazzi tra i 16 e i 25 anni che vivono o studiano in uno dei sei comuni.',
+            'q2' => 'Costa qualcosa?', 'a2' => 'No. Materiali, viaggi e pasti durante i cantieri li copre il progetto.',
+            'q3' => 'Il mio comune può entrare nel 2027?', 'a3' => 'Sì: scriveteci entro marzo. Cerchiamo altri tre comuni.']],
+    ]],
+    ['type' => 'block', 'slug' => 'home-logos', 'template' => 'logos', 'menu_order' => 10, 'tr' => [
+        'en' => ['title' => 'Partners'], 'it' => ['title' => 'I partner'],
+    ]],
+    ['type' => 'block', 'slug' => 'home-newsletter', 'template' => 'newsletter', 'menu_order' => 11, 'meta' => ['tone' => 'field2'], 'tr' => [
+        'en' => ['title' => 'One email a month', 'excerpt' => 'News from the labs and the dates of the next events. No spam, unsubscribe anytime.'],
+        'it' => ['title' => 'Una email al mese', 'excerpt' => 'Notizie dai cantieri e le date dei prossimi eventi. Niente spam, ti cancelli quando vuoi.'],
+    ]],
+    ['type' => 'block', 'slug' => 'home-cta', 'template' => 'cta', 'menu_order' => 12,
         'meta' => ['cta_url' => 'contact', 'bg_image' => 'seed-media/fascia-1.webp'], 'tr' => [
         'en' => ['title' => 'Is your town next?', 'excerpt' => 'We are looking for municipalities that want to try the method in 2027.', 'extra' => ['cta_label' => 'Get in touch']],
         'it' => ['title' => 'Il prossimo è il tuo comune?', 'excerpt' => 'Cerchiamo comuni che vogliano provare il metodo nel 2027.', 'extra' => ['cta_label' => 'Scrivici']],
@@ -138,6 +176,7 @@ foreach ($news as [$i, $date, $cat, $ten, $tit, $exen, $exit, $alten, $altit]) {
         'en' => ['title' => $ten, 'excerpt' => $exen, 'image_alt' => $alten, 'slug' => '',
             'body' => $p($exen . ' This is demonstration content: the project and the people are invented, but the format is the one a real project would use.',
                 'Each news item has a date, a category, a photo with its description and a body text that can contain headings, lists, links and quotes.')
+                . ($i === 1 ? '[gallery:seed-media/news-2.webp=A trainer in a classroom|seed-media/news-4.webp=An audience listening|seed-media/news-3.webp=A young woman at a laptop]' : '')
                 . '<h2>What happens next</h2>' . $p('The next step is planned for the coming weeks. Follow the news section or write to us to know more.')],
         'it' => ['title' => $tit, 'excerpt' => $exit, 'image_alt' => $altit,
             'body' => $p($exit . ' Questo è un contenuto dimostrativo: progetto e persone sono inventati, ma la forma è quella di un progetto vero.',
@@ -158,6 +197,21 @@ foreach ($stories as [$i, $name, $country, $ren, $rit, $qen, $qit]) {
             'body' => $p("$name took part in the first season of local labs. This is a demonstration story: the person is invented.", 'A story page can hold a longer interview, a short video and the links to share it.')],
         'it' => ['title' => $name, 'excerpt' => $qit, 'image_alt' => "Ritratto di $name", 'extra' => ['role' => $rit],
             'body' => $p("$name ha partecipato alla prima stagione dei cantieri. Questa è una storia dimostrativa: la persona è inventata.", 'Una storia può contenere un’intervista più lunga, un breve video e i link per condividerla.')],
+    ]];
+}
+
+// ---------- eventi (date relative ad oggi, così ce ne sono sempre di prossimi e di passati) ----------
+$events = [
+    ['open-day', '+12 days', '', '10:00-13:00', 'Rome, Piazza dei Ragazzi', 'Roma, Piazza dei Ragazzi', 'Open day of the Rome lab', 'Giornata aperta del cantiere di Roma', 'Come and see the yard, meet the group, try the new benches.', 'Venite a vedere il cortile, conoscere il gruppo, provare le nuove panchine.', 'news-4'],
+    ['toolkit-webinar', '+30 days', '', '17:00', 'Online', 'Online', 'Webinar: the listening walks toolkit', 'Webinar: il toolkit delle passeggiate di ascolto', 'One hour to present the field guide to youth workers and councils.', 'Un’ora per presentare la guida pratica a educatori e comuni.', 'news-3'],
+    ['partner-meeting', '+55 days', '+56 days', '', 'Ljubljana', 'Lubiana', 'Partner meeting in Ljubljana', 'Incontro dei partner a Lubiana', 'Two days to review the first season and plan the next towns.', 'Due giorni per fare il punto sulla prima stagione e scegliere i prossimi comuni.', 'news-1'],
+    ['kick-off-event', '-40 days', '-39 days', '', 'Rome', 'Roma', 'Kick-off meeting', 'Riunione di avvio', 'The five partners met for the first time.', 'I cinque partner si sono incontrati per la prima volta.', 'news-2'],
+];
+foreach ($events as [$slug, $start, $end, $time, $pen, $pit, $ten, $tit, $exen, $exit, $img]) {
+    $entries[] = ['type' => 'event', 'slug' => $slug, 'pub_date' => date('Y-m-d', strtotime('-60 days')), 'image' => "seed-media/$img.webp",
+        'meta' => ['start' => date('Y-m-d', strtotime($start)), 'end' => $end ? date('Y-m-d', strtotime($end)) : '', 'time' => $time, 'url' => 'https://example.org/'], 'tr' => [
+        'en' => ['title' => $ten, 'excerpt' => $exen, 'extra' => ['place' => $pen], 'body' => $p('This is a demonstration event. The page shows date, place, a link to register and the file to add it to your calendar.')],
+        'it' => ['title' => $tit, 'excerpt' => $exit, 'extra' => ['place' => $pit], 'body' => $p('Questo è un evento dimostrativo. La pagina mostra data, luogo, un link per iscriversi e il file per aggiungerlo al calendario.')],
     ]];
 }
 

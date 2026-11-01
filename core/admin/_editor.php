@@ -12,6 +12,7 @@
     <button type="button" data-cmd="link" title="Link">Link</button>
     <button type="button" data-cmd="unlink" title="Togli link">Togli link</button>
     <button type="button" data-cmd="image" title="Immagine dalla libreria">Immagine</button>
+    <button type="button" data-cmd="gallery" title="Galleria: più immagini dalla libreria, si ingrandiscono al clic">Galleria</button>
     <button type="button" data-cmd="doc" title="Documento (si aggiorna da solo in tutte le lingue)">Documento</button>
     <button type="button" data-cmd="video" title="Video YouTube">Video</button>
     <button type="button" data-cmd="html" class="editor__html" aria-pressed="false">HTML</button>

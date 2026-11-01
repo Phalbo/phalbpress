@@ -10,6 +10,13 @@
         <input type="email" name="mail_from" value="<?= e($c['mail_from'] ?? '') ?>"></label>
       <label class="field">Social <span class="muted">(uno per riga: Nome | https://…)</span>
         <textarea name="social" rows="5" placeholder="Instagram | https://www.instagram.com/progetto&#10;LinkedIn | https://www.linkedin.com/company/progetto"><?= e($social) ?></textarea></label>
+      <?php $sp = (string)($c['social_place'] ?? 'footer'); ?>
+      <label class="field">Icone dei social <span class="muted">(con ogni tema)</span>
+        <select name="social_place">
+          <option value="footer"<?= $sp === 'footer' ? ' selected' : '' ?>>Nel footer</option>
+          <option value="header"<?= $sp === 'header' ? ' selected' : '' ?>>Nella testata</option>
+          <option value="both"<?= $sp === 'both' ? ' selected' : '' ?>>In testata e nel footer</option>
+        </select></label>
       <label class="field">Finanziatore <span class="muted">(es. European Union: va nei dati strutturati per i motori di ricerca)</span>
         <input type="text" name="funder" value="<?= e($c['funder'] ?? '') ?>"></label>
       <?php $o = (array)($c['owner'] ?? []); $person = ($o['type'] ?? '') === 'person'; ?>

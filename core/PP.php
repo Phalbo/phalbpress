@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.12.0';
+    public const VERSION = '1.13.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -361,6 +361,18 @@ final class PP
         $html = preg_replace_callback('~(?:<p>\s*)?\[docs:([a-z0-9_-]+)\](?:\s*</p>)?~', fn($m) => self::partial('doc-list', ['docs' => Content::docs($lang, $m[1])]), $html);
         $html = preg_replace_callback('~(?:<p>\s*)?\[video:([A-Za-z0-9_-]{6,20})\](?:\s*</p>)?~', fn($m) => self::partial('video', ['id' => $m[1], 'service' => 'youtube']), $html);
         $html = preg_replace_callback('~(?:<p>\s*)?\[vimeo:(\d{5,12})\](?:\s*</p>)?~', fn($m) => self::partial('video', ['id' => $m[1], 'service' => 'vimeo']), $html);
+        // galleria nel testo: [gallery:uploads/media/a.webp=descrizione|uploads/media/b.webp=descrizione]
+        $html = preg_replace_callback('~(?:<p>\s*)?\[gallery:([^\]]+)\](?:\s*</p>)?~', function ($m) {
+            $items = [];
+            foreach (explode('|', html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')) as $part) {
+                [$path, $alt] = array_pad(explode('=', $part, 2), 2, '');
+                $path = trim($path);
+                // seed-media/… = foto dimostrative del motore (contenuti di esempio e anteprima dei temi)
+                if (str_starts_with($path, 'seed-media/')) $path = 'pp-assets/demo/media/' . substr($path, 11);
+                if (preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif)$~i', $path) && is_file(PP_ROOT . '/' . $path)) $items[] = [$path, trim($alt)];
+            }
+            return $items ? self::partial('gallery', ['items' => $items]) : '';
+        }, $html);
         return Hooks::filter('body', $html);
     }
 
@@ -416,6 +428,22 @@ function img(string $rel, string $alt = '', string $sizes = '100vw', string $cla
         . ($w ? ' width="' . $w . '" height="' . $h . '"' : '')
         . ($class ? ' class="' . e($class) . '"' : '')
         . ($lazy ? ' loading="lazy" decoding="async"' : '') . '>';
+}
+
+/** Classe del punto focale di una foto (campo "image_focus" di pagine, news, storie, eventi): dove sta il soggetto quando la foto viene tagliata. */
+function focus_class(?array $e): string
+{
+    $f = (string)($e['meta_arr']['image_focus'] ?? '');
+    return in_array($f, ['top', 'bottom', 'left', 'right'], true) ? ' pp-focus--' . $f : '';
+}
+
+/** Pagina madre di una pagina: campo "parent" (id) o, nei contenuti iniziali, "parent_slug". */
+function page_parent(?array $e): int
+{
+    $m = $e['meta_arr'] ?? [];
+    if (!empty($m['parent'])) return (int)$m['parent'];
+    if (!empty($m['parent_slug'])) return (int)DB::val("SELECT id FROM pp_entries WHERE type = 'page' AND slug = ?", [(string)$m['parent_slug']]);
+    return 0;
 }
 
 function fmt_date(string $d, ?string $lang = null): string

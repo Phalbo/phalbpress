@@ -15,7 +15,9 @@ final class Blocks
                 'fields' => ['line2' => $tr('Frase grande, seconda riga', 'text', 'facoltativo'), 'cta_label' => $tr('Pulsante: testo'),
                     'cta_url' => ['label' => 'Pulsante: dove porta', 'hint' => 'slug di una pagina (es. leadership-labs), una sezione (news) o https://…'],
                     'switch' => ['label' => 'Mostra la frase in tutte le lingue, con i pulsanti per cambiarla', 'type' => 'checkbox'],
-                    'switch_label' => $tr('Etichetta dei pulsanti lingua', 'text', 'es. “Dillo in”')]],
+                    'switch_label' => $tr('Etichetta dei pulsanti lingua', 'text', 'es. “Dillo in”'),
+                    'slides' => ['label' => 'Altre foto (scorrono)', 'type' => 'textarea', 'hint' => 'facoltativo: un percorso per riga, da “Copia percorso” in Immagini e file. La prima resta la Foto qui sopra'],
+                    'slides_alts' => $tr('Descrizioni delle altre foto', 'textarea', 'una per riga, nello stesso ordine')]],
             'statement' => ['label' => 'Dichiarazione', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Testo'],
                 'fields' => ['fact' => $tr('Dato o frase a lato', 'textarea')]],
             'steps' => ['label' => 'Passi', 'uses' => ['title' => 'Titolo (facoltativo, per i lettori di schermo)'],
@@ -39,7 +41,18 @@ final class Blocks
                 'fields' => ['cta_label' => $tr('Pulsante: testo'), 'cta_url' => ['label' => 'Pulsante: dove porta', 'hint' => 'slug di una pagina, una sezione o https://…']]],
             'video' => ['label' => 'Video', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Testo'],
                 'fields' => ['video' => ['label' => 'Video YouTube', 'hint' => 'ID o link']]],
+            'logos' => ['label' => 'Loghi dei partner', 'uses' => ['title' => 'Titolo (facoltativo)'],
+                'fields' => ['motion' => ['label' => 'Movimento', 'type' => 'select', 'options' => ['' => 'Scorrono piano', 'still' => 'Fermi in griglia']]]],
+            'quote' => ['label' => 'Citazione', 'uses' => ['title' => 'Citazione', 'excerpt' => 'Chi lo dice', 'image' => 'Foto della persona (facoltativa)'],
+                'fields' => ['role' => $tr('Ruolo o organizzazione', 'text', 'facoltativo')]],
+            'faq' => ['label' => 'Domande frequenti', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Introduzione'],
+                'fields' => ['q1' => $tr('Domanda 1'), 'a1' => $tr('Risposta 1', 'textarea'), 'q2' => $tr('Domanda 2'), 'a2' => $tr('Risposta 2', 'textarea'),
+                    'q3' => $tr('Domanda 3'), 'a3' => $tr('Risposta 3', 'textarea'), 'q4' => $tr('Domanda 4'), 'a4' => $tr('Risposta 4', 'textarea'),
+                    'q5' => $tr('Domanda 5'), 'a5' => $tr('Risposta 5', 'textarea'), 'q6' => $tr('Domanda 6'), 'a6' => $tr('Risposta 6', 'textarea')]],
+            'newsletter' => ['label' => 'Iscrizione alla newsletter', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Testo']],
         ];
+        if (isset(PP::$config['types']['event'])) $k['events'] = ['label' => 'Prossimi eventi', 'uses' => ['title' => 'Titolo'],
+            'fields' => ['limit' => ['label' => 'Quanti', 'type' => 'number'], 'more_label' => $tr('Link “tutti gli eventi”: testo', 'text', 'facoltativo')]];
         return Hooks::filter('block_kinds', $k);
     }
 

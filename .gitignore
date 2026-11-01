@@ -4,6 +4,8 @@
 /data/
 /dist/
 /search/
+/feed/
+/ics/
 # cartelle statiche delle lingue (es. en/, it/, sr-Latn/): elencate una per una, mai con un'espressione che prenda anche pp-*
 /en/
 /it/

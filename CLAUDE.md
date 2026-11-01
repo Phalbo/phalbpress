@@ -28,7 +28,8 @@ core/Auth.php        sessione, login, TOTP, ruoli (can/canLang/canEdit), CSRF, l
 core/Media.php       upload (nomi puliti, WebP, -960, SVG ripulito, PDF), replace() stesso percorso, usage() dove è usato
 core/Scheduler.php   contenuti programmati
 core/Translator.php  traduzione automatica (Anthropic / DeepL), anche i campi personalizzati traducibili
-core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms, backup, activity, themes, updater, settings
+core/modules/        identity, seo, ai, legal, static, menus, redirects, search, forms (+ newsletter), backup, activity, themes, updater, settings,
+                     events (tipo `event`, sezione eventi, file .ics; `'events' => false` nel config lo spegne), feed (RSS `/feed/{lang}.xml`)
                      (settings: contact_email, mail_from, social, funder, owner, translation modificabili in gestione, applicati sopra il config in PP::boot;
                      owner = organizzazione o persona per i dati strutturati, `Seo::owner()`: Person + ProfilePage per i siti personali)
 pp-themes/_base/     struttura comune a tutti i temi: templates/, partials/ (+ blocks/), assets/base.css, base.js, strings.php
@@ -55,9 +56,18 @@ admin (tutto) · editor (contenuti, pubblicazione, menu, testi, documenti, redir
 translator (solo le lingue in `users.langs`). Controlli: `Auth::can('admin'|'site'|'publish'|'content'|'translate')`, `Auth::canLang()`, `Auth::canEdit($row)`.
 Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` = `admin`).
 
+## Funzioni comuni (in _base, valgono con ogni tema)
+- **Galleria nel testo**: shortcode `[gallery:percorso=alt|percorso=alt]` (pulsante "Galleria" nell'editor) → `partials/gallery.php`.
+- **Lightbox**: `<dialog class="pp-lightbox">` in base.js per gallerie, `[data-lightbox]` e immagini della `.prose`; frecce, tastiera, swipe, testi da `data-ui` del body.
+- **Punto focale**: meta `image_focus` (top|bottom|left|right) → `focus_class($e)` = classe `pp-focus--X` su card, intestazione, mosaico.
+- **Pagine madri**: meta `parent` (id) o `parent_slug` nel seed → `page_parent($e)`; percorso sopra il titolo ed elenco `.children` (parte `list`) nella madre.
+- **Social**: `partials/social.php` (icone SVG dal nome o dal dominio); `social_place` = footer|header|both nelle Impostazioni.
+- **Newsletter**: `Forms::render('newsletter')` (email + consenso con data), esportazione CSV in Richieste.
+
 ## Rotte pubbliche
 `/{lang}/` home a blocchi · `/{lang}/{section news}/[slug]` · stories · results · partners · `/{lang}/{slug pagina}/` · legali · ricerca (`/{lang}/cerca/`…)
-· `/search/{lang}.json` · `/download/{id}/{lang}` · `POST /form/{nome}` · sitemap, robots, llms · `/{admin_slug}/…`.
+· `/{lang}/{section events}/[slug]` · `/ics/{lang}/{id}.ics` · `/feed/{lang}.xml`
+· `/search/{lang}.json` · `/download/{id}/{lang}` · `POST /form/{nome}` (anche `newsletter`) · sitemap, robots, llms · `/{admin_slug}/…`.
 `config['sections']`: stringa o array per lingua. `PP::items()` = tutte le pagine con il percorso per lingua (sitemap, statico, llms); i moduli aggiungono col filtro `paths`.
 404 → `Redirects::find()` prima di mostrare la pagina d'errore (funziona anche col sito statico).
 
@@ -68,7 +78,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Il tema usa solo le variabili dell'identità** per colori e font: `--bg --ink --surface --muted --accent(-ink) --field-1(-ink) --field-2(-ink) --black(-ink) --hero-1 --hero-2 --font --font-display --radius`.
 - `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`),
   `hero_on` (`accent` | `ground`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
-- Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, steps, collection, figures, latest, text, gallery, cta, video), ordine = menu_order.
+- Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, steps, collection, figures, latest, text, gallery, cta, video, logos, quote, faq, newsletter, events), ordine = menu_order.
+  L'apertura può essere uno slideshow (campo `slides`: percorsi uno per riga, `slides_alts` tradotto; `[data-slides]` in base.js, pausa, niente giro con meno movimento).
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
 - **Aspetto delle fasce** (`Blocks::look()`: tone con `custom`, bg_color, bg_image, bg_focus, bg_overlay, parallax, spacing, width; in `meta`, non tradotti):
   si applicano in `Blocks::decorate()` al primo `<section>` del blocco, quindi valgono con ogni tema senza toccarne i partial. Un fondo scuro (colore libero scuro

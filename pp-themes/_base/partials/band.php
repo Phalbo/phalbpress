@@ -1,7 +1,7 @@
 <?php
 /* Intestazione delle pagine interne.
    $title, $lead, $tone (paper|accent|field1|field2|dark), $lg (attributo lang), $meta (HTML), $kicker, $image, $imageAlt,
-   $layout (left|center|split|cover|minimal: Layouts::get), $crumb ([[etichetta, link], …] percorso sopra il titolo).
+   $layout (left|center|split|cover|minimal: Layouts::get), $crumb ([[etichetta, link], …] percorso sopra il titolo), $focus (classe del punto focale).
    La struttura è piatta (percorso, etichetta, titolo, frase, dati, foto): ogni disposizione la sistema con la griglia del CSS. */
 $layout = $layout ?? 'left';
 $tone = $tone ?? 'field1';
@@ -21,6 +21,6 @@ $cls = 'band ' . (class_exists('Blocks') ? Blocks::toneClass($tone) : 'chapter c
   <h1 class="band__title"<?= $lg ?? '' ?>><?= e($title) ?></h1>
   <?php if (!empty($lead)): ?><p class="band__lead"<?= $lg ?? '' ?>><?= e($lead) ?></p><?php endif; ?>
   <?php if (!empty($meta)): ?><p class="band__meta"><?= $meta ?></p><?php endif; ?>
-  <?php if ($hasImg): ?><figure class="band__img"><?= img($image, $imageAlt ?? '', $layout === 'split' ? '(min-width: 961px) 50vw, 100vw' : '100vw', '', false) ?></figure>
+  <?php if ($hasImg): ?><figure class="band__img<?= e($focus ?? '') ?>"><?= img($image, $imageAlt ?? '', $layout === 'split' ? '(min-width: 961px) 50vw, 100vw' : '100vw', '', false) ?></figure>
   <?php elseif (in_array($layout, ['split', 'cover'], true)): ?><span class="band__deco" aria-hidden="true"><i></i><i></i><i></i></span><?php endif; ?>
 </header>

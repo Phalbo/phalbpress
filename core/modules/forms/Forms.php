@@ -19,6 +19,14 @@ final class Forms
             'form_required' => ['group' => $g, 'text' => ['en' => 'required', 'it' => 'obbligatorio']],
             'form_ok' => ['group' => $g, 'text' => ['en' => 'Thank you, your message has been sent. We will answer as soon as we can.', 'it' => 'Grazie, il messaggio è stato inviato. Ti risponderemo appena possibile.']],
             'form_error' => ['group' => $g, 'note' => '{email} = indirizzo di contatto', 'text' => ['en' => 'The message could not be sent. Please check the fields, or write to {email}.', 'it' => 'Non è stato possibile inviare il messaggio. Controlla i campi, oppure scrivi a {email}.']],
+            'nl_title' => ['group' => 'Newsletter', 'text' => ['en' => 'Stay in the loop', 'it' => 'Resta aggiornato']],
+            'nl_email' => ['group' => 'Newsletter', 'text' => ['en' => 'Your email', 'it' => 'La tua email']],
+            'nl_send' => ['group' => 'Newsletter', 'text' => ['en' => 'Subscribe', 'it' => 'Iscriviti']],
+            'nl_privacy' => ['group' => 'Newsletter', 'html' => true, 'note' => '{privacy} = indirizzo della privacy policy', 'text' => [
+                'en' => 'I agree to receive the project newsletter and have read the <a href="{privacy}">privacy policy</a>. I can unsubscribe at any time.',
+                'it' => 'Accetto di ricevere la newsletter del progetto e ho letto la <a href="{privacy}">privacy policy</a>. Posso cancellarmi quando voglio.']],
+            'nl_ok' => ['group' => 'Newsletter', 'text' => ['en' => 'Thank you, you are subscribed.', 'it' => 'Grazie, sei iscritto.']],
+            'nl_error' => ['group' => 'Newsletter', 'text' => ['en' => 'The subscription did not work. Please check the email and the consent box.', 'it' => 'L’iscrizione non è riuscita. Controlla l’email e la casella del consenso.']],
             'form_nojs' => ['group' => $g, 'note' => '{email} = indirizzo di contatto', 'text' => ['en' => 'This form needs JavaScript to protect against spam. You can also write to {email}.', 'it' => 'Questo modulo richiede JavaScript per difendersi dallo spam. Puoi anche scrivere a {email}.']],
         ];
     }
@@ -37,7 +45,7 @@ final class Forms
 
     public static function render(string $form): string
     {
-        $file = PP::themeFile('partials/form.php') ?: __DIR__ . '/form.php';
+        $file = $form === 'newsletter' ? (PP::themeFile('partials/form-newsletter.php') ?: __DIR__ . '/form-newsletter.php') : (PP::themeFile('partials/form.php') ?: __DIR__ . '/form.php');
         $privacy = class_exists('Legal') ? PP::link(Legal::slug('privacy')) : '#';
         $email = self::email();
         $action = PP::url('form/' . $form);
@@ -69,6 +77,19 @@ final class Forms
         $elapsed = (int)($p['pp_e'] ?? 0);
         if (!empty($p['website']) || !hash_equals($key, (string)($p['pp_k'] ?? '')) || $elapsed < self::MIN_SECONDS) self::back(false);
 
+        if ($form === 'newsletter') {
+            $email = trim((string)($p['email'] ?? ''));
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($p['privacy'])) self::back(false);
+            $recent = (int)DB::val("SELECT COUNT(*) FROM pp_form_entries WHERE data LIKE ? AND at > ?", ['%"_ip":"' . $ipHash . '"%', date('Y-m-d H:i:s', time() - 3600)]);
+            if ($recent >= self::MAX_PER_HOUR) self::back(false);
+            // un indirizzo una volta sola: se c'è già, si risponde comunque "iscritto"
+            if (!DB::val("SELECT id FROM pp_form_entries WHERE form = 'newsletter' AND data LIKE ?", ['%"email":' . json_encode(strtolower($email)) . '%'])) {
+                $data = Hooks::filter('form_data', ['name' => '', 'email' => strtolower($email), 'org' => '', 'message' => 'newsletter', 'consent' => Content::now(),
+                    'page' => parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_PATH) ?: '', '_ip' => $ipHash], $form, $p);
+                DB::insert('pp_form_entries', ['form' => 'newsletter', 'lang' => $lang, 'data' => json_encode($data, JSON_UNESCAPED_UNICODE), 'at' => Content::now(), 'is_read' => 0]);
+            }
+            self::back(true);
+        }
         $name = mb_substr(trim(strip_tags((string)($p['name'] ?? ''))), 0, 120);
         $email = trim((string)($p['email'] ?? ''));
         $org = mb_substr(trim(strip_tags((string)($p['org'] ?? ''))), 0, 160);
@@ -114,6 +135,16 @@ final class Forms
         $rows = DB::all('SELECT * FROM pp_form_entries ORDER BY id DESC LIMIT 500');
         foreach ($rows as &$r) $r['d'] = json_decode((string)$r['data'], true) ?: [];
         unset($r);
+        if ($id === 'newsletter') {
+            // solo gli iscritti alla newsletter: email, lingua, data del consenso (da importare in Brevo, Mailchimp…)
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="newsletter-' . date('Y-m-d') . '.csv"');
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF");
+            fputcsv($out, ['email', 'lingua', 'consenso'], ';');
+            foreach ($rows as $r) if ($r['form'] === 'newsletter') fputcsv($out, [$r['d']['email'] ?? '', $r['lang'], $r['d']['consent'] ?? $r['at']], ';');
+            exit;
+        }
         if ($id === 'csv') {
             header('Content-Type: text/csv; charset=utf-8');
             header('Content-Disposition: attachment; filename="richieste-' . date('Y-m-d') . '.csv"');

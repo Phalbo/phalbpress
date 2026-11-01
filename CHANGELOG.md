@@ -2,6 +2,19 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.13.0
+- **Gallerie in news e pagine**: pulsante "Galleria" nell'editor, si scelgono le foto e il testo alternativo di ognuna.
+- **Foto ingrandite (lightbox)**: un clic su una foto della galleria o del testo la apre grande, con frecce, tastiera e scorrimento col dito.
+- **Apertura a scorrimento**: nell'apertura della home si possono mettere più foto, che si alternano ogni 6 secondi (pulsante pausa; ferme con "meno movimento").
+- **Punto focale delle foto**: in pagine, news, storie ed eventi si sceglie dove sta il soggetto (in alto, in basso, a sinistra, a destra), così resta visibile quando la foto viene tagliata.
+- **Pagine madri**: una pagina può stare sotto un'altra (es. Progetti → Progetto 1). La madre mostra l'elenco delle figlie, le figlie il percorso sopra il titolo.
+- **Eventi**: nuovo tipo con data di inizio e fine, ora, luogo e link di iscrizione; pagina degli eventi (prossimi e passati), pagina del singolo evento con "Aggiungi al calendario" (.ics), blocco "Eventi" per la home. Chi non li vuole mette `'events' => false` nel config.
+- **Newsletter**: blocco per la home con email e consenso; le iscrizioni stanno in Richieste e si scaricano in CSV.
+- **RSS**: un feed delle news per ogni lingua (`/feed/it.xml`…), segnalato nelle pagine.
+- **Nuovi blocchi della home**: loghi (fermi o a scorrimento lento), citazione, domande frequenti.
+- **Icone social** nella testata, nel piè di pagina o in tutti e due (Impostazioni).
+- Tutto vale con ogni tema e con ogni disposizione, anche nel sito statico.
+
 ## 1.12.0
 - **Modelli di testata**, uguali per tutti i temi: *Barra* (logo a sinistra, menu a destra), *Logo a destra*, *Centrata* (logo al centro e menu sotto), *Menu a pulsanti* (fascia colorata con le voci come pulsanti), *Essenziale* (solo logo e Menu, le voci si aprono a tutto schermo, grandi). Ogni tema parte dal suo; si cambia per tutto il sito cliccando la testata in **Modifica visuale**. Su telefono tutti diventano logo, ricerca, lingue e Menu.
 - **Pagine interne ridisegnate in tutti i temi**:

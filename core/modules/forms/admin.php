@@ -1,7 +1,7 @@
 <header class="head"><h1>Richieste</h1>
-  <div class="head__actions"><?php if ($rows): ?><a class="btn" href="<?= e(Admin::u('forms/csv')) ?>">Scarica CSV</a><?php endif; ?></div></header>
+  <div class="head__actions"><?php if ($rows): ?><a class="btn" href="<?= e(Admin::u('forms/csv')) ?>">Scarica CSV</a> <a class="btn" href="<?= e(Admin::u('forms/newsletter')) ?>">Iscritti alla newsletter (CSV)</a><?php endif; ?></div></header>
 <section class="panel">
-  <p class="hint">Messaggi arrivati dal modulo di contatto (<code>[form:contact]</code> in una pagina). Arrivano anche per email a <strong><?= e($to ?: 'nessuno: imposta contact_email') ?></strong>.
+  <p class="hint">Messaggi arrivati dal modulo di contatto (<code>[form:contact]</code> in una pagina) e iscrizioni alla newsletter (blocco della home o <code>[form:newsletter]</code>). Arrivano anche per email a <strong><?= e($to ?: 'nessuno: imposta contact_email') ?></strong>.
     Per la privacy conviene non tenerli più di un anno.</p>
   <?php if (Auth::isAdmin()): ?>
     <form method="post" class="row"><?= Admin::csrfField() ?>

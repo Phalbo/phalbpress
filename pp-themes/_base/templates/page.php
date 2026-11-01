@@ -12,9 +12,24 @@ $body = preg_replace_callback('~<h2>(.*?)</h2>~s', function ($m) use (&$toc) {
 $head = Layouts::get('page', 'head', $page);
 $lay = Layouts::get('page', 'body', $page);
 $hasToc = count($toc) > 1;
+// pagine madri: percorso Home / Madre / Pagina, ed elenco delle figlie sotto il testo
+$crumb = [[t('home'), link_to('')]];
+$seen = [(int)$page['id']];
+$pid = page_parent($page);
+$chain = [];
+while ($pid && !in_array($pid, $seen, true) && count($chain) < 4) {
+    $seen[] = $pid;
+    $par = Content::byId($pid, lang());
+    if (!$par || ($par['type'] ?? '') !== 'page') break;
+    array_unshift($chain, [$par['title'], PP::entryUrl($par)]);
+    $pid = page_parent($par);
+}
+$crumb = array_merge($crumb, $chain);
+$children = array_values(array_filter(Content::entries('page', lang(), 0, 'menu_order ASC, id ASC'), fn($c) => page_parent($c) === (int)$page['id']));
+$listLay = Layouts::get('page', 'list', $page);
 ?>
 <?= PP::partial('band', ['title' => $page['title'], 'lead' => $page['excerpt'], 'tone' => 'field1', 'lg' => $lg, 'image' => $page['image'] ?? '', 'imageAlt' => $page['image_alt'] ?? '',
-    'layout' => $head, 'crumb' => [[t('home'), link_to('')]]]) ?>
+    'layout' => $head, 'focus' => focus_class($page), 'crumb' => $crumb]) ?>
 <article class="article chapter chapter--paper body--<?= e($lay) ?><?= $hasToc && $lay === 'aside' ? ' article--toc' : '' ?>" data-ink="dark" data-pp-part="body">
   <?= PP::partial('fallback', ['item' => $page]) ?>
   <?php if ($hasToc && $lay === 'read'): ?>
@@ -36,3 +51,9 @@ $hasToc = count($toc) > 1;
     </aside>
   <?php endif; ?>
 </article>
+<?php if ($children): $ct = trim(t('children_title')); ?>
+<section class="children newslist chapter chapter--paper list--<?= e($listLay) ?>" data-ink="dark" aria-label="<?= e($ct !== '' && $ct !== 'children_title' ? $ct : $page['title']) ?>" data-pp-part="list">
+  <?php if ($ct !== '' && $ct !== 'children_title'): ?><h2 class="children__head reveal"><?= e($ct) ?></h2><?php endif; ?>
+  <div class="cards"><?php foreach ($children as $c) echo PP::partial('card', ['e' => $c]); ?></div>
+</section>
+<?php endif; ?>

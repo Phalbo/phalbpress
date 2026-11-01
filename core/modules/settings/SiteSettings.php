@@ -2,7 +2,7 @@
 final class SiteSettings
 {
     /** Chiavi della configurazione che si possono cambiare dalla gestione (salvate in pp_settings, chiave "site_config"). */
-    public const KEYS = ['contact_email', 'mail_from', 'social', 'funder', 'owner', 'translation'];
+    public const KEYS = ['contact_email', 'mail_from', 'social', 'social_place', 'funder', 'owner', 'translation'];
 
     /** Le impostazioni salvate vincono su site/config.php. Si chiama dopo la connessione al database. */
     public static function apply(): void
@@ -50,6 +50,7 @@ final class SiteSettings
                     'contact_email' => $email('contact_email'),
                     'mail_from' => $email('mail_from'),
                     'social' => $social,
+                    'social_place' => in_array(Admin::post('social_place'), ['header', 'footer', 'both'], true) ? Admin::post('social_place') : 'footer',
                     'funder' => trim(strip_tags((string)Admin::post('funder'))),
                     'owner' => self::ownerFromPost(),
                     // la chiave non si rimostra: campo vuoto = resta quella di prima

@@ -123,6 +123,16 @@
       } else if (cmd === 'image') {
         const p = await pickImage();
         if (p) { const alt = prompt('Testo alternativo (cosa mostra l’immagine)') || ''; insertBlock(`<figure><img src="${ROOT}/${p}" alt="${alt.replace(/"/g, '&quot;')}"></figure><p></p>`); }
+      } else if (cmd === 'gallery') {
+        // si scelgono le immagini una alla volta; Annulla per finire
+        const parts = [];
+        for (;;) {
+          const p = await pickImage();
+          if (!p) break;
+          const alt = (prompt('Descrizione di questa immagine (cosa mostra). Poi scegli la prossima, o Annulla per finire.') || '').replace(/[|=\]]/g, ' ').trim();
+          parts.push(alt ? `${p}=${alt}` : p);
+        }
+        if (parts.length) insertBlock(`<p>[gallery:${parts.join('|')}]</p><p></p>`);
       } else if (cmd === 'doc') {
         const id = await pickDoc();
         if (id) insertBlock(`<p>[doc:${id}]</p><p></p>`);

@@ -11,7 +11,7 @@ $others = array_values(array_filter(Content::entries('news', lang(), 4, 'pub_dat
 $others = array_slice($others, 0, 3);
 ?>
 <?= PP::partial('band', ['title' => $item['title'], 'lead' => $item['excerpt'], 'tone' => 'field2', 'lg' => $lg, 'meta' => $meta, 'layout' => $head,
-    'image' => $imgInHead ? $item['image'] : '', 'imageAlt' => $item['image_alt'],
+    'image' => $imgInHead ? $item['image'] : '', 'imageAlt' => $item['image_alt'], 'focus' => focus_class($item),
     'crumb' => [[t('home'), link_to('')], [t('news_title'), section_link('news')]]]) ?>
 <article class="article chapter chapter--paper body--<?= e($body) ?>" data-ink="dark" data-pp-part="body">
   <?= PP::partial('fallback', ['item' => $item]) ?>
