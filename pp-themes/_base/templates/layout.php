@@ -20,6 +20,7 @@ $themeJs = PP::themeFile('assets/theme.js');
 $siteCss = is_file(PP_SITE . '/theme/assets/site.css');
 $claim = trim(t('claim'));
 $themeBody = (string)(PP::themes()[$theme]['body_class'] ?? '');   // es. "photo-hero": il tema mostra la foto dell'apertura
+$themeMotion = PP::themes()[$theme]['motion'] ?? [];                // movimento del tema (base.js), false = niente
 ?>
 <!doctype html>
 <html lang="<?= e(I18n::hreflang($L)) ?>" class="no-js">
@@ -38,7 +39,7 @@ $themeBody = (string)(PP::themes()[$theme]['body_class'] ?? '');   // es. "photo
 <script src="<?= e(PP::url('pp-themes/_base/assets/base.js')) ?>?v=<?= e(substr((string)filemtime(PP_ROOT . '/pp-themes/_base/assets/base.js'), -6)) ?>" defer></script>
 <?php if ($themeJs): ?><script src="<?= e(asset('theme.js')) ?>" defer></script><?php endif; ?>
 </head>
-<body class="theme-<?= e($theme) ?><?= $themeBody ? ' ' . e($themeBody) : '' ?> route-<?= e($r['name']) ?><?= !empty($bodyClass) ? ' ' . e($bodyClass) : '' ?>">
+<body class="theme-<?= e($theme) ?><?= $themeBody ? ' ' . e($themeBody) : '' ?> route-<?= e($r['name']) ?><?= !empty($bodyClass) ? ' ' . e($bodyClass) : '' ?>" data-motion="<?= e(json_encode($themeMotion, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)) ?>">
 <a class="skip" href="#content"><?= e(t('skip')) ?></a>
 
 <header class="site-head" data-head>

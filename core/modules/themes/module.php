@@ -7,6 +7,7 @@
 require_once __DIR__ . '/Blocks.php';
 require_once __DIR__ . '/Themes.php';
 require_once __DIR__ . '/Visual.php';
+require_once __DIR__ . '/Layouts.php';
 require_once __DIR__ . '/Demo.php';
 
 return [
@@ -16,7 +17,7 @@ return [
     'boot' => function () {
         // testi comuni a tutti i temi (pulsanti, etichette): il sito può riscriverli in site/strings.php
         Hooks::on('strings', fn($d) => $d + (require PP_ROOT . '/pp-themes/_base/strings.php'), 5);
-        Hooks::on('fields', fn($f, $type, $row = null) => $type === 'block' ? Blocks::fields((string)($row['template'] ?? 'text')) : $f);
+        Hooks::on('fields', fn($f, $type, $row = null) => $type === 'block' ? Blocks::fields((string)($row['template'] ?? 'text')) : $f + Layouts::fields((string)$type));
         Hooks::on('admin.pages', fn($p) => $p + [
             'themes' => ['label' => 'Temi', 'group' => 'Sito', 'perm' => 'admin', 'handler' => fn($seg) => Themes::admin()],
             'visual' => ['label' => 'Modifica visuale', 'group' => 'Sito', 'perm' => 'publish', 'handler' => fn($seg) => Visual::admin($seg)],

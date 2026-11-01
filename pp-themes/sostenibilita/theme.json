@@ -5,8 +5,89 @@
   "best_for": "progetti su acqua, clima, biodiversità, energia, agricoltura e territori; missioni UE e reti di regioni",
   "direction": "River bank: foto al vivo con bordo inferiore curvo, titolo bianco di misura in basso a sinistra, tessere dei numeri arrotondate, sezioni centrate con titoli da 40 px, curve morbide tra le fasce; movimento lento e fluttuante",
   "hero_on": "ground",
-  "palette": {"ground": "#ffffff", "ink": "#16302f", "accent": "#0d7a74", "field1": "#2b9a8f", "field2": "#e7f4f2", "dark": "#0f2e2c", "hero1": "#16302f", "hero2": "#0d7a74"},
-  "fonts": {"display": "Figtree", "text": "Figtree"},
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#16302f",
+    "accent": "#0d7a74",
+    "field1": "#2b9a8f",
+    "field2": "#e7f4f2",
+    "dark": "#0f2e2c",
+    "hero1": "#16302f",
+    "hero2": "#0d7a74"
+  },
+  "fonts": {
+    "display": "Figtree",
+    "text": "Figtree"
+  },
   "buttons": "pill",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "up",
+        150
+      ],
+      ".figure": [
+        "pop",
+        140
+      ],
+      ".card": [
+        "up",
+        140
+      ],
+      ".partner": [
+        "up",
+        90
+      ],
+      ".story": [
+        "up",
+        0
+      ],
+      ".gallery__item": [
+        "zoom",
+        100
+      ],
+      ".latest__col": [
+        "up",
+        160
+      ],
+      ".collection__item": [
+        "up",
+        80
+      ],
+      ".statement__fact": [
+        "up",
+        0
+      ],
+      ".doctable tbody tr": [
+        "up",
+        50
+      ],
+      ".pp-embed": [
+        "zoom",
+        0
+      ]
+    },
+    "count": 2200
+  },
+  "layouts": {
+    "*": {
+      "head": "cover",
+      "body": "read",
+      "docs": "cards",
+      "partners": "logos",
+      "list": "grid",
+      "stories": "grid"
+    },
+    "news-item": {
+      "head": "split",
+      "body": "read"
+    },
+    "search": {
+      "head": "minimal"
+    },
+    "404": {
+      "head": "cover"
+    }
+  }
 }

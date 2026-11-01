@@ -8,7 +8,7 @@ $body = PP::body($page['body']);
 // se il testo non contiene già un modulo, lo aggiungiamo in fondo
 if (class_exists('Forms') && !str_contains($page['body'], '[form:')) $body .= Forms::render('contact');
 ?>
-<?= PP::partial('band', ['title' => $page['title'], 'lead' => $page['excerpt'], 'tone' => 'accent', 'lg' => $lg]) ?>
+<?= PP::partial('band', ['title' => $page['title'], 'lead' => $page['excerpt'], 'tone' => 'accent', 'lg' => $lg, 'layout' => Layouts::get('contact', 'head', $page), 'image' => $page['image'] ?? '', 'imageAlt' => $page['image_alt'] ?? '', 'crumb' => [[t('home'), link_to('')]]]) ?>
 <section class="contact chapter chapter--paper" data-ink="dark" aria-label="<?= e($page['title']) ?>">
   <?= PP::partial('fallback', ['item' => $page]) ?>
   <div class="contact__main">

@@ -356,11 +356,10 @@ html.js .reveal.is-pending { opacity: 0; transform: translateY(26px); }
 }
 
 /* entrata delle intestazioni interne, senza script */
-.band > *, .storypage__text > *, .storypage__pic { animation: fade 900ms var(--ease-out) both; }
-.band > :nth-child(2), .storypage__text > :nth-child(2) { animation-delay: 90ms; }
-.band > :nth-child(3), .storypage__text > :nth-child(3) { animation-delay: 180ms; }
-.band__title { animation-name: rise; }
-@media (prefers-reduced-motion: reduce) { .band > *, .storypage__text > *, .storypage__pic { animation: none; } }
+.storypage__text > *, .storypage__pic { animation: fade 900ms var(--ease-out) both; }
+.storypage__text > :nth-child(2) { animation-delay: 90ms; }
+.storypage__text > :nth-child(3) { animation-delay: 180ms; }
+@media (prefers-reduced-motion: reduce) { .storypage__text > *, .storypage__pic { animation: none; } }
 @media (max-width: 1000px) { .stories__now { order: 2; } }
 
 /* logo nel menu, pulsante preferenze cookie nel footer, claim */
@@ -446,3 +445,16 @@ html.js .reveal.is-pending { opacity: 0; transform: translateY(26px); }
 .chapter--w-narrow .textblock__body.prose, .chapter--w-narrow .textblock__body { columns: 1; text-align: left; }
 .site-foot { min-height: 70svh; }
 .foot__word { margin-top: 6vh; }
+
+/* disposizioni dell'intestazione (Layouts) sulla griglia a 12 colonne del tema */
+.band__crumb, .band__kicker, .band > .band__img { grid-column: 1 / -1; }
+.band__crumb { order: -1; }
+.head--center > *, .head--minimal > *, .head--cover > * { grid-column: 1 / -1 !important; }
+.head--center .band__lead { max-width: 52ch; }
+.head--minimal .band__title { font-size: clamp(2.6rem, 1rem + 5vw, 6rem); }
+@media (min-width: 961px) {
+  .head--split > :not(.band__img):not(.band__deco) { grid-column: 1 / 8 !important; }
+  .head--split .band__title { font-size: clamp(2.6rem, 1rem + 4.4vw, 6rem); }
+  .head--split > .band__img, .head--split > .band__deco { grid-column: 8 / -1 !important; grid-row: 1 / span 6; }
+}
+.head--cover.band--img { padding-top: clamp(10rem, 22vw, 16rem); }

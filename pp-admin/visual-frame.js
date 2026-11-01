@@ -15,9 +15,21 @@
     if (scroll) el.scrollIntoView({ block: 'center' });
   };
 
+  // pagine interne: intestazione, testo, elenchi si cliccano per scegliere la disposizione
+  const ptype = document.documentElement.dataset.ppType || '';
+  const pentry = Number(document.documentElement.dataset.ppEntry || 0);
+  const selectPart = (part) => {
+    document.querySelectorAll('[data-pp-part].pp-sel').forEach((e) => e.classList.remove('pp-sel'));
+    const el = part && document.querySelector('[data-pp-part="' + part + '"]');
+    if (el) el.classList.add('pp-sel');
+  };
+  if (ptype) document.documentElement.classList.add('pp-editing-page');
+
   document.addEventListener('click', (ev) => {
-    const el = ev.target.closest('[data-pp-block]');
     if (ev.target.closest('a, button, summary, input, select, textarea, label')) ev.preventDefault();
+    const part = ptype && ev.target.closest('[data-pp-part]');
+    if (part) { ev.preventDefault(); selectPart(part.dataset.ppPart); send({ type: 'part', part: part.dataset.ppPart, ptype, entry: pentry }); return; }
+    const el = ev.target.closest('[data-pp-block]');
     if (!el) return;
     ev.preventDefault();
     select(el.dataset.ppBlock, false);
@@ -28,6 +40,7 @@
   window.addEventListener('message', (ev) => {
     if (ev.origin !== origin || !ev.data || !ev.data.pp) return;
     if (ev.data.type === 'select') select(ev.data.id, ev.data.scroll);
+    if (ev.data.type === 'part') selectPart(ev.data.part);
     if (ev.data.type === 'scroll') window.scrollTo(0, ev.data.y || 0);
   });
 

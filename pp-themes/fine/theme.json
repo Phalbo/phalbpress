@@ -5,8 +5,37 @@
   "best_for": "progetti su istruzione, università, orientamento e ricerca, con giovani e scuole come pubblico",
   "direction": "The label on the photo: pannello di colore pieno sopra la foto, grotesk pesante con serif da lettura, arancio solo per agire",
   "hero_on": "accent",
-  "palette": {"ground": "#ffffff", "ink": "#111a2e", "accent": "#c2410c", "field1": "#0b4a9c", "field2": "#e6eefc", "dark": "#0e1a33", "hero1": "#ffffff", "hero2": "#ffd9c2"},
-  "fonts": {"display": "Bricolage Grotesque", "text": "Source Serif 4"},
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#111a2e",
+    "accent": "#c2410c",
+    "field1": "#0b4a9c",
+    "field2": "#e6eefc",
+    "dark": "#0e1a33",
+    "hero1": "#ffffff",
+    "hero2": "#ffd9c2"
+  },
+  "fonts": {
+    "display": "Bricolage Grotesque",
+    "text": "Source Serif 4"
+  },
   "buttons": "square",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "up",
+        110
+      ],
+      ".figure": [
+        "up",
+        110
+      ],
+      ".card": [
+        "right",
+        110
+      ]
+    },
+    "count": 1500
+  }
 }

@@ -50,8 +50,61 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
+  /* ---------- movimento del tema: comparse a cascata, entrata dell'apertura, numeri che contano ----------
+     Il tema lo regola in theme.json ("motion": { "marks": {selettore: [tipo, ritardo tra fratelli in ms]}, "count": ms, "tuck": bool }),
+     che arriva qui come data-motion sul body; "motion": false lo spegne. Con "meno movimento" non si muove niente. */
+  let motion = {};
+  try { motion = JSON.parse(document.body.dataset.motion || '{}'); } catch (e) { motion = {}; }
+  const MARKS = motion === false ? {} : Object.assign({
+    '.step': ['up', 120], '.figure': ['up', 110], '.card': ['up', 110], '.partner': ['up', 70], '.story': ['up', 0],
+    '.gallery__item': ['zoom', 80], '.latest__col': ['up', 140], '.collection__item': ['up', 60], '.statement__fact': ['up', 0],
+    '.doctable tbody tr': ['up', 40], '.pp-embed': ['zoom', 0], '.lead-item': ['up', 0], '.results__head': ['up', 0], '.toc--inline': ['up', 0]
+  }, (motion && motion.marks) || {});
+  Object.entries(MARKS).forEach(([sel, val]) => {
+    if (!val) return;
+    const [kind, step] = val;
+    document.querySelectorAll(sel).forEach((el) => {
+      if (el.closest('.hero') || el.dataset.fx) return;
+      el.dataset.fx = kind;
+      const sibs = el.parentElement ? Array.from(el.parentElement.children).filter((c) => c.matches(sel)) : [el];
+      el.style.setProperty('--fx-d', Math.min(Math.max(0, sibs.indexOf(el)), 6) * (step || 0) + 'ms');
+    });
+  });
+  const go = () => document.body.classList.add('fx-go');
+  if (reduce) go(); else requestAnimationFrame(() => requestAnimationFrame(go));
+  const nums = Array.from(document.querySelectorAll('.figure__num[data-count]'));
+  if (motion !== false && !(motion && motion.count === false) && !reduce && nums.length && 'IntersectionObserver' in window) {
+    const count = (el) => {
+      const target = parseInt(el.dataset.count, 10);
+      const tpl = el.textContent;
+      const digits = tpl.match(/[0-9][0-9.,\s]*[0-9]|[0-9]/);
+      if (!target || !digits) return;
+      const sep = (digits[0].match(/[.,\s]/) || [''])[0];
+      const fmt = (n) => (sep ? String(n).replace(/\B(?=(\d{3})+(?!\d))/g, sep) : String(n));
+      const t0 = performance.now();
+      const dur = (motion && motion.count) || 1700;
+      el.setAttribute('aria-label', tpl);
+      const tick = (now) => {
+        const p = Math.min(1, (now - t0) / dur);
+        el.textContent = tpl.replace(digits[0], fmt(Math.round(target * (1 - Math.pow(1 - p, 3)))));
+        if (p < 1) requestAnimationFrame(tick); else { el.textContent = tpl; el.removeAttribute('aria-label'); }
+      };
+      requestAnimationFrame(tick);
+    };
+    const ioN = new IntersectionObserver((entries) => entries.forEach((en) => { if (en.isIntersecting) { count(en.target); ioN.unobserve(en.target); } }), { threshold: 0.6 });
+    nums.forEach((n) => ioN.observe(n));
+  }
+  if (head && motion && motion.tuck) {
+    let last = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      head.classList.toggle('is-tucked', y > last && y > 240 && !document.body.classList.contains('nav-open') && !head.contains(document.activeElement));
+      last = y;
+    }, { passive: true });
+  }
+
   /* ---------- comparsa dei contenuti ---------- */
-  const reveals = document.querySelectorAll('.reveal');
+  const reveals = document.querySelectorAll('.reveal, [data-fx]');
   if (!reduce && 'IntersectionObserver' in window) {
     const io = new IntersectionObserver((entries) => entries.forEach((en) => {
       if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); }

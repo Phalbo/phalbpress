@@ -5,8 +5,37 @@
   "best_for": "progetti con molte foto e video dal territorio: comunità, luoghi, reportage, storie di persone",
   "direction": "The place carries it (tasteskill, seed 90413904)",
   "hero_on": "ground",
-  "palette": {"ground": "#e5e1d8", "ink": "#2a1d17", "accent": "#456f3a", "field1": "#456f3a", "field2": "#dad5ca", "dark": "#2a1d17", "hero1": "#ffffff", "hero2": "#ffffff"},
-  "fonts": {"display": "Newsreader", "text": "Newsreader"},
+  "palette": {
+    "ground": "#e5e1d8",
+    "ink": "#2a1d17",
+    "accent": "#456f3a",
+    "field1": "#456f3a",
+    "field2": "#dad5ca",
+    "dark": "#2a1d17",
+    "hero1": "#ffffff",
+    "hero2": "#ffffff"
+  },
+  "fonts": {
+    "display": "Newsreader",
+    "text": "Newsreader"
+  },
   "buttons": "square",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".gallery__item": [
+        "zoom",
+        120
+      ],
+      ".card": [
+        "fade",
+        120
+      ],
+      ".story": [
+        "fade",
+        0
+      ]
+    },
+    "count": 2000
+  }
 }

@@ -5,8 +5,37 @@
   "best_for": "progetti su ambiente, territorio, mobilità lenta e cammini, itinerari a tappe, aree naturali",
   "direction": "Route journal: la strada tratteggiata che unisce le tappe, carta paglia, segnaletica rossa, foto di paesaggio grandi",
   "hero_on": "accent",
-  "palette": {"ground": "#f4eedf", "ink": "#1f1a14", "accent": "#9b1b1b", "field1": "#2f5d3a", "field2": "#e2d3a8", "dark": "#1f1a14", "hero1": "#ffffff", "hero2": "#ffffff"},
-  "fonts": {"display": "Jost", "text": "Newsreader"},
+  "palette": {
+    "ground": "#f4eedf",
+    "ink": "#1f1a14",
+    "accent": "#9b1b1b",
+    "field1": "#2f5d3a",
+    "field2": "#e2d3a8",
+    "dark": "#1f1a14",
+    "hero1": "#ffffff",
+    "hero2": "#ffffff"
+  },
+  "fonts": {
+    "display": "Jost",
+    "text": "Newsreader"
+  },
   "buttons": "square",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "left",
+        120
+      ],
+      ".card": [
+        "up",
+        110
+      ],
+      ".gallery__item": [
+        "zoom",
+        90
+      ]
+    },
+    "count": 1700
+  }
 }

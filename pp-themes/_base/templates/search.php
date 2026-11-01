@@ -1,7 +1,7 @@
 <?php
 $pageTitle = t('search_title'); $noindex = true;
 ?>
-<?= PP::partial('band', ['title' => t('search_title'), 'tone' => 'paper']) ?>
+<?= PP::partial('band', ['title' => t('search_title'), 'tone' => 'paper', 'layout' => Layouts::get('search', 'head')]) ?>
 <section class="chapter chapter--paper pp-search" data-pp-search data-index="<?= e(PP::url('search/' . lang() . '.json')) ?>" data-count="<?= e(t('search_count')) ?>" data-none="<?= e(t('search_none')) ?>">
   <form role="search" action="" method="get">
     <label class="sr-only" for="pp-q"><?= e(t('search_label')) ?></label>

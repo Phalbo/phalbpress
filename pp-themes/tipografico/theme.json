@@ -4,7 +4,40 @@
   "description": "Solo tipografia e fasce di colore pieno: frasi enormi, capitoli che cambiano colore, la testata che segue il colore sotto.",
   "best_for": "progetti con un messaggio forte e poche immagini; campagne, diritti, partecipazione",
   "hero_on": "accent",
-  "palette": {"ground": "#ffffff", "ink": "#000000", "accent": "#c63232", "field1": "#298343", "field2": "#3f74b8", "dark": "#000000", "hero1": "#ffffff", "hero2": "#000000"},
-  "fonts": {"display": "Petrona", "text": "Petrona"},
-  "buttons": "pill"
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#000000",
+    "accent": "#c63232",
+    "field1": "#298343",
+    "field2": "#3f74b8",
+    "dark": "#000000",
+    "hero1": "#ffffff",
+    "hero2": "#000000"
+  },
+  "fonts": {
+    "display": "Petrona",
+    "text": "Petrona"
+  },
+  "buttons": "pill",
+  "motion": {
+    "marks": {
+      ".card": [
+        "fade",
+        90
+      ],
+      ".step": [
+        "fade",
+        120
+      ],
+      ".figure": [
+        "up",
+        90
+      ],
+      ".collection__item": [
+        "fade",
+        50
+      ]
+    },
+    "count": 1400
+  }
 }

@@ -5,3 +5,6 @@ html.pp-editing [data-pp-block].pp-sel { outline: 4px solid #2f6fed; }
 html.pp-editing [data-pp-hidden] { opacity: .45; }
 html.pp-editing [data-pp-hidden]:hover, html.pp-editing [data-pp-hidden].pp-sel { opacity: .8; }
 html.pp-editing .site-head { pointer-events: none; }
+html.pp-editing-page [data-pp-part] { cursor: pointer; outline: 3px solid transparent; outline-offset: -3px; transition: outline-color .15s; }
+html.pp-editing-page [data-pp-part]:hover { outline: 3px dashed #2f6fed; }
+html.pp-editing-page [data-pp-part].pp-sel { outline: 4px solid #2f6fed; }

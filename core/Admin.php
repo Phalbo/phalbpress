@@ -417,6 +417,7 @@ final class Admin
             $html = str_replace('</head>', '<style>' . Identity::css(PP::themes()[PP::$theme]) . '</style></head>', $html);
         }
         if ($edit) {
+            if (class_exists('Layouts') && Layouts::$type !== '') $html = preg_replace('~<html\b~', '<html data-pp-type="' . e(Layouts::$type) . '" data-pp-entry="' . (int)Layouts::$entry . '"', $html, 1);
             $tools = '<link rel="stylesheet" href="' . e(PP::url('pp-admin/visual-frame.css')) . '?v=' . PP::VERSION . '">'
                 . '<script src="' . e(PP::url('pp-admin/visual-frame.js')) . '?v=' . PP::VERSION . '" defer></script>';
             echo str_replace('</head>', $tools . '</head>', $html);

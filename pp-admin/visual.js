@@ -10,6 +10,8 @@
   const status = root.querySelector('[data-vis-status]');
   const origin = location.origin;
   let lang = root.dataset.lang;
+  const pageSel = root.parentElement.querySelector('[data-vis-page]');
+  let path = '/' + lang + '/';
   let current = 0;
   let scrollY = 0;
   let scrollToCurrent = false;
@@ -31,7 +33,14 @@
   };
 
   /* ---------- anteprima ---------- */
-  const loadFrame = () => { frame.src = root.dataset.preview + '?edit=1&path=' + encodeURIComponent('/' + lang + '/') + '&t=' + Date.now(); };
+  const isHome = () => path === '/' + lang + '/';
+  const homeTools = root.querySelector('[data-vis-home]');
+  const pageHint = root.querySelector('[data-vis-hint-page]');
+  const loadFrame = () => {
+    if (homeTools) homeTools.hidden = !isHome();
+    if (pageHint) pageHint.hidden = isHome();
+    frame.src = root.dataset.preview + '?edit=1&path=' + encodeURIComponent(path) + '&t=' + Date.now();
+  };
   const toFrame = (msg) => frame.contentWindow && frame.contentWindow.postMessage(Object.assign({ pp: true }, msg), origin);
   window.addEventListener('message', (ev) => {
     if (ev.origin !== origin || !ev.data || !ev.data.pp) return;
@@ -42,6 +51,7 @@
     }
     if (ev.data.type === 'scroll') scrollY = ev.data.y;
     if (ev.data.type === 'select') open(ev.data.id);
+    if (ev.data.type === 'part') openPart(ev.data);
   });
 
   root.parentElement.querySelectorAll('[data-device]').forEach((b) => b.addEventListener('click', () => {
@@ -49,7 +59,15 @@
     root.classList.toggle('vis--phone', b.dataset.device === 'phone');
   }));
   const langSel = root.parentElement.querySelector('[data-vis-lang]');
-  if (langSel) langSel.addEventListener('change', () => { lang = langSel.value; scrollY = 0; loadFrame(); });
+  if (langSel) langSel.addEventListener('change', () => {
+    // stessa pagina nell'altra lingua: la home sì, le altre si riaprono dall'elenco (gli indirizzi cambiano con la lingua)
+    location.search = '?lang=' + encodeURIComponent(langSel.value);
+  });
+  if (pageSel) pageSel.addEventListener('change', () => {
+    path = pageSel.value; scrollY = 0; current = 0;
+    panel.querySelectorAll('[data-vis-form],[data-vis-layout]').forEach((f) => f.remove());
+    loadFrame();
+  });
 
   /* ---------- elenco delle fasce ---------- */
   const refreshList = async () => {
@@ -148,6 +166,32 @@
     if (toggle) toggle.addEventListener('click', async () => {
       try { const r = await post('status/' + id); say(r.status === 'published' ? 'La fascia ora si vede sul sito.' : 'Fascia nascosta: sul sito non si vede più.'); await refreshList(); open(id); loadFrame(); }
       catch (e) { say(e.message, true); }
+    });
+  };
+
+  /* ---------- disposizione di una parte di pagina ---------- */
+  let partOpen = null;
+  const openPart = async (d) => {
+    partOpen = d;
+    const q = 'layout?type=' + encodeURIComponent(d.ptype) + '&part=' + encodeURIComponent(d.part) + '&entry=' + (d.entry || 0);
+    try { panel.innerHTML = await html(q); }
+    catch (e) { panel.innerHTML = '<p class="flash flash--error">' + e.message + '</p>'; return; }
+    const form = panel.querySelector('[data-vis-layout]');
+    if (!form) return;
+    const send = async (extra = {}) => {
+      const fd = new FormData(form);
+      fd.set('type', form.dataset.type); fd.set('part', form.dataset.part); fd.set('entry', form.dataset.entry);
+      Object.entries(extra).forEach(([k, v]) => fd.set(k, v));
+      say('Salvo…');
+      try { await post('layout', fd); say('Salvato. Anche il sito pubblico è aggiornato.'); loadFrame(); openPart(partOpen); }
+      catch (e) { say(e.message, true); }
+    };
+    form.addEventListener('change', (ev) => { if (ev.target.name === 'value') send(); });
+    const reset = form.querySelector('[data-vis-reset]');
+    if (reset) reset.addEventListener('click', () => {
+      const own = form.querySelector('[name=scope][value=page]');
+      if (own && own.checked) send({ scope: 'page', value: '' });
+      else send({ scope: 'type', value: '' });
     });
   };
 

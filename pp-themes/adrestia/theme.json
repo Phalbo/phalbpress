@@ -5,7 +5,36 @@
   "best_for": "associazioni e reti civiche con più aree di attività, progetti sociali per famiglie, scuole e territorio",
   "direction": "The open door: riquadri morbidi e luminosi come stanze di una sede aperta, foto dentro cornici arrotondate, un verde che invita",
   "hero_on": "accent",
-  "palette": {"ground": "#ffffff", "ink": "#242b4d", "accent": "#1f7a4d", "field1": "#7ed69a", "field2": "#e3f3fb", "dark": "#242b4d", "hero1": "#ffffff", "hero2": "#bff0cf"},
-  "fonts": {"display": "Figtree", "text": "Figtree"},
-  "buttons": "pill"
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#242b4d",
+    "accent": "#1f7a4d",
+    "field1": "#7ed69a",
+    "field2": "#e3f3fb",
+    "dark": "#242b4d",
+    "hero1": "#ffffff",
+    "hero2": "#bff0cf"
+  },
+  "fonts": {
+    "display": "Figtree",
+    "text": "Figtree"
+  },
+  "buttons": "pill",
+  "motion": {
+    "marks": {
+      ".step": [
+        "up",
+        140
+      ],
+      ".card": [
+        "up",
+        120
+      ],
+      ".gallery__item": [
+        "zoom",
+        90
+      ]
+    },
+    "count": 1800
+  }
 }

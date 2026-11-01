@@ -2,10 +2,12 @@
 $pageTitle = t('results_title'); $metaDesc = t('results_intro');
 $all = Content::docs(lang());
 $groups = [];
+$head = Layouts::get('results', 'head');
+$docs = Layouts::get('results', 'docs');
 foreach ($all as $d) $groups[$d['category']][] = $d;
 ?>
-<?= PP::partial('band', ['title' => t('results_title'), 'lead' => t('results_intro'), 'tone' => 'dark']) ?>
-<section class="results chapter chapter--paper" data-ink="dark" aria-label="<?= e(t('results_title')) ?>">
+<?= PP::partial('band', ['title' => t('results_title'), 'lead' => t('results_intro'), 'tone' => 'dark', 'layout' => $head, 'crumb' => [[t('home'), link_to('')]]]) ?>
+<section class="results chapter chapter--paper docs--<?= e($docs) ?>" data-ink="dark" data-pp-part="docs" aria-label="<?= e(t('results_title')) ?>">
   <?php if (!$all): ?><p class="empty"><?= e(t('results_empty')) ?></p><?php endif; ?>
   <?php foreach (PP::$config['doc_categories'] ?? [] as $cat => $catLabel): if (empty($groups[$cat])) continue; $cl = t('cat_' . $cat); ?>
     <div class="results__group reveal">

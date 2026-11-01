@@ -1,6 +1,9 @@
-<?php /* Modifica visuale: anteprima della home + pannello. Variabili: $lang, $langs, $kinds */ ?>
+<?php /* Modifica visuale: anteprima di una pagina + pannello. Variabili: $lang, $langs, $kinds, $pages ([etichetta, percorso]) */ ?>
 <header class="head"><h1>Modifica visuale</h1>
   <div class="row">
+    <label class="vis-lang">Pagina <select data-vis-page>
+      <?php foreach ($pages as [$label, $path]): ?><option value="<?= e($path) ?>"><?= e($label) ?></option><?php endforeach; ?>
+    </select></label>
     <label class="vis-lang">Lingua <select data-vis-lang>
       <?php foreach ($langs as $l): ?><option value="<?= e($l) ?>" <?= $l === $lang ? 'selected' : '' ?>><?= e(strtoupper($l)) ?></option><?php endforeach; ?>
     </select></label>
@@ -12,11 +15,13 @@
   </div>
 </header>
 <div class="vis" data-vis data-base="<?= e(Admin::u('visual')) ?>" data-preview="<?= e(Admin::u('preview')) ?>" data-lang="<?= e($lang) ?>" data-csrf="<?= e(Auth::csrf()) ?>">
-  <div class="vis__stage"><iframe class="vis__frame" title="Anteprima della home" data-vis-frame></iframe></div>
-  <aside class="vis__side panel stack" aria-label="Fasce della home">
+  <div class="vis__stage"><iframe class="vis__frame" title="Anteprima della pagina" data-vis-frame></iframe></div>
+  <aside class="vis__side panel stack" aria-label="Pannello della Modifica visuale">
     <div data-vis-panel><p class="hint">Clicca una fascia nell'anteprima, o scegline una qui sotto, per cambiarne il fondo, l'immagine, lo spazio e la larghezza.
-      I testi si cambiano dalla scheda della fascia; l'aspetto vale per tutte le lingue.</p></div>
-    <h2 class="vis__h">Fasce</h2>
+      I testi si cambiano dalla scheda della fascia; l'aspetto vale per tutte le lingue.</p>
+      <p class="hint" data-vis-hint-page hidden>Clicca l'intestazione o il contenuto della pagina per sceglierne la disposizione: per tutte le pagine di quel tipo o solo per questa.</p></div>
+    <div class="stack" data-vis-home>
+    <h2 class="vis__h">Fasce della home</h2>
     <ol class="vis-list" data-vis-list></ol>
     <form class="row vis-add" data-vis-add>
       <label class="field">Aggiungi una fascia <select name="kind">
@@ -25,6 +30,7 @@
       <button class="btn btn--small" type="submit">Aggiungi</button>
     </form>
     <p class="hint">Una fascia nuova nasce nascosta: scrivi i testi, poi mostrala.</p>
+    </div>
     <p class="small muted" role="status" data-vis-status></p>
   </aside>
 </div>

@@ -5,8 +5,92 @@
   "best_for": "progetti con giovani, scuole, cittadinanza attiva, cooperazione internazionale, community e piattaforme partecipative",
   "direction": "Open mic: foto in una forma morbida che cambia lentamente, titolo terracotta a fianco, maiuscole centrate per le sezioni, nastro di testo a contorno che scorre nelle fasce scure, accento verde per agire",
   "hero_on": "ground",
-  "palette": {"ground": "#ffffff", "ink": "#221a16", "accent": "#9c3a14", "field1": "#245c31", "field2": "#fbf3ec", "dark": "#141110", "hero1": "#9c3a14", "hero2": "#221a16"},
-  "fonts": {"display": "Bricolage Grotesque", "text": "Figtree"},
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#221a16",
+    "accent": "#9c3a14",
+    "field1": "#245c31",
+    "field2": "#fbf3ec",
+    "dark": "#141110",
+    "hero1": "#9c3a14",
+    "hero2": "#221a16"
+  },
+  "fonts": {
+    "display": "Bricolage Grotesque",
+    "text": "Figtree"
+  },
   "buttons": "soft",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "tilt",
+        130
+      ],
+      ".figure": [
+        "zoom",
+        120
+      ],
+      ".card": [
+        "tilt",
+        130
+      ],
+      ".partner": [
+        "up",
+        80
+      ],
+      ".story": [
+        "up",
+        0
+      ],
+      ".gallery__item": [
+        "zoom",
+        90
+      ],
+      ".latest__col": [
+        "up",
+        160
+      ],
+      ".collection__item": [
+        "up",
+        70
+      ],
+      ".statement__fact": [
+        "up",
+        0
+      ],
+      ".doctable tbody tr": [
+        "up",
+        40
+      ],
+      ".pp-embed": [
+        "zoom",
+        0
+      ]
+    },
+    "count": 1800
+  },
+  "layouts": {
+    "*": {
+      "head": "center",
+      "body": "read",
+      "docs": "cards",
+      "partners": "logos",
+      "list": "grid",
+      "stories": "grid"
+    },
+    "page": {
+      "head": "split"
+    },
+    "news-item": {
+      "head": "split",
+      "body": "read"
+    },
+    "contact": {
+      "head": "split"
+    },
+    "search": {
+      "head": "center"
+    }
+  }
 }

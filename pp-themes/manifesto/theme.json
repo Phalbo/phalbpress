@@ -5,7 +5,40 @@
   "best_for": "campagne, mobilitazione, giovani, diritti, progetti che devono farsi sentire",
   "direction": "Loud and flat (tasteskill, seed 2105798294)",
   "hero_on": "ground",
-  "palette": {"ground": "#ffffff", "ink": "#000000", "accent": "#a7ff9c", "field1": "#c5c5c5", "field2": "#ff6831", "dark": "#000000", "hero1": "#000000", "hero2": "#000000"},
-  "fonts": {"display": "Barlow Condensed", "text": "Atkinson Hyperlegible Next"},
-  "buttons": "square"
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#000000",
+    "accent": "#a7ff9c",
+    "field1": "#c5c5c5",
+    "field2": "#ff6831",
+    "dark": "#000000",
+    "hero1": "#000000",
+    "hero2": "#000000"
+  },
+  "fonts": {
+    "display": "Barlow Condensed",
+    "text": "Atkinson Hyperlegible Next"
+  },
+  "buttons": "square",
+  "motion": {
+    "marks": {
+      ".step": [
+        "pop",
+        100
+      ],
+      ".figure": [
+        "pop",
+        110
+      ],
+      ".card": [
+        "pop",
+        100
+      ],
+      ".gallery__item": [
+        "pop",
+        70
+      ]
+    },
+    "count": 1200
+  }
 }

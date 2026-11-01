@@ -5,8 +5,37 @@
   "best_for": "progetti sui diritti e contro le discriminazioni, partecipazione delle comunità, campagne con ritratti di persone",
   "direction": "Faces and fields: ritratti in bianco e nero, campi di colore pieno (rosso, verde, azzurro) come pagine di un manifesto civico",
   "hero_on": "accent",
-  "palette": {"ground": "#ffffff", "ink": "#15171c", "accent": "#d42a20", "field1": "#3c9a3a", "field2": "#7cc8ea", "dark": "#1b2150", "hero1": "#ffffff", "hero2": "#ffffff"},
-  "fonts": {"display": "Saira Condensed", "text": "Work Sans"},
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#15171c",
+    "accent": "#d42a20",
+    "field1": "#3c9a3a",
+    "field2": "#7cc8ea",
+    "dark": "#1b2150",
+    "hero1": "#ffffff",
+    "hero2": "#ffffff"
+  },
+  "fonts": {
+    "display": "Saira Condensed",
+    "text": "Work Sans"
+  },
   "buttons": "square",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "up",
+        110
+      ],
+      ".figure": [
+        "pop",
+        110
+      ],
+      ".card": [
+        "up",
+        110
+      ]
+    },
+    "count": 1500
+  }
 }

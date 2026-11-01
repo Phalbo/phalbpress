@@ -19,6 +19,7 @@ final class Visual
                     'status' => self::status($id),
                     'add' => self::add(),
                     'delete' => self::delete($id),
+                    'layout' => self::saveLayout(),
                     default => Admin::json(['error' => 'Azione sconosciuta'], 404),
                 };
             } catch (Throwable $e) {
@@ -26,11 +27,12 @@ final class Visual
             }
         }
         if ($act === 'panel') { self::panel($id); return; }
+        if ($act === 'layout') { self::layoutPanel(); return; }
         if ($act === 'list') { self::listHtml(); return; }
         $langs = I18n::codes();
         $lang = in_array($_GET['lang'] ?? '', $langs, true) ? $_GET['lang'] : I18n::$master;
         Admin::view(__DIR__ . '/visual-view.php', ['title' => 'Modifica visuale', 'lang' => $lang, 'langs' => $langs,
-            'kinds' => array_map(fn($k) => $k['label'], Blocks::kinds())]);
+            'kinds' => array_map(fn($k) => $k['label'], Blocks::kinds()), 'pages' => self::pages($lang)]);
     }
 
     /** Blocchi della home in ordine, pubblicati e nascosti, con il titolo nell'originale. */
@@ -144,5 +146,88 @@ final class Visual
         Auth::log('visual add', 'block #' . $id);
         Admin::changed('visual');
         Admin::json(['ok' => true, 'id' => $id]);
+    }
+
+    /* ---------- pagine interne: disposizioni ---------- */
+
+    /** Pagine che si possono aprire nella Modifica visuale: [etichetta, percorso]. */
+    private static function pages(string $lang): array
+    {
+        $out = [['Home', '/' . $lang . '/']];
+        foreach (Content::entries('page', $lang) as $p) {
+            $u = substr((string)PP::entryUrl($p, $lang), strlen(PP::base()));
+            if ($u !== '' && $u !== '/' . $lang . '/') $out[] = ['Pagina: ' . $p['title'], $u];
+        }
+        $sec = ['news' => 'Elenco delle news', 'stories' => 'Elenco delle storie', 'results' => 'Risultati', 'partners' => 'Partner'];
+        foreach ($sec as $k => $label) if (isset(PP::$config['sections'][$k])) $out[] = [$label, substr(PP::link(PP::section($k, $lang), $lang), strlen(PP::base()))];
+        $last = Content::entries('news', $lang, 1, 'pub_date DESC, id DESC');
+        if ($last && ($u = PP::entryUrl($last[0], $lang))) $out[] = ['Una news: ' . $last[0]['title'], substr($u, strlen(PP::base()))];
+        if (class_exists('Search')) $out[] = ['Ricerca', substr(Search::url(), strlen(PP::base()))];
+        $out[] = ['Pagina non trovata', '/' . $lang . '/pagina-che-non-esiste/'];
+        return array_values(array_filter($out, fn($r) => $r[1] !== '' && $r[1] !== false));
+    }
+
+    /** Pannello di una parte di pagina: le disposizioni come miniature, per tutte le pagine del tipo o solo per questa. */
+    private static function layoutPanel(): void
+    {
+        $type = (string)($_GET['type'] ?? '');
+        $part = (string)($_GET['part'] ?? '');
+        $entry = (int)($_GET['entry'] ?? 0);
+        $types = Layouts::types();
+        if (!isset($types[$type]) || !in_array($part, $types[$type][1], true)) { header('Content-Type: text/html; charset=utf-8'); echo '<p class="hint">Questa parte della pagina non ha disposizioni da scegliere.</p>'; exit; }
+        $p = Layouts::parts()[$part];
+        $perPage = $entry && in_array($type, ['page', 'news-item'], true);
+        $row = $perPage ? DB::one('SELECT * FROM pp_entries WHERE id = ?', [$entry]) : null;
+        $own = $row ? (string)(Content::meta($row)['layout_' . $part] ?? '') : '';
+        $typeVal = Layouts::forType($type, $part);
+        $themeVal = Layouts::themeDefault($type, $part);
+        $site = Settings::get('layouts', []);
+        $siteSet = !empty($site[$type][$part]);
+        $current = $own ?: $typeVal;
+        header('Content-Type: text/html; charset=utf-8');
+        ?>
+<form class="stack vis-form" data-vis-layout data-type="<?= e($type) ?>" data-part="<?= e($part) ?>" data-entry="<?= $perPage ? $entry : 0 ?>">
+  <div class="vis-form__head">
+    <p class="small muted"><?= e($types[$type][0]) ?></p>
+    <h2><?= e($p['label']) ?></h2>
+  </div>
+  <?php if ($perPage): ?>
+  <fieldset class="vis-scope"><legend>Vale per</legend>
+    <label class="check"><input type="radio" name="scope" value="type" <?= $own === '' ? 'checked' : '' ?>> Tutte le pagine di questo tipo (<?= e(mb_strtolower($types[$type][0])) ?>)</label>
+    <label class="check"><input type="radio" name="scope" value="page" <?= $own !== '' ? 'checked' : '' ?>> Solo questa pagina</label>
+  </fieldset>
+  <?php else: ?><input type="hidden" name="scope" value="type"><?php endif; ?>
+  <fieldset class="vis-layouts"><legend>Disposizione</legend>
+    <?php foreach ($p['options'] as $k => [$name, $desc]): ?>
+      <label class="vis-lay"><input type="radio" name="value" value="<?= e($k) ?>" <?= $current === $k ? 'checked' : '' ?>>
+        <span class="vis-lay__pic vis-lay__pic--<?= e($part . '-' . $k) ?>" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span class="vis-lay__txt"><strong><?= e($name) ?></strong><?= $k === $themeVal ? ' <span class="pill">del tema</span>' : '' ?><br><span class="small muted"><?= e($desc) ?></span></span></label>
+    <?php endforeach; ?>
+  </fieldset>
+  <?php if ($own !== '' || $siteSet): ?>
+  <p><button type="button" class="btn btn--small" data-vis-reset><?= $own !== '' ? 'Questa pagina torna come le altre' : 'Torna a quella del tema' ?></button></p>
+  <?php endif; ?>
+  <p class="hint">Si salva da sola e l'anteprima si aggiorna. Vale per tutte le lingue e resta anche se cambi tema.</p>
+</form>
+        <?php
+        exit;
+    }
+
+    private static function saveLayout(): void
+    {
+        $type = (string)Admin::post('type');
+        $part = (string)Admin::post('part');
+        $value = (string)Admin::post('value');
+        $entry = (int)Admin::post('entry');
+        if (Admin::post('scope') === 'page' && $entry) {
+            Layouts::setEntry($entry, $part, $value);
+            // tornando "come le altre" la scelta per tipo resta quella di prima
+        } else {
+            if ($entry && Admin::post('reset_page')) Layouts::setEntry($entry, $part, '');
+            Layouts::setType($type, $part, $value);
+        }
+        Auth::log('visual layout', $type . '/' . $part . '=' . ($value ?: 'tema'));
+        Admin::changed('visual');
+        Admin::json(['ok' => true]);
     }
 }

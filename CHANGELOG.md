@@ -2,6 +2,17 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.11.0
+- **Disposizioni delle pagine interne**: intestazione, testo ed elenchi si scelgono da un piccolo menu, uguale per tutti i temi.
+  - Intestazione: a sinistra, centrata, divisa con foto, foto al vivo, essenziale. Senza foto le disposizioni con la foto mostrano una decorazione del tema.
+  - Testo di pagine e news: colonna di lettura, larga, con barra laterale (indice, condivisione, altre notizie).
+  - News: griglia di schede, prima in evidenza, elenco con miniature, mosaico. Storie: alternate, ritratti, mosaico. Risultati: schede o tabella. Partner: schede, loghi, elenco.
+  - Ogni tema parte con le sue; il sito le cambia per tipo di pagina e una singola pagina o news può fare eccezione. Si sceglie in **Modifica visuale** (ora c'è "Pagina" in alto: si clicca l'intestazione o il contenuto) o nella scheda della pagina.
+- **Percorso sopra il titolo** (Home / Notizie) e **altre notizie** in fondo a ogni news.
+- **Pagine interne ridisegnate** nei temi European Excellence, Sustainability Champion, SME Star, Cultural Ambassador e People's Choice, con le scelte di partenza prese dai siti di riferimento.
+- **Movimento in tutti i temi**: comparse a cascata allo scroll, apertura e intestazioni che entrano, numeri che contano, sottolineature che si allungano. Ogni tema ha il suo carattere (dal basso, di lato, a scatto, in dissolvenza…) e "riduci il movimento" del sistema lo spegne del tutto.
+- Corretto: nessuno scorrimento orizzontale sui telefoni con le entrate di lato.
+
 ## 1.10.0
 - **Cinque temi nuovi**, ispirati ai vincitori dei .eu Web Awards 2025: l'apertura ha la **foto protagonista** e il titolo di misura (non più la frase gigante), con animazioni in entrata, comparse a cascata allo scroll, numeri che contano ed effetti al passaggio del mouse. Rispettano "riduci il movimento" e senza JavaScript si vede tutto.
   - **European Excellence**: foto scura a tutto schermo con zoom lento, titolo centrato, schede di vetro che salgono sopra la foto, card delle news con la data in etichetta (Jost).

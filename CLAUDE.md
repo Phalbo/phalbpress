@@ -76,6 +76,15 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   (dopo tema e identità), parallasse in `_base/assets/base.js`. Un tema nuovo deve reggere `chapter--custom`, `chapter--has-bg`, `chapter--over-dark|light`,
   `chapter--sp-compact|wide`, `chapter--w-narrow|full`: per colori di card e testi usare `--surface` e `--muted`, che quelle classi ridefiniscono.
 - **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
+- **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, results, partners, contact, search, 404) ha delle parti
+  (`head`: left|center|split|cover|minimal · `body`: read|wide|aside · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic · `docs`: cards|table · `partners`: cards|logos|rows),
+  uguali per tutti i temi. `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina o news → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json
+  (`"*"` vale per tutti i tipi) → base. I template mettono la classe `head--X` sull'intestazione (partial `band`, struttura piatta: percorso, etichetta, titolo, frase, dati, foto o `.band__deco`),
+  `body--X`, `list--X`, `stories--X`, `docs--X`, `partners--X` sulle parti e `data-pp-part`; la struttura sta in base.css, il tema ci mette il carattere e deve reggerle tutte, anche senza foto.
+  Nella Modifica visuale si sceglie la pagina in alto e si clicca una parte: vale per tutte le pagine del tipo o solo per quella (anteprima con `data-pp-type`/`data-pp-entry` sull'html).
+- **Movimento comune** (`_base/assets/base.js` + base.css): comparse a cascata (`data-fx` = up|down|left|right|zoom|pop|tilt|spin|fade, ritardo `--fx-d`), entrata di apertura e intestazioni (`body.fx-go`),
+  numeri che contano. Il tema lo regola in theme.json `"motion": {"marks": {selettore: [tipo, ms tra fratelli]}, "count": ms|false, "tuck": bool}` o lo spegne con `"motion": false`; tempi con `--fx-t --fx-e --fx-y`.
+  Con "meno movimento" del sistema non si muove niente; sui telefoni niente entrate di lato.
 - Anteprima: `/{admin}/preview?path=/it/…&theme=slug[&palette=1]` (bozze e programmati visibili, palette del tema al posto di quella dell'identità).
   Con `&demo=1` l'anteprima usa i contenuti dimostrativi (`pp-assets/demo/seed.php` + `media/`, gli stessi del sito di `tools/demo`): `Demo::use()` passa a `data/demo-preview.sqlite`
   (rifatto quando cambiano seed, lingue o versione) con `DB::reconnect()`; ogni lingua del sito prende il testo nella sua lingua o in inglese; `Demo::links()` tiene i link interni nell'anteprima.

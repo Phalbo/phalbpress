@@ -5,8 +5,41 @@
   "best_for": "campagne di sensibilizzazione (bullismo, violenza, dipendenze), progetti con video, fumetti e materiali per le scuole",
   "direction": "Lights down: fondo scuro da sala, maiuscolo condensato, l'accento magenta come evidenziatore su una sola riga",
   "hero_on": "ground",
-  "palette": {"ground": "#141518", "ink": "#f2efe9", "accent": "#d0306f", "field1": "#134a52", "field2": "#1d2c5b", "dark": "#0a0b0d", "hero1": "#ffffff", "hero2": "#ffffff"},
-  "fonts": {"display": "Anton", "text": "Atkinson Hyperlegible Next"},
+  "palette": {
+    "ground": "#141518",
+    "ink": "#f2efe9",
+    "accent": "#d0306f",
+    "field1": "#134a52",
+    "field2": "#1d2c5b",
+    "dark": "#0a0b0d",
+    "hero1": "#ffffff",
+    "hero2": "#ffffff"
+  },
+  "fonts": {
+    "display": "Anton",
+    "text": "Atkinson Hyperlegible Next"
+  },
   "buttons": "square",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "zoom",
+        110
+      ],
+      ".figure": [
+        "zoom",
+        110
+      ],
+      ".card": [
+        "zoom",
+        100
+      ],
+      ".gallery__item": [
+        "zoom",
+        80
+      ]
+    },
+    "count": 1300
+  }
 }

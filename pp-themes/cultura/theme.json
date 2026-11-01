@@ -5,8 +5,92 @@
   "best_for": "progetti su cultura, musica, arti, media, giovani e creatività; festival, residenze, industrie culturali",
   "direction": "Color block stage: grotesk geometrico pesante, blocchi di colore piatti senza sfumature, forme semplici (quadrati, cerchi, mezzelune) che scorrono e ruotano, separatori a rombo nel menu, ombre colorate dure sulle immagini",
   "hero_on": "ground",
-  "palette": {"ground": "#ffffff", "ink": "#111111", "accent": "#c2410c", "field1": "#16d96b", "field2": "#ff3d9a", "dark": "#111111", "hero1": "#111111", "hero2": "#c2410c"},
-  "fonts": {"display": "League Spartan", "text": "Figtree"},
+  "palette": {
+    "ground": "#ffffff",
+    "ink": "#111111",
+    "accent": "#c2410c",
+    "field1": "#16d96b",
+    "field2": "#ff3d9a",
+    "dark": "#111111",
+    "hero1": "#111111",
+    "hero2": "#c2410c"
+  },
+  "fonts": {
+    "display": "League Spartan",
+    "text": "Figtree"
+  },
   "buttons": "square",
-  "body_class": "photo-hero"
+  "body_class": "photo-hero",
+  "motion": {
+    "marks": {
+      ".step": [
+        "spin",
+        110
+      ],
+      ".figure": [
+        "pop",
+        120
+      ],
+      ".card": [
+        "up",
+        120
+      ],
+      ".partner": [
+        "up",
+        80
+      ],
+      ".story": [
+        "up",
+        0
+      ],
+      ".gallery__item": [
+        "pop",
+        90
+      ],
+      ".latest__col": [
+        "up",
+        140
+      ],
+      ".collection__item": [
+        "up",
+        60
+      ],
+      ".statement__fact": [
+        "pop",
+        0
+      ],
+      ".doctable tbody tr": [
+        "up",
+        40
+      ],
+      ".pp-embed": [
+        "pop",
+        0
+      ]
+    },
+    "count": 1400
+  },
+  "layouts": {
+    "*": {
+      "head": "left",
+      "body": "read",
+      "docs": "cards",
+      "partners": "logos",
+      "list": "feature",
+      "stories": "mosaic"
+    },
+    "page": {
+      "head": "split"
+    },
+    "news-item": {
+      "head": "cover",
+      "body": "wide"
+    },
+    "search": {
+      "head": "left"
+    },
+    "404": {
+      "head": "split"
+    }
+  }
 }
