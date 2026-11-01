@@ -292,3 +292,11 @@
 .contact__mail a { color: inherit; }
 .contact__list { padding: 24px; border: 3px solid var(--ink); }
 @media (prefers-reduced-motion: reduce) { .band::after, .band__deco i { animation: none !important; } }
+
+/* modelli di testata: la fascia dei pulsanti è nera (la testata è già arancio), niente rombi nel menu a tutto schermo */
+@media (min-width: 961px) {
+  .head-model--tabs .nav { background: var(--black); color: var(--black-ink); }
+  .head-model--tabs .nav__link[aria-current], .head-model--tabs .is-current > .nav__link { background: var(--c2); color: var(--field-1-ink); }
+  .head-model--tabs .nav__link:hover { background: color-mix(in srgb, var(--black-ink) 16%, transparent); }
+}
+.head-model--drawer .nav__item + .nav__item::before { display: none; }

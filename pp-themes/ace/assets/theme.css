@@ -167,3 +167,41 @@
 /* sei foto: le ultime due a metà riga, niente buco in fondo */
 .gallery__item:nth-child(5):nth-last-child(2), .gallery__item:nth-child(6):last-child { grid-column: span 6; }
 @media (max-width: 760px) { .step { min-height: 0; } .gallery__item:nth-child(5):nth-last-child(2), .gallery__item:nth-child(6):last-child { grid-column: span 1; } .gallery__item:nth-child(even):last-child { grid-column: 1 / -1; } }
+
+/* =====================================================================
+   Pagine interne — Faces and fields (dai riferimenti ACE).
+   Intestazione come una striscia di ritratti in bianco e nero con il titolo sopra; titoli di sezione piccoli nel colore
+   principale; righe foto-testo alternate; partner con il logo a sinistra. Campi di colore pieno, nessuna ombra.
+   ===================================================================== */
+.head--cover.band--img { min-height: min(46svh, 420px); }
+.head--cover.band--img > .band__img img { filter: grayscale(1) contrast(1.05); }
+.head--cover.band--img > .band__img::after { background: linear-gradient(90deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.15) 70%); }
+.head--cover .band__title { text-transform: uppercase; font-size: clamp(2.2rem, 1.2rem + 3.4vw, 4.6rem); }
+.band__crumb a { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; }
+.band__deco { background: var(--field-1); border-radius: 0; }
+.band__deco i { border-radius: 0; background: var(--accent); opacity: 1; }
+.band__deco i:nth-child(1) { width: 40%; height: 100%; aspect-ratio: auto; right: 0; top: 0; background: var(--field-2); }
+.band__deco i:nth-child(2) { width: 30%; height: 55%; aspect-ratio: auto; left: 0; bottom: 0; top: auto; }
+.band__deco i:nth-child(3) { width: 22%; height: 30%; left: 34%; top: 14%; background: var(--black); opacity: 1; }
+.prose h2 { font-family: var(--font-display); color: var(--accent); text-transform: uppercase; font-size: clamp(1.3rem, 1rem + 1vw, 1.8rem); letter-spacing: 0.02em; }
+.chapter:not(.chapter--paper) .prose h2 { color: inherit; }
+.prose img { filter: grayscale(1); }
+.article__img img { filter: grayscale(1) contrast(1.05); }
+.article__side { padding: 24px; background: var(--field-2); color: var(--field-2-ink); }
+.toc--inline { border-radius: 0; background: var(--field-2); color: var(--field-2-ink); }
+.morenews { background: var(--surface); }
+.lead-item__tag { border-radius: 0; font-family: var(--font-display); text-transform: uppercase; }
+.list--rows .card__img img, .card__img img, .lead-item__img img { filter: grayscale(1); transition: filter 600ms var(--fx-e), transform 900ms var(--fx-e); }
+.card:hover .card__img img, .lead-item:hover .lead-item__img img { filter: none; }
+.partners--rows .partner__logo { display: block; grid-row: 1 / span 3; max-width: 110px; }
+.partners--rows .partner { grid-template-columns: 130px minmax(0, 1fr); }
+.partners--rows .partner__about { grid-column: 2; }
+.results__head { font-family: var(--font-display); text-transform: uppercase; color: var(--accent); }
+.docs--cards .doctable tr { border-radius: 0; border: 0; border-top: 6px solid var(--accent); background: var(--surface); }
+.docs--cards .doctable tr:nth-child(3n + 2) { border-top-color: var(--field-1); }
+.docs--cards .doctable tr:nth-child(3n + 3) { border-top-color: var(--field-2); }
+.contact__main .contact__mail { padding: 24px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); }
+.contact__mail a { color: inherit; }
+@media (max-width: 760px) { .partners--rows .partner { grid-template-columns: 1fr; } .partners--rows .partner__logo { grid-row: auto; } }
+.head--cover.band--noimg > .band__deco { opacity: 0.9; }
+.head--cover.band--noimg { background: var(--black); color: var(--black-ink); }

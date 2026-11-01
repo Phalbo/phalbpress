@@ -37,5 +37,22 @@
       ]
     },
     "count": 1500
+  },
+  "layouts": {
+    "*": {
+      "head": "cover",
+      "body": "read",
+      "list": "feature",
+      "stories": "zigzag",
+      "docs": "cards",
+      "partners": "cards"
+    },
+    "news-item": {
+      "head": "split",
+      "body": "aside"
+    },
+    "search": {
+      "head": "left"
+    }
   }
 }

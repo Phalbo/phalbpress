@@ -122,3 +122,18 @@ body { letter-spacing: 0.01em; }
   .foot__cols { grid-template-columns: 1fr 1fr; } .foot__col--brand { grid-column: 1 / -1; }
   .article--toc > .toc { position: static; }
 }
+
+/* Pagine interne — The printed annual: intestazione centrata come il frontespizio di un rapporto, filetti doppi,
+   numeri e codici in maiuscoletto, documenti in tabella come un indice stampato. */
+.head--center .band__title { font-style: italic; }
+.head--center::after { content: ""; grid-column: 1 / -1; justify-self: center; width: 120px; height: 5px; border-top: 1px solid currentColor; border-bottom: 1px solid currentColor; margin-top: 18px; }
+.band__crumb a, .band__meta { font-variant: small-caps; letter-spacing: 0.06em; }
+.prose h2 { font-family: var(--font-display); font-style: italic; font-weight: 500; }
+.prose > p:first-of-type::first-letter { float: left; font-family: var(--font-display); font-size: 3.4em; line-height: 0.85; padding: 0.04em 0.08em 0 0; color: var(--accent); }
+.article__side { border-top: 3px double currentColor; padding-top: 18px; }
+.toc--inline { background: none; border-top: 3px double currentColor; border-bottom: 1px solid var(--line); border-radius: 0; }
+.morenews__head { text-align: center; font-style: italic; }
+.doctable__code { font-variant: small-caps; letter-spacing: 0.06em; }
+.partners--cards .partner { border-top: 3px double currentColor; }
+.band__deco { background: none; border: 1px solid var(--line); }
+.band__deco i { border-radius: 0; background: none; border: 1px solid currentColor; opacity: 0.35; }

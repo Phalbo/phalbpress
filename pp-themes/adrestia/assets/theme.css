@@ -153,3 +153,32 @@
 .pp-field input, .pp-search input[type=search] { border-radius: 14px; }
 .pp-field textarea { border-radius: var(--radius-box); }
 @media (max-width: 760px) { .gallery__item:nth-child(odd):last-child { grid-column: 1 / -1; } }
+
+/* =====================================================================
+   Pagine interne — The open door (dai riferimenti dell'Associazione).
+   Fondo chiaro con una forma morbida azzurra che entra dall'angolo, titoli a sinistra di misura, progetti a righe
+   alternate foto/testo con le foto nelle cornici arrotondate, partner in griglia di loghi, contatti con il modulo accanto.
+   ===================================================================== */
+.band { position: relative; overflow: hidden; isolation: isolate; }
+.band::before { content: ""; position: absolute; z-index: -1; left: -8%; top: -40%; width: clamp(260px, 36vw, 560px); aspect-ratio: 1.4; border-radius: 48% 52% 60% 40% / 55% 45% 55% 45%; background: color-mix(in srgb, var(--field-2) 70%, transparent); }
+.band.chapter--green, .band.chapter--blue, .band.chapter--accent { background: var(--bg); color: var(--ink); --muted: color-mix(in srgb, var(--ink) 74%, var(--bg)); }
+.band__title { font-size: clamp(2.1rem, 1.3rem + 2.8vw, 3.8rem); }
+.head--split .band__img img { border-radius: calc(var(--radius-box) * 2); }
+.band__deco { background: var(--field-2); border-radius: calc(var(--radius-box) * 2); }
+.band__deco i { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+.band__deco i:nth-child(3) { background: var(--accent); opacity: 0.8; }
+.article__img img, .prose img { border-radius: calc(var(--radius-box) * 1.5); }
+.article__side { padding: 26px; border-radius: calc(var(--radius-box) * 1.5); background: var(--field-2); }
+.toc--inline { border-radius: calc(var(--radius-box) * 1.5); background: var(--field-2); }
+.morenews { background: var(--field-2); }
+.morenews .card { background: var(--bg); padding-bottom: 18px; border-radius: calc(var(--radius-box) * 1.5); overflow: hidden; }
+.morenews .card__body { padding: 0 18px; }
+.lead-item { padding: clamp(18px, 2.5vw, 30px); border-radius: calc(var(--radius-box) * 2); background: var(--field-2); }
+.lead-item__img { border-radius: calc(var(--radius-box) * 1.5); }
+.stories--zigzag .story__pic { border-radius: calc(var(--radius-box) * 2); }
+.stories--grid .story__pic { border-radius: 50%; aspect-ratio: 1; }
+.partners--logos .partner { border-radius: calc(var(--radius-box) * 1.5); background: var(--bg); box-shadow: 0 10px 30px rgba(20, 40, 70, 0.08); border: 0; }
+.docs--cards .doctable tr { border-radius: calc(var(--radius-box) * 1.5); background: var(--field-2); border: 0; }
+@media (min-width: 1000px) { .contact { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); } }
+.contact__main .contact__mail { padding: 22px 26px; border-radius: calc(var(--radius-box) * 1.5); background: var(--field-2); color: var(--accent); }
+.contact__list { padding: 26px; border-radius: calc(var(--radius-box) * 1.5); background: var(--surface); }

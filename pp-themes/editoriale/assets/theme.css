@@ -96,3 +96,17 @@ h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-d
 .site-main > .chapter--ink { background: color-mix(in srgb, var(--black-ink) 8%, var(--black)); }
 /* il pulsante dell'apertura sulla foto velata */
 .hero--img .btn--dark { background: var(--bg); color: var(--ink); border-color: var(--bg); }
+
+/* Pagine interne — The page is the object: frontespizio centrato in maiuscolo, colonna di lettura da libro,
+   capolettera, citazioni grandi in corsivo, la prima notizia come copertina. */
+.prose { font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3rem); line-height: 1.7; }
+.prose > p:first-of-type::first-letter { float: left; font-family: var(--font-display); font-weight: 800; font-size: 3.6em; line-height: 0.82; padding: 0.05em 0.1em 0 0; }
+.prose blockquote { border: 0; padding: 0; text-align: center; font-style: italic; font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.3rem); line-height: 1.2; }
+.prose blockquote::before { content: ""; display: block; width: 48px; height: 2px; background: currentColor; margin: 0 auto 16px; }
+.lead-item { border-top: 2px solid currentColor; border-bottom: 1px solid var(--line); padding: 28px 0; }
+.lead-item__title { text-transform: uppercase; }
+.morenews__head { text-align: center; text-transform: uppercase; }
+.head--split .band__title, .head--left .band__title { text-transform: uppercase; }
+.band__deco { background: var(--surface); border-radius: 0; }
+.band__deco i { border-radius: 0; background: none; border-top: 2px solid currentColor; height: 0 !important; aspect-ratio: auto; opacity: 0.4; }
+.band__deco i:nth-child(1) { width: 70%; top: 30%; right: 15%; } .band__deco i:nth-child(2) { width: 50%; top: 50%; left: 25%; bottom: auto; } .band__deco i:nth-child(3) { width: 60%; top: 70%; left: 20%; }

@@ -137,3 +137,18 @@
 .partner__logo { background: var(--ink); padding: 8px; border-radius: 8px; }
 .storypage.chapter--accent { background: var(--surface); color: var(--ink); }
 @media (max-width: 760px) { .statement__body { grid-template-columns: 1fr; } }
+
+/* Pagine interne — The well-kept board: tutto in tessere arrotondate su un fondo grigio, come una bacheca ordinata;
+   intestazione divisa con la foto in una tessera, documenti e partner in tessere, barra laterale in tessera. */
+.head--split .band__img img { border-radius: var(--radius-box); }
+.band__deco { background: var(--bg); border-radius: var(--radius-box); }
+.band__deco i { border-radius: var(--radius-box); background: var(--accent); opacity: 0.85; }
+.band__deco i:nth-child(1) { width: 44%; height: 44%; aspect-ratio: auto; right: 6%; top: 8%; }
+.band__deco i:nth-child(2) { width: 30%; height: 40%; aspect-ratio: auto; left: 8%; bottom: 8%; top: auto; background: var(--field-1); }
+.band__deco i:nth-child(3) { width: 22%; height: 28%; left: 44%; top: 56%; background: var(--field-2); opacity: 1; }
+.article__side, .toc--inline { background: var(--surface); border-radius: var(--radius-box); padding: 22px; }
+.lead-item { background: var(--surface); border-radius: var(--radius-box); padding: 18px; }
+.docs--cards .doctable tr, .partners--logos .partner { background: var(--surface); border: 0; border-radius: var(--radius-box); }
+.morenews { background: var(--surface); }
+.morenews .card { background: var(--bg); border-radius: var(--radius-box); overflow: hidden; }
+.morenews .card__body { padding: 0 16px 18px; }

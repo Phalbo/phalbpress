@@ -27,6 +27,8 @@
 
   document.addEventListener('click', (ev) => {
     if (ev.target.closest('a, button, summary, input, select, textarea, label')) ev.preventDefault();
+    const head = ev.target.closest('[data-pp-part="header"]');
+    if (head) { ev.preventDefault(); selectPart('header'); send({ type: 'part', part: 'header', ptype: 'site', entry: 0 }); return; }
     const part = ptype && ev.target.closest('[data-pp-part]');
     if (part) { ev.preventDefault(); selectPart(part.dataset.ppPart); send({ type: 'part', part: part.dataset.ppPart, ptype, entry: pentry }); return; }
     const el = ev.target.closest('[data-pp-block]');

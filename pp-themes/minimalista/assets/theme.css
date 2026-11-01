@@ -120,3 +120,22 @@
 .article__img { max-width: var(--col) !important; }
 .contact > * { margin-left: 0 !important; max-width: var(--col); }
 .site-head__in { max-width: 1120px; }
+
+/* Pagine interne — The quiet instrument: titolo essenziale su fondo chiaro, molto bianco, filetti di un pixel,
+   elenchi a righe e tabelle, nessun effetto oltre a una dissolvenza. */
+.band { border-bottom: 1px solid var(--line); }
+.band__crumb { opacity: 0.7; }
+.prose h2 { font-weight: 500; font-size: clamp(1.3rem, 1.1rem + 0.8vw, 1.8rem); }
+.list--rows .card { border-top: 1px solid var(--line); }
+.list--rows .card__title { font-weight: 500; }
+.lead-item__title, .morenews__head { font-weight: 400; }
+.lead-item__tag { background: none; color: inherit; border: 1px solid currentColor; }
+.docs--cards .doctable tr, .partners--logos .partner { border: 1px solid var(--line); border-radius: 0; background: none; }
+.article__side { border-left: 1px solid var(--line); padding-left: 24px; }
+.toc--inline { background: none; border: 1px solid var(--line); border-radius: 0; }
+.band__deco { background: none; border: 1px solid var(--line); border-radius: 0; }
+.band__deco i { background: none; border: 1px solid var(--line); }
+.card__title a:hover, .lead-item__title a:hover, .partner__name a:hover, .story__name a:hover { background-size: 100% 1px; }
+.card__title a, .lead-item__title a, .partner__name a, .story__name a { background-size: 0 1px; }
+/* partner a righe: in questo tema le colonne restano larghe e leggibili */
+.partners--rows .partner { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) minmax(0, 6fr); }

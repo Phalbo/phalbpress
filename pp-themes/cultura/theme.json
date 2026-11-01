@@ -91,6 +91,9 @@
     },
     "404": {
       "head": "split"
+    },
+    "site": {
+      "header": "tabs"
     }
   }
 }

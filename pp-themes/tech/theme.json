@@ -42,5 +42,21 @@
     },
     "count": false,
     "tuck": true
+  },
+  "layouts": {
+    "*": {
+      "head": "split",
+      "body": "aside",
+      "list": "grid",
+      "stories": "grid",
+      "docs": "cards",
+      "partners": "logos"
+    },
+    "search": {
+      "head": "left"
+    },
+    "404": {
+      "head": "left"
+    }
   }
 }

@@ -44,5 +44,18 @@
       ]
     },
     "count": 1800
+  },
+  "layouts": {
+    "*": {
+      "head": "minimal",
+      "body": "read",
+      "list": "rows",
+      "stories": "grid",
+      "docs": "table",
+      "partners": "rows"
+    },
+    "site": {
+      "header": "drawer"
+    }
   }
 }

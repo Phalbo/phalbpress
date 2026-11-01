@@ -36,5 +36,21 @@
       ]
     },
     "count": 2000
+  },
+  "layouts": {
+    "*": {
+      "head": "center",
+      "body": "read",
+      "list": "grid",
+      "stories": "zigzag",
+      "docs": "table",
+      "partners": "cards"
+    },
+    "news-item": {
+      "body": "aside"
+    },
+    "site": {
+      "header": "center"
+    }
   }
 }

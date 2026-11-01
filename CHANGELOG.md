@@ -2,6 +2,14 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.12.0
+- **Modelli di testata**, uguali per tutti i temi: *Barra* (logo a sinistra, menu a destra), *Logo a destra*, *Centrata* (logo al centro e menu sotto), *Menu a pulsanti* (fascia colorata con le voci come pulsanti), *Essenziale* (solo logo e Menu, le voci si aprono a tutto schermo, grandi). Ogni tema parte dal suo; si cambia per tutto il sito cliccando la testata in **Modifica visuale**. Su telefono tutti diventano logo, ricerca, lingue e Menu.
+- **Pagine interne ridisegnate in tutti i temi**:
+  - ACE, Adrestia, Ares 2.0, FINE, Rebus e Sic2Sic seguono le pagine interne dei siti originali: striscia di ritratti in bianco e nero (ACE), forma morbida e cornici arrotondate (Adrestia), foto in bicromia col taglio della vela (Ares 2.0), etichetta blu sulla foto e fasce in diagonale (FINE), sala buia con la frase evidenziata (Rebus), striscia di paesaggio e diario a grandi foto di tappa (Sic2Sic).
+  - Tipografico, Istituzionale, Editoriale, Manifesto, Documentario, Minimalista e Tech hanno intestazioni, testi, elenchi, documenti e partner nel loro carattere (capolettera, filetti doppi, blocchi pieni, foto al vivo, tessere…).
+  - Ogni tema ha le sue disposizioni di partenza e regge tutte le altre, anche senza foto.
+- Corretto: l'intestazione "al vivo" senza foto non copre più il titolo con la decorazione.
+
 ## 1.11.0
 - **Disposizioni delle pagine interne**: intestazione, testo ed elenchi si scelgono da un piccolo menu, uguale per tutti i temi.
   - Intestazione: a sinistra, centrata, divisa con foto, foto al vivo, essenziale. Senza foto le disposizioni con la foto mostrano una decorazione del tema.

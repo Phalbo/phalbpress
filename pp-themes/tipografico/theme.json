@@ -39,5 +39,15 @@
       ]
     },
     "count": 1400
+  },
+  "layouts": {
+    "*": {
+      "head": "left",
+      "body": "read",
+      "list": "rows",
+      "stories": "zigzag",
+      "docs": "table",
+      "partners": "rows"
+    }
   }
 }

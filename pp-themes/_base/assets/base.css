@@ -548,3 +548,61 @@ html.pp-editing .hero > * { opacity: 1 !important; transform: none !important; }
 .morenews > * { min-width: 0; }
 /* le entrate di lato partono un po' fuori dalla colonna: la pagina non deve scorrere in orizzontale per questo */
 html { overflow-x: clip; }
+
+/* =====================================================================
+   Modelli di testata (Layouts: sito → header). Stesso HTML per tutti: logo, menu, strumenti (ricerca, lingue, pulsante Menu).
+   Qui la disposizione; il tema dà colori, caratteri e dettagli. Sui telefoni tutti diventano logo + strumenti + Menu.
+   ===================================================================== */
+/* logo a destra: menu a sinistra, strumenti in mezzo, logo in fondo */
+.head-model--right .brand { order: 3; margin-right: 0; margin-left: auto; }
+.head-model--right .nav { order: 1; }
+.head-model--right .site-head__tools { order: 2; }
+.head-model--right .brand__text { align-items: flex-end; text-align: right; }
+@media (max-width: 960px) { .head-model--right .site-head__tools { order: 0; } .head-model--right .brand { order: 3; } }
+@media (min-width: 961px) {
+  /* centrata: logo grande al centro, strumenti a destra, menu centrato sotto un filo */
+  .head-model--center { --head-h: 132px; }
+  .head-model--center .site-head__in { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-areas: ". brand tools" "nav nav nav"; row-gap: 0; padding-top: 14px; }
+  .head-model--center .brand { grid-area: brand; margin: 0; flex-direction: column; text-align: center; gap: 6px; }
+  .head-model--center .brand__logo { height: 48px; }
+  .head-model--center .brand__claim { display: block; }
+  .head-model--center .site-head__tools { grid-area: tools; justify-self: end; }
+  .head-model--center .nav { grid-area: nav; margin-top: 10px; border-top: 1px solid var(--line); }
+  .head-model--center .nav__list { justify-content: center; }
+  .site-head.head-model--center.is-scrolled .brand__claim { display: none; }
+  /* menu a pulsanti: riga sottile con logo e strumenti, sotto una fascia piena con le voci come pulsanti */
+  .head-model--tabs { --head-h: 124px; }
+  .head-model--tabs .site-head__in { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "brand tools" "nav nav"; row-gap: 0; padding-left: 0; padding-right: 0; max-width: none; }
+  .head-model--tabs .brand { grid-area: brand; padding: 12px 0 12px max(var(--margin), calc((100% - var(--container)) / 2 + var(--margin))); }
+  .head-model--tabs .site-head__tools { grid-area: tools; padding-right: max(var(--margin), calc((100% - var(--container)) / 2 + var(--margin))); }
+  .head-model--tabs .nav { grid-area: nav; background: var(--accent); color: var(--accent-ink); padding: 6px max(var(--margin), calc((100% - var(--container)) / 2 + var(--margin))); }
+  .head-model--tabs .nav__list { gap: 4px; }
+  .head-model--tabs .nav__link { min-height: 40px; padding: 0 16px; border-radius: var(--radius); text-decoration: none !important; transition: background-color var(--t-hover), color var(--t-hover); }
+  .head-model--tabs .nav__link:hover { background: color-mix(in srgb, var(--accent-ink) 16%, transparent); }
+  .head-model--tabs .nav__link[aria-current], .head-model--tabs .is-current > .nav__link { background: var(--accent-ink); color: var(--accent); }
+  .head-model--tabs .nav__subbtn { color: inherit; }
+  .head-model--tabs :focus-visible { outline-color: currentColor; }
+}
+/* essenziale: anche sul computer solo logo, strumenti e Menu; le voci si aprono a tutto schermo, grandi */
+.js .head-model--drawer .nav-toggle { display: inline-flex; align-items: center; }
+.js .head-model--drawer .nav { position: fixed; inset: var(--head-h) 0 0 0; background: var(--head-bg); color: var(--head-ink); padding: clamp(24px, 5vw, 64px) max(var(--margin), calc((100% - var(--container)) / 2 + var(--margin))) 48px; overflow-y: auto; display: none; z-index: 39; }
+.js .nav-open .head-model--drawer .nav { display: block; animation: pp-drop 320ms var(--ease-out); }
+.js .head-model--drawer .nav__list { flex-direction: column; align-items: flex-start; gap: 0; }
+.js .head-model--drawer .nav__item { flex-wrap: wrap; width: 100%; border-bottom: 1px solid var(--line); }
+.js .head-model--drawer .nav__link { font-family: var(--font-display); font-size: clamp(1.6rem, 1rem + 2.6vw, 3.4rem); font-weight: var(--weight-head); letter-spacing: var(--tracking-head); min-height: 64px; padding: 6px 0; text-decoration: none; }
+.js .head-model--drawer .nav__link:hover, .js .head-model--drawer .nav__link[aria-current] { text-decoration: underline; text-decoration-thickness: 0.06em; }
+.js .head-model--drawer .nav__sub { position: static; display: none; outline: 0; background: transparent; color: inherit; padding: 0 0 16px; min-width: 0; }
+.js .head-model--drawer .is-open > .nav__sub { display: block; }
+.js .nav-open .head-model--drawer .nav__item { animation: pp-drawer-in 520ms var(--ease-out) both; }
+.js .nav-open .head-model--drawer .nav__item:nth-child(2) { animation-delay: 40ms; } .js .nav-open .head-model--drawer .nav__item:nth-child(3) { animation-delay: 80ms; }
+.js .nav-open .head-model--drawer .nav__item:nth-child(4) { animation-delay: 120ms; } .js .nav-open .head-model--drawer .nav__item:nth-child(5) { animation-delay: 160ms; }
+.js .nav-open .head-model--drawer .nav__item:nth-child(n+6) { animation-delay: 200ms; }
+@keyframes pp-drawer-in { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+.no-js .head-model--drawer .site-head__in { flex-wrap: wrap; padding-bottom: 8px; }
+.no-js .head-model--drawer .nav { order: 3; width: 100%; }
+@media (prefers-reduced-motion: reduce) { .js .nav-open .head-model--drawer .nav, .js .nav-open .head-model--drawer .nav__item { animation: none; } }
+.hm-drawer.nav-open .nav-toggle__open { display: none; }
+.hm-drawer.nav-open .nav-toggle__close { display: inline; }
+.hm-drawer.nav-open { overflow: hidden; }
+/* al vivo senza foto: la decorazione resta piccola nell'angolo destro e il testo ha tutta la larghezza che gli serve */
+.head--cover.band--noimg > .band__deco { left: auto; width: min(42%, 520px); }

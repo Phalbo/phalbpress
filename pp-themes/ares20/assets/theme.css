@@ -146,3 +146,31 @@
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) { position: relative; }
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) img { filter: grayscale(1) contrast(1.1); }
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img)::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; }
+
+/* =====================================================================
+   Pagine interne — Sail and sea (dai riferimenti di ares20.it).
+   Intestazione con la foto in bicromia blu e il taglio della vela in basso; testo a due colonne con indice laterale;
+   lavori come griglia da portfolio senza spazi; documenti come schede piccole; footer scuro.
+   ===================================================================== */
+.head--cover.band--img { min-height: min(56svh, 520px); }
+.head--cover.band--img > .band__img::after { background: linear-gradient(0deg, color-mix(in srgb, var(--field-1) 82%, transparent), color-mix(in srgb, var(--field-1) 40%, transparent)); mix-blend-mode: multiply; }
+.head--cover .band__title { letter-spacing: -0.045em; }
+.band__deco { background: var(--field-1); border-radius: 0; clip-path: polygon(0 0, 100% 0, 100% 70%, 30% 100%, 0 100%); }
+.band__deco i { background: color-mix(in srgb, var(--field-1-ink) 14%, transparent); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.band__deco i:nth-child(1) { width: 70%; aspect-ratio: 1; right: -6%; top: -10%; }
+.band__deco i:nth-child(2) { width: 40%; aspect-ratio: 1; left: 6%; bottom: -6%; top: auto; }
+.band__deco i:nth-child(3) { display: none; }
+.prose h2 { letter-spacing: -0.03em; }
+.article__side { padding: 0 0 0 24px; border-left: 1px solid var(--line); }
+.article__side-head, .toc__head { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8125rem; }
+.list--mosaic .cards, .stories--mosaic .storylist { gap: 2px; }
+.list--mosaic .card, .stories--mosaic .story { border-radius: 0; }
+.morenews { background: var(--black); color: var(--black-ink); --muted: color-mix(in srgb, var(--black-ink) 82%, var(--black)); --surface: color-mix(in srgb, var(--black-ink) 9%, var(--black)); }
+.docs--cards .doctable tbody { grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+.docs--cards .doctable tr { border-radius: 0; border: 1px solid var(--line); background: var(--bg); transition: border-color 300ms; }
+.docs--cards .doctable tr:hover { border-color: var(--field-1); }
+.partners--logos .partner { border-radius: 0; }
+.partners--logos .partner__logo { filter: grayscale(1); }
+.contact__main .contact__mail { padding: 24px 28px; background: var(--field-1); color: var(--field-1-ink); }
+.contact__mail a { color: inherit; }
+.head--cover.band--noimg { background: var(--field-1); color: var(--field-1-ink); }

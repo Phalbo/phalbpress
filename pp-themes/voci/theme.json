@@ -91,6 +91,9 @@
     },
     "search": {
       "head": "center"
+    },
+    "site": {
+      "header": "bar"
     }
   }
 }

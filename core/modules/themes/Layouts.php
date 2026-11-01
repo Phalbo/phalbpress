@@ -19,6 +19,13 @@ final class Layouts
     public static function parts(): array
     {
         return [
+            'header' => ['label' => 'Testata e menu', 'options' => [
+                'bar' => ['Barra', 'logo a sinistra, menu a destra sulla stessa riga'],
+                'right' => ['Logo a destra', 'menu a sinistra, logo a destra'],
+                'center' => ['Centrata', 'logo al centro, menu centrato sotto'],
+                'tabs' => ['Menu a pulsanti', 'logo sopra, sotto una fascia colorata con le voci come pulsanti'],
+                'drawer' => ['Essenziale', 'solo logo e pulsante Menu: le voci si aprono a tutto schermo'],
+            ]],
             'head' => ['label' => 'Intestazione', 'options' => [
                 'left' => ['A sinistra', 'titolo e frase allineati a sinistra'],
                 'center' => ['Centrata', 'titolo e frase al centro'],
@@ -58,6 +65,7 @@ final class Layouts
     public static function types(): array
     {
         return [
+            'site' => ['Tutto il sito', ['header']],
             'page' => ['Pagine', ['head', 'body']],
             'news' => ['Elenco delle news', ['head', 'list']],
             'news-item' => ['Singola news', ['head', 'body']],
@@ -73,7 +81,7 @@ final class Layouts
     /** Valori di base, se né il sito né il tema dicono altro. */
     private static function base(string $part): string
     {
-        return ['head' => 'left', 'body' => 'read', 'list' => 'grid', 'stories' => 'zigzag', 'docs' => 'table', 'partners' => 'cards'][$part] ?? '';
+        return ['header' => 'bar', 'head' => 'left', 'body' => 'read', 'list' => 'grid', 'stories' => 'zigzag', 'docs' => 'table', 'partners' => 'cards'][$part] ?? '';
     }
 
     private static function valid(string $part, $v): bool

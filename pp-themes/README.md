@@ -4,7 +4,7 @@ Ogni tema è una cartella con:
 - `theme.json` — nome, descrizione, palette e font suggeriti (ruoli dell'Identità visiva), forma dei pulsanti, `body_class` facoltativa, `hero_on` (`accent` o `ground`: il fondo su cui la frase grande dell'apertura è leggibile senza foto);
 - `assets/theme.css` — l'aspetto: si appoggia a `_base/assets/base.css` e usa solo le variabili dell'identità per colori e font;
 - facoltativi: `assets/theme.js`, `preview.webp` (720×450, immagine nella pagina Temi), e qualsiasi file di `_base/templates/` o `_base/partials/` da sostituire;
-- in `theme.json` anche `layouts` (disposizioni di partenza delle pagine interne per tipo, `"*"` per tutti) e `motion` (movimento: vedi CLAUDE.md). Ogni tema deve reggere tutte le disposizioni di `Layouts::parts()`.
+- in `theme.json` anche `layouts` (disposizioni di partenza delle pagine interne per tipo, `"*"` per tutti) e `motion` (movimento: vedi CLAUDE.md), con `layouts.site.header` per il modello di testata. Ogni tema deve reggere tutte le disposizioni di `Layouts::parts()` e tutti i modelli di testata.
 
 `_base/` contiene la struttura comune (template, blocchi della home, testi, CSS e JS di base). Le cartelle che iniziano con `_` non compaiono tra i temi.
 

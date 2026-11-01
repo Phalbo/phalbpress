@@ -40,5 +40,18 @@
       ]
     },
     "count": 1200
+  },
+  "layouts": {
+    "*": {
+      "head": "left",
+      "body": "read",
+      "list": "feature",
+      "stories": "grid",
+      "docs": "cards",
+      "partners": "logos"
+    },
+    "site": {
+      "header": "tabs"
+    }
   }
 }

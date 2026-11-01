@@ -76,6 +76,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   (dopo tema e identità), parallasse in `_base/assets/base.js`. Un tema nuovo deve reggere `chapter--custom`, `chapter--has-bg`, `chapter--over-dark|light`,
   `chapter--sp-compact|wide`, `chapter--w-narrow|full`: per colori di card e testi usare `--surface` e `--muted`, che quelle classi ridefiniscono.
 - **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
+- **Modelli di testata** (`Layouts`, tipo `site`, parte `header`: bar|right|center|tabs|drawer): stesso HTML per tutti, classe `head-model--X` sulla testata e `hm-X` sul body, struttura in base.css. Il tema dà quello di partenza in `layouts.site.header`, il sito lo cambia cliccando la testata in Modifica visuale. Su telefono diventano tutti logo + strumenti + Menu.
 - **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, results, partners, contact, search, 404) ha delle parti
   (`head`: left|center|split|cover|minimal · `body`: read|wide|aside · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic · `docs`: cards|table · `partners`: cards|logos|rows),
   uguali per tutti i temi. `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina o news → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json

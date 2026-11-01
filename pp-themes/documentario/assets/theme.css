@@ -100,3 +100,18 @@
 
 .site-foot { background: var(--black); }
 .foot__name { font-weight: 300; font-size: var(--step-head); letter-spacing: -0.04em; }
+
+/* Pagine interne — The place carries it: la foto del luogo apre la pagina al vivo, il titolo sottile ci sta sopra;
+   elenchi a mosaico di foto, testo in una colonna stretta da leggere con calma. */
+.head--cover.band--img { min-height: min(78svh, 760px); }
+.head--cover.band--img > .band__img::after { background: linear-gradient(to top, rgba(0, 0, 0, 0.66), rgba(0, 0, 0, 0) 55%); }
+.head--cover .band__title { font-weight: 300; }
+.prose { font-size: clamp(1.125rem, 1.05rem + 0.3vw, 1.3rem); line-height: 1.75; }
+.prose img, .article__img img { border-radius: 0; }
+.article.body--wide .prose img { width: calc(100% + 2 * var(--margin)); max-width: none; margin-left: calc(var(--margin) * -1); }
+.list--mosaic .cards, .stories--mosaic .storylist { gap: 6px; }
+.list--mosaic .card, .stories--mosaic .story { border-radius: 0; min-height: 420px; }
+.morenews__head { font-weight: 300; }
+.band__deco { background: linear-gradient(160deg, var(--field-2), color-mix(in srgb, var(--accent) 40%, var(--field-2))); border-radius: 0; }
+.band__deco i { display: none; }
+.head--cover.band--noimg { background: var(--black); color: var(--black-ink); }

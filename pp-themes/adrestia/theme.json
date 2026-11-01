@@ -36,5 +36,21 @@
       ]
     },
     "count": 1800
+  },
+  "layouts": {
+    "*": {
+      "head": "left",
+      "body": "read",
+      "list": "grid",
+      "stories": "zigzag",
+      "docs": "cards",
+      "partners": "logos"
+    },
+    "page": {
+      "head": "split"
+    },
+    "contact": {
+      "head": "left"
+    }
   }
 }

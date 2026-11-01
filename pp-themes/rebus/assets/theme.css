@@ -156,3 +156,26 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 /* il magenta pieno è per i testi grandi: sulle etichette piccole si schiarisce verso il testo per restare leggibile */
 .card__cat, .doctable__code { color: color-mix(in srgb, var(--accent) 55%, var(--ink)); }
 .chapter--accent .band__meta { color: var(--accent-ink); }
+
+/* =====================================================================
+   Pagine interne — Lights down (dai riferimenti di REBUS).
+   Sala buia: intestazione con la foto al vivo e il titolo condensato maiuscolo centrato, testo chiaro su scuro,
+   una sola riga evidenziata in magenta, toolkit e risorse come schede chiare sul fondo scuro.
+   ===================================================================== */
+.head--cover.band--img { min-height: min(44svh, 420px); justify-items: center; text-align: center; }
+.head--cover.band--img > :not(.band__img) { margin-left: auto !important; margin-right: auto !important; }
+.head--cover .band__crumb ol { justify-content: center; }
+.head--cover.band--img > .band__img::after { background: linear-gradient(to top, var(--black) 2%, rgba(0, 0, 0, 0.45) 60%, rgba(0, 0, 0, 0.6)); }
+.head--cover .band__title { text-transform: uppercase; }
+.head--cover .band__lead { display: inline; padding: 0.1em 0.3em; background: var(--accent); color: var(--accent-ink) !important; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.band:has(.band__img).head--cover { padding-bottom: clamp(2.5rem, 5vw, 4rem); }
+.band__deco { background: radial-gradient(circle at 70% 30%, color-mix(in srgb, var(--accent) 40%, transparent), transparent 55%), color-mix(in srgb, var(--black-ink) 6%, transparent); border-radius: 0; }
+.band__deco i { display: none; }
+.article__side { padding: 24px; background: color-mix(in srgb, currentColor 7%, transparent); }
+.toc--inline { border-radius: 0; }
+.prose mark, .prose strong { background: var(--accent); color: var(--accent-ink); padding: 0 0.15em; }
+.docs--cards .doctable tr, .partners--logos .partner { border-radius: 0; background: var(--black-ink); color: var(--black); border: 0; --muted: color-mix(in srgb, var(--black) 72%, var(--black-ink)); }
+.chapter--paper .docs--cards .doctable tr { background: var(--surface); color: inherit; }
+.lead-item__tag { border-radius: 0; }
+.contact__main .contact__mail { padding: 22px 26px; background: var(--accent); color: var(--accent-ink); }
+.contact__mail a { color: inherit; }

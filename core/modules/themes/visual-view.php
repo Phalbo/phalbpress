@@ -19,7 +19,8 @@
   <aside class="vis__side panel stack" aria-label="Pannello della Modifica visuale">
     <div data-vis-panel><p class="hint">Clicca una fascia nell'anteprima, o scegline una qui sotto, per cambiarne il fondo, l'immagine, lo spazio e la larghezza.
       I testi si cambiano dalla scheda della fascia; l'aspetto vale per tutte le lingue.</p>
-      <p class="hint" data-vis-hint-page hidden>Clicca l'intestazione o il contenuto della pagina per sceglierne la disposizione: per tutte le pagine di quel tipo o solo per questa.</p></div>
+      <p class="hint" data-vis-hint-page hidden>Clicca l'intestazione o il contenuto della pagina per sceglierne la disposizione: per tutte le pagine di quel tipo o solo per questa.</p>
+      <p class="hint">Clicca la testata (logo e menu) per sceglierne il modello: vale per tutto il sito.</p></div>
     <div class="stack" data-vis-home>
     <h2 class="vis__h">Fasce della home</h2>
     <ol class="vis-list" data-vis-list></ol>

@@ -143,3 +143,35 @@
 
 /* larghezza "stretta" scelta nella Modifica visuale: il blocco testo diventa una colonna sola */
 .textblock.chapter--w-narrow { grid-template-columns: minmax(0, 1fr); }
+
+/* =====================================================================
+   Pagine interne — The label on the photo (dai riferimenti del FINE project).
+   Intestazione con la foto al vivo e il titolo grosso in maiuscolo dentro l'etichetta blu; fasce tagliate in diagonale;
+   righe foto a sinistra e testo a destra; inviti in arancio. Su fondo chiaro per leggere bene i testi lunghi.
+   ===================================================================== */
+.head--cover.band--img { min-height: min(52svh, 480px); justify-items: center; text-align: center; padding-bottom: clamp(2.5rem, 5vw, 4rem); }
+.head--cover.band--img > :not(.band__img) { margin-left: auto !important; margin-right: auto !important; }
+.head--cover.band--img > .band__img::after { background: rgba(0, 0, 0, 0.35); }
+.head--cover .band__title { text-transform: uppercase; padding: 0.15em 0.4em 0.1em; background: var(--field-1); color: var(--field-1-ink) !important; letter-spacing: 0.02em; }
+.head--cover .band__crumb ol { justify-content: center; }
+.band { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 28px), 0 100%); padding-bottom: calc(clamp(2.5rem, 5vw, 4rem) + 28px); }
+.band.chapter--paper { clip-path: none; }
+.band__deco { background: var(--field-1); border-radius: 0; clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%); }
+.band__deco i { border-radius: 0; background: var(--accent); }
+.band__deco i:nth-child(1) { width: 60%; height: 18px; aspect-ratio: auto; right: 0; top: 30%; transform: skewY(-8deg); }
+.band__deco i:nth-child(2) { width: 46%; height: 18px; aspect-ratio: auto; right: 0; top: 52%; bottom: auto; left: auto; transform: skewY(-8deg); opacity: 0.6; }
+.band__deco i:nth-child(3) { display: none; }
+.prose h2 { color: var(--field-1); }
+.article__side { padding: 26px; background: var(--field-1); color: var(--field-1-ink); --muted: color-mix(in srgb, var(--field-1-ink) 85%, var(--field-1)); }
+.article__side .pp-share a, .article__side .pp-share button { color: inherit; }
+.morenews { background: var(--field-1); color: var(--field-1-ink); clip-path: polygon(0 28px, 100% 0, 100% 100%, 0 100%); padding-top: calc(var(--section) + 28px); --muted: color-mix(in srgb, var(--field-1-ink) 85%, var(--field-1)); }
+.morenews .card { background: var(--bg); color: var(--ink); }
+.morenews .card__body { padding: 0 16px 18px; }
+.lead-item { background: var(--field-1); color: var(--field-1-ink); padding: clamp(18px, 2.5vw, 30px); --muted: color-mix(in srgb, var(--field-1-ink) 85%, var(--field-1)); }
+.lead-item__tag { background: var(--accent); color: var(--accent-ink); border-radius: 0; }
+.results__head { color: var(--field-1); }
+.docs--cards .doctable tr { border-radius: 0; border: 0; border-top: 4px solid var(--accent); background: var(--surface); }
+.contact__main .contact__mail { padding: 24px; background: var(--field-1); color: var(--field-1-ink); }
+.contact__mail a { color: inherit; }
+.head--cover.band--noimg { justify-items: start; text-align: left; }
+.head--cover.band--noimg > :not(.band__deco) { margin-left: max(0px, calc((100% - var(--container)) / 2)) !important; margin-right: auto !important; }

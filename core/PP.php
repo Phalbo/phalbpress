@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.11.0';
+    public const VERSION = '1.12.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche

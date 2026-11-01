@@ -37,5 +37,21 @@
       ]
     },
     "count": 2000
+  },
+  "layouts": {
+    "*": {
+      "head": "cover",
+      "body": "read",
+      "list": "mosaic",
+      "stories": "mosaic",
+      "docs": "table",
+      "partners": "cards"
+    },
+    "search": {
+      "head": "minimal"
+    },
+    "404": {
+      "head": "left"
+    }
   }
 }

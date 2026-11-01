@@ -88,6 +88,9 @@
     },
     "404": {
       "head": "cover"
+    },
+    "site": {
+      "header": "center"
     }
   }
 }
