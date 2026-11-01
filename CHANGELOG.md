@@ -2,6 +2,9 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.13.1
+- Gestione: la scheda di pagine, news, storie ed eventi non scrive più avvisi nel registro degli errori di PHP (campi “Pagina madre”, “Punto focale” e “Disposizione” senza i valori di partenza).
+
 ## 1.13.0
 - **Gallerie in news e pagine**: pulsante "Galleria" nell'editor, si scelgono le foto e il testo alternativo di ognuna.
 - **Foto ingrandite (lightbox)**: un clic su una foto della galleria o del testo la apre grande, con frecce, tastiera e scorrimento col dito.

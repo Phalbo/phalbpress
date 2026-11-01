@@ -239,7 +239,9 @@ final class Admin
             $f = is_array($f) ? $f : ['label' => $f];
             $out[$k] = $f + ['label' => $k, 'type' => 'text', 'options' => [], 'translatable' => false, 'hint' => ''];
         }
-        return Hooks::filter('fields', $out, $type, $row);
+        // i campi aggiunti dai moduli (filtro 'fields') prendono gli stessi valori di partenza
+        return array_map(fn($f) => (is_array($f) ? $f : ['label' => $f]) + ['type' => 'text', 'options' => [], 'translatable' => false, 'hint' => ''],
+            Hooks::filter('fields', $out, $type, $row));
     }
 
     public static function fieldValue(array $f, $v)
