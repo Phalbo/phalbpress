@@ -64,6 +64,10 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Pagine madri**: meta `parent` (id) o `parent_slug` nel seed → `page_parent($e)`; percorso sopra il titolo ed elenco `.children` (parte `list`) nella madre.
 - **Social**: `partials/social.php` (icone SVG dal nome o dal dominio); `social_place` = footer|header|both nelle Impostazioni.
 - **Newsletter**: `Forms::render('newsletter')` (email + consenso con data), esportazione CSV in Richieste.
+- **Portfolio** (`core/modules/themes/Stories.php`): una storia ha `meta.category` + `meta.categories` (id di contenuti `category`, con `meta.parent` per le sottocategorie).
+  Ogni categoria usata ha la pagina `/{lang}/{sezione storie}/{slug}/` (rotta `stories-cat`, template `stories` con `$category`, in `PP::items()` quindi anche statica);
+  la disposizione dell'elenco si sceglie per tipo o per categoria (meta `layout_stories`). Dati della scheda: campi del tipo `story` con `'public' => chiave del testo` (`Stories::facts`).
+- **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`).
 
 ## Importa da WordPress (core/modules/wpimport)
 - File in `data/wp-import/`: `.xml` (WXR, obbligatorio), `.sql` (facoltativo: SOLO `icl_translations`, `term_taxonomy`, `redirection_items`), `.zip` di uploads (facoltativo, altrimenti scarica dal vecchio sito con `'download' => true`).
@@ -99,9 +103,10 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   `chapter--sp-compact|wide`, `chapter--w-narrow|full`: per colori di card e testi usare `--surface` e `--muted`, che quelle classi ridefiniscono.
 - **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
 - **Modelli di testata** (`Layouts`, tipo `site`, parte `header`: bar|right|center|tabs|drawer): stesso HTML per tutti, classe `head-model--X` sulla testata e `hm-X` sul body, struttura in base.css. Il tema dà quello di partenza in `layouts.site.header`, il sito lo cambia cliccando la testata in Modifica visuale. Su telefono diventano tutti logo + strumenti + Menu.
-- **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, results, partners, contact, search, 404) ha delle parti
-  (`head`: left|center|split|cover|minimal · `body`: read|wide|aside · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic · `docs`: cards|table · `partners`: cards|logos|rows),
-  uguali per tutti i temi. `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina o news → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json
+- **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, story, results, partners, contact, search, 404) ha delle parti
+  (`head`: left|center|split|cover|minimal · `body`: read|wide|aside · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic|tiles|covers|screens|index
+  · `work` (tipo `story`, la scheda): portrait|sheet|showcase|journal · `docs`: cards|table · `partners`: cards|logos|rows),
+  uguali per tutti i temi. `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina, news, storia o categoria → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json
   (`"*"` vale per tutti i tipi) → base. I template mettono la classe `head--X` sull'intestazione (partial `band`, struttura piatta: percorso, etichetta, titolo, frase, dati, foto o `.band__deco`),
   `body--X`, `list--X`, `stories--X`, `docs--X`, `partners--X` sulle parti e `data-pp-part`; la struttura sta in base.css, il tema ci mette il carattere e deve reggerle tutte, anche senza foto.
   Nella Modifica visuale si sceglie la pagina in alto e si clicca una parte: vale per tutte le pagine del tipo o solo per quella (anteprima con `data-pp-type`/`data-pp-entry` sull'html).

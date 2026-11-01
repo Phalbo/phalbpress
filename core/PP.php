@@ -210,7 +210,10 @@ final class PP
             if ($first !== self::section($sec, $lang)) continue;
             if (!$second) return ['name' => $sec, 'tpl' => $sec === 'news' ? 'news' : 'stories'];
             $item = Content::entry($type, $second, $lang, Content::$preview);
-            return $item ? ['name' => $sec . '-item', 'params' => [(int)$item['id']], 'tpl' => $type === 'news' ? 'news-item' : 'story', 'vars' => ['item' => $item]] : null;
+            if ($item) return ['name' => $sec . '-item', 'params' => [(int)$item['id']], 'tpl' => $type === 'news' ? 'news-item' : 'story', 'vars' => ['item' => $item]];
+            // una categoria delle storie ha la sua pagina: /{lang}/{storie}/{categoria}/
+            $cat = $type === 'story' && class_exists('Stories') ? Stories::bySlug($second, $lang) : null;
+            return $cat ? ['name' => 'stories-cat', 'params' => [(int)$cat['id']], 'tpl' => 'stories', 'vars' => ['category' => $cat]] : null;
         }
         if (!$second && $first === self::section('results', $lang)) return ['name' => 'results', 'tpl' => 'results'];
         if (!$second && $first === self::section('partners', $lang)) return ['name' => 'partners', 'tpl' => 'partners'];
@@ -236,6 +239,11 @@ final class PP
             $p = [];
             foreach (I18n::codes() as $l) $p[$l] = self::section($sec, $l);
             $items[] = ['kind' => $sec, 'paths' => $p];
+        }
+        if (class_exists('Stories')) foreach (Stories::categories(I18n::$master) as $c) {
+            $p = [];
+            foreach (I18n::codes() as $l) $p[$l] = self::section('stories', $l) . '/' . Content::slugFor((int)$c['id'], $l);
+            $items[] = ['kind' => 'stories-cat', 'id' => (int)$c['id'], 'paths' => $p];
         }
         foreach (DB::all("SELECT * FROM pp_entries WHERE type IN ('page','news','story') AND " . Content::live() . " ORDER BY type, menu_order, id") as $e) {
             if ($e['type'] === 'page' && $e['slug'] === 'home') continue;
@@ -266,7 +274,7 @@ final class PP
             'home', '404' => self::link('', $lang),
             'news', 'stories', 'results', 'partners' => self::link(self::section($r['name'], $lang), $lang),
             'news-item' => self::link(self::section('news', $lang) . '/' . Content::slugFor($id, $lang), $lang),
-            'stories-item' => self::link(self::section('stories', $lang) . '/' . Content::slugFor($id, $lang), $lang),
+            'stories-item', 'stories-cat' => self::link(self::section('stories', $lang) . '/' . Content::slugFor($id, $lang), $lang),
             'page' => self::link(Content::slugFor($id, $lang), $lang),
             default => self::link('', $lang),
         };

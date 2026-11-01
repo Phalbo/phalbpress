@@ -144,8 +144,14 @@
 
 /* foto virate nel blu del tema, come dice la direzione: bianco e nero sotto, il campo chiaro sopra in moltiplica */
 :is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) { position: relative; }
-:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) img { filter: grayscale(1) contrast(1.1); }
-:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img)::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; }
+:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img) img { filter: grayscale(1) contrast(1.1); transition: filter .5s cubic-bezier(.16, 1, .3, 1); }
+:is(.card__img, .gallery__item, .story__pic, .storypage__pic, .band__img, .article__img)::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; border-radius: inherit; transition: opacity .5s cubic-bezier(.16, 1, .3, 1); }
+/* i lavori del portfolio: in blu a riposo, coi loro colori veri passandoci sopra (e con la tastiera) */
+:is(.story, .card, .worknav__item):is(:hover, :focus-within) :is(.story__pic, .card__img, .worknav__pic) img { filter: none; }
+:is(.story, .card, .worknav__item):is(:hover, :focus-within) :is(.story__pic, .card__img, .worknav__pic)::after { opacity: 0; }
+.worknav__pic { position: relative; }
+.worknav__pic img { filter: grayscale(1) contrast(1.1); transition: filter .5s cubic-bezier(.16, 1, .3, 1); }
+.worknav__pic::after { content: ""; position: absolute; inset: 0; background: var(--field-2); mix-blend-mode: multiply; pointer-events: none; transition: opacity .5s; }
 
 /* =====================================================================
    Pagine interne — Sail and sea (dai riferimenti di ares20.it).
@@ -174,3 +180,36 @@
 .contact__main .contact__mail { padding: 24px 28px; background: var(--field-1); color: var(--field-1-ink); }
 .contact__mail a { color: inherit; }
 .head--cover.band--noimg { background: var(--field-1); color: var(--field-1-ink); }
+
+/* =====================================================================
+   Portfolio — categorie come il menu, griglie fitte, scheda del lavoro con i dati a lato.
+   Le foto dei lavori nella scheda restano coi loro colori: sono il lavoro, non decorazione.
+   ===================================================================== */
+.catnav { gap: 0; }
+.catnav__list { gap: 0 26px; }
+.catnav__link { font-size: 0.8125rem; font-weight: 650; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; }
+.catnav__link:hover, .catnav__link[aria-current] { text-decoration: none; box-shadow: inset 0 -3px 0 var(--accent); }
+.catnav__link[aria-current="true"] { box-shadow: inset 0 -3px 0 var(--line); }
+.catnav__list--sub { border-top: 2px solid var(--ink); padding-top: 4px; margin-top: 10px; }
+.catnav__list--sub .catnav__link { text-transform: none; letter-spacing: 0; font-size: 0.9375rem; font-weight: 550; }
+.catnav__n { letter-spacing: 0; }
+
+:is(.stories--tiles, .stories--screens) .storylist { column-gap: 4px; }
+.story__name, .worknav__name, .pager__name { letter-spacing: -0.02em; font-weight: 650; }
+.story__cat { color: var(--accent); }
+.stories--index .story { border-top: 2px solid var(--ink); }
+.stories--index .story + .story { border-top-width: 1px; border-top-color: var(--line); }
+.stories--index .story__year { font-weight: 650; color: var(--accent); }
+
+.work__title { letter-spacing: -0.045em; font-weight: 650; }
+.work .facts dt, .worknav__head, .pager__dir { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8125rem; }
+.facts--row { border-top: 2px solid var(--ink); }
+.work--sheet .work__side { border-top: 2px solid var(--ink); padding-top: 18px; }
+.work--sheet .work__img img { background: var(--field-2); }
+.work__stage { background: var(--field-1); color: var(--field-1-ink); clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--cut) * 0.6), 0 100%); padding-bottom: calc(clamp(2.5rem, 5vw, 4rem) + var(--cut) * 0.6); position: relative; z-index: 2; }
+.work__stage + .work__body { margin-top: calc(var(--cut) * -0.6); padding-top: calc(var(--section) * 0.6 + var(--cut) * 0.6); }
+.work__stage :is(.band__crumb a, .work__lead) { color: inherit; }
+.worknav > :first-child { border-top: 2px solid var(--ink); padding-top: 18px; }
+.worknav > .pager:first-child { padding-top: 24px; }
+.worknav__list { gap: 32px 4px; }
+.worknav__pic { aspect-ratio: 1; }

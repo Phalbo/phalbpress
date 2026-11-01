@@ -8,6 +8,7 @@ require_once __DIR__ . '/Blocks.php';
 require_once __DIR__ . '/Themes.php';
 require_once __DIR__ . '/Visual.php';
 require_once __DIR__ . '/Layouts.php';
+require_once __DIR__ . '/Stories.php';
 require_once __DIR__ . '/Demo.php';
 
 return [

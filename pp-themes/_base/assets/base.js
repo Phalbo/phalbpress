@@ -131,6 +131,33 @@
     hero.querySelectorAll('[data-say]').forEach((b) => b.addEventListener('click', () => show(b.dataset.say)));
   });
 
+  /* ---------- elenchi lunghi: i primi N, poi "Mostra altri" (senza JS si vedono tutti) ---------- */
+  document.querySelectorAll('[data-more]').forEach((list) => {
+    const step = parseInt(list.dataset.more, 10) || 24;
+    const items = Array.from(list.children);
+    if (items.length <= step) return;
+    let shown = step;
+    items.forEach((it, i) => { if (i >= shown) it.hidden = true; });
+    const wrap = document.createElement('p');
+    wrap.className = 'more';
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'btn btn--dark more__btn';
+    const label = () => { b.textContent = (list.dataset.moreLabel || '{n}').replace('{n}', String(items.length - shown)); };
+    label();
+    b.addEventListener('click', () => {
+      const from = shown;
+      shown = Math.min(items.length, shown + step);
+      items.slice(from, shown).forEach((it) => { it.hidden = false; it.classList.add('is-in'); });
+      // il fuoco va al primo nuovo, così chi usa la tastiera continua da lì
+      const first = items[from] && items[from].querySelector('h3 a, a:not([tabindex="-1"])');
+      if (first) first.focus();
+      if (shown >= items.length) wrap.remove(); else label();
+    });
+    wrap.appendChild(b);
+    list.after(wrap);
+  });
+
   /* ---------- filtri degli elenchi (categorie, paesi) ---------- */
   document.querySelectorAll('[data-filter]').forEach((f) => {
     f.hidden = false;

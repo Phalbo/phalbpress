@@ -44,10 +44,20 @@ final class Layouts
                 'rows' => ['Elenco', 'righe con miniatura, comodo con tante notizie'],
                 'mosaic' => ['Mosaico', 'foto al vivo con il titolo sopra'],
             ]],
-            'stories' => ['label' => 'Storie', 'options' => [
+            'stories' => ['label' => 'Elenco', 'options' => [
                 'zigzag' => ['Alternate', 'foto e testo a zig-zag'],
                 'grid' => ['Ritratti', 'ritratti in griglia'],
                 'mosaic' => ['Mosaico', 'foto al vivo con il nome sopra'],
+                'tiles' => ['Riquadri', 'quadrati fitti, il titolo sotto: per campagne e grafiche social'],
+                'covers' => ['Copertine', 'formato verticale come libri e riviste: per editoria e report'],
+                'screens' => ['Schermi', 'formato 16:9 largo: per video e siti'],
+                'index' => ['Indice', 'righe di testo con anno e cliente, la foto compare passandoci sopra: per ricerche e lunghi archivi'],
+            ]],
+            'work' => ['label' => 'Scheda', 'options' => [
+                'portrait' => ['Ritratto', 'foto verticale accanto al nome, poi il testo: per le persone'],
+                'sheet' => ['Scheda', 'dati del lavoro in una colonna fissa a lato, foto e testo accanto'],
+                'showcase' => ['Vetrina', 'la foto grande in apertura su fondo scuro, i dati in una riga sotto il titolo'],
+                'journal' => ['Racconto', 'titolo grande, testo stretto e immagini a tutta larghezza tra un paragrafo e l’altro'],
             ]],
             'docs' => ['label' => 'Documenti', 'options' => [
                 'cards' => ['Schede', 'un documento per scheda con il pulsante per scaricarlo'],
@@ -69,7 +79,8 @@ final class Layouts
             'page' => ['Pagine', ['head', 'body', 'list']],
             'news' => ['Elenco delle news', ['head', 'list']],
             'news-item' => ['Singola news', ['head', 'body']],
-            'stories' => ['Elenco delle storie', ['head', 'stories']],
+            'stories' => ['Elenco delle storie (e delle loro categorie)', ['head', 'stories']],
+            'story' => ['Singola storia', ['work']],
             'events' => ['Elenco degli eventi', ['head']],
             'event' => ['Singolo evento', ['head']],
             'results' => ['Risultati', ['head', 'docs']],
@@ -83,7 +94,7 @@ final class Layouts
     /** Valori di base, se né il sito né il tema dicono altro. */
     private static function base(string $part): string
     {
-        return ['header' => 'bar', 'head' => 'left', 'body' => 'read', 'list' => 'grid', 'stories' => 'zigzag', 'docs' => 'table', 'partners' => 'cards'][$part] ?? '';
+        return ['header' => 'bar', 'head' => 'left', 'body' => 'read', 'list' => 'grid', 'stories' => 'zigzag', 'work' => 'portrait', 'docs' => 'table', 'partners' => 'cards'][$part] ?? '';
     }
 
     private static function valid(string $part, $v): bool
@@ -134,7 +145,7 @@ final class Layouts
     /** Una sola pagina fa eccezione ('' = come le altre del suo tipo). */
     public static function setEntry(int $id, string $part, string $value): void
     {
-        $row = DB::one("SELECT * FROM pp_entries WHERE id = ? AND type IN ('page', 'news')", [$id]);
+        $row = DB::one("SELECT * FROM pp_entries WHERE id = ? AND type IN ('page', 'news', 'story', 'category')", [$id]);
         if (!$row) throw new RuntimeException('Contenuto non trovato');
         if ($value !== '' && !self::valid($part, $value)) throw new RuntimeException('Disposizione sconosciuta');
         $meta = Content::meta($row);
@@ -151,9 +162,12 @@ final class Layouts
             'hint' => 'quando la foto viene tagliata (schede, intestazioni, mosaico) resta visibile questa parte'];
         if ($type === 'page') $out['parent'] = ['label' => 'Pagina madre', 'type' => 'entry', 'entry_type' => 'page',
             'hint' => 'facoltativa: la pagina compare nell’elenco della madre e nel percorso sopra il titolo (es. Progetti → Progetto 1)'];
-        $map = ['page' => 'page', 'news' => 'news-item'][$type] ?? '';
+        if ($type === 'category') $out['parent'] = ['label' => 'Categoria madre', 'type' => 'entry', 'entry_type' => 'category',
+            'hint' => 'facoltativa: la categoria compare tra le sottocategorie della madre (es. Comunicazione → Audiovisivi)'];
+        $map = ['page' => 'page', 'news' => 'news-item', 'story' => 'story', 'category' => 'stories'][$type] ?? '';
         if (!$map) return $out;
         foreach (self::types()[$map][1] as $part) {
+            if ($part === 'head' && $type === 'category') continue;
             $p = self::parts()[$part];
             $opts = ['' => 'Come le altre (' . $p['options'][self::forType($map, $part)][0] . ')'];
             foreach ($p['options'] as $k => [$name]) $opts[$k] = $name;

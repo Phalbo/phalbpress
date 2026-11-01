@@ -137,3 +137,10 @@ body { letter-spacing: 0.01em; }
 .partners--cards .partner { border-top: 3px double currentColor; }
 .band__deco { background: none; border: 1px solid var(--line); }
 .band__deco i { border-radius: 0; background: none; border: 1px solid currentColor; opacity: 0.35; }
+
+/* scheda del lavoro (1.14): i dati stanno nell'asse a sinistra, foto e testo nella colonna dei contenuti */
+@media (min-width: 1000px) {
+  .work--sheet > .work__in { grid-column: 1 / -1; grid-template-columns: var(--axis) minmax(0, 1fr); column-gap: calc(var(--gutter) * 2); }
+  .work--sheet .work__head, .work--sheet .work__main { grid-column: 2; }
+  .work--sheet .work__side { grid-column: 1; justify-self: end; width: min(100%, 320px); }
+}

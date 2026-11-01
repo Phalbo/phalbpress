@@ -48,7 +48,7 @@ $headerModel = class_exists('Layouts') ? Layouts::forType('site', 'header') : 'b
   <div class="site-head__in">
     <a class="brand" href="<?= e(link_to('')) ?>"<?= $r['name'] === 'home' ? ' aria-current="page"' : '' ?>>
       <?= $hasId ? Identity::logo(false, 'brand__logo') : '' ?>
-      <span class="brand__text"><span class="brand__name"><?= e($siteName) ?></span><?php if ($claim !== ''): ?><span class="brand__claim"><?= e($claim) ?></span><?php endif; ?></span>
+      <span class="brand__text<?= $hasId && !empty(Identity::get()['logo_has_name']) && Identity::logo(false, 'x') !== '' ? ' sr-only' : '' ?>"><span class="brand__name"><?= e($siteName) ?></span><?php if ($claim !== ''): ?><span class="brand__claim"><?= e($claim) ?></span><?php endif; ?></span>
     </a>
     <nav class="nav" id="site-nav" aria-label="<?= e(t('nav_main')) ?>" data-nav>
       <ul class="nav__list">

@@ -13,6 +13,7 @@
           <label class="field">Logo (per fondi chiari)<input type="file" name="logo" accept=".svg,.png,.webp"></label>
           <p class="hint"><?= e($hintLogo) ?></p>
           <?php if ($s['logo']): ?><label class="check"><input type="checkbox" name="remove_logo" value="1"> Togli il logo</label><?php endif; ?>
+          <label class="check"><input type="checkbox" name="logo_has_name" value="1" <?= !empty($s['logo_has_name']) ? 'checked' : '' ?>> Il logo contiene già il nome (in testata non si ripete)</label>
         </div>
       </div>
       <div class="logo-row">

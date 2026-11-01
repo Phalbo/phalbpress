@@ -176,7 +176,8 @@ final class Visual
         $types = Layouts::types();
         if (!isset($types[$type]) || !in_array($part, $types[$type][1], true)) { header('Content-Type: text/html; charset=utf-8'); echo '<p class="hint">Questa parte della pagina non ha disposizioni da scegliere.</p>'; exit; }
         $p = Layouts::parts()[$part];
-        $perPage = $entry && in_array($type, ['page', 'news-item'], true);
+        $perPage = $entry && in_array($type, ['page', 'news-item', 'story', 'stories'], true) && !($type === 'stories' && $part === 'head');
+        $scopeOne = $type === 'stories' ? 'Solo questa categoria' : 'Solo questa pagina';
         $row = $perPage ? DB::one('SELECT * FROM pp_entries WHERE id = ?', [$entry]) : null;
         $own = $row ? (string)(Content::meta($row)['layout_' . $part] ?? '') : '';
         $typeVal = Layouts::forType($type, $part);
@@ -194,7 +195,7 @@ final class Visual
   <?php if ($perPage): ?>
   <fieldset class="vis-scope"><legend>Vale per</legend>
     <label class="check"><input type="radio" name="scope" value="type" <?= $own === '' ? 'checked' : '' ?>> Tutte le pagine di questo tipo (<?= e(mb_strtolower($types[$type][0])) ?>)</label>
-    <label class="check"><input type="radio" name="scope" value="page" <?= $own !== '' ? 'checked' : '' ?>> Solo questa pagina</label>
+    <label class="check"><input type="radio" name="scope" value="page" <?= $own !== '' ? 'checked' : '' ?>> <?= e($scopeOne) ?></label>
   </fieldset>
   <?php else: ?><input type="hidden" name="scope" value="type"><?php endif; ?>
   <fieldset class="vis-layouts"><legend>Disposizione</legend>

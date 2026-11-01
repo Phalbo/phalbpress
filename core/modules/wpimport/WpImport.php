@@ -10,7 +10,7 @@
  *   'types'      => ['post' => 'news', 'page' => 'page', 'portfolio' => 'story']   tipo di WordPress → tipo di PhalbPress
  *   'taxonomies' => ['category' => ['type' => 'category', 'field' => 'category']]   termini → contenuti, collegati con un campo
  *   'drafts'     => true      importa anche le bozze (restano bozze)
- *   'skip'       => [id o slug di WordPress da non importare]; con 'slug' => 'home' | chiave di sezione (es. 'stories') | '/percorso/'
+ *   'skip'       => [id o slug di WordPress da non importare]; con 'slug' => 'home' | chiave di sezione (es. 'stories') | '/percorso/' | 'category:slug'
  *                   il vecchio indirizzo porta lì (pagine che erano solo griglie automatiche, la vecchia home…)
  *   'download'   => true      i file che non sono nello zip si scaricano dal vecchio sito, piano
  *   'menu'       => 'slug'    menu di WordPress da usare come menu principale (di base: il più lungo nella lingua principale)
@@ -307,7 +307,7 @@ final class WpImport
     private static function stepTerms(array &$s): bool
     {
         $m = self::model(); $c = self::cfg();
-        $groups = [];
+        $groups = []; $termIds = [];
         foreach ($m['terms'] as $t) {
             if (!isset($c['taxonomies'][$t['tax']])) continue;
             $icl = $m['icl']['terms'][$t['id']] ?? null;
@@ -328,6 +328,20 @@ final class WpImport
             foreach ($texts as $l => $t) Content::saveText('entry', $id, $l, ['title' => $t['name'], 'slug' => $t['slug']]);
             self::setMap('termgroup', $key, (string)$id);
             foreach ($byLang as $t) self::setMap('term', (string)$t['id'], (string)$id);
+            $termIds[$id] = $mt;
+        }
+        // categorie madri (gerarchia di WordPress) e ritocchi del sito (es. la disposizione dell'elenco per categoria)
+        foreach ($termIds ?? [] as $id => $mt) {
+            $row = DB::one('SELECT meta FROM pp_entries WHERE id = ?', [$id]);
+            $meta = Content::meta($row ?: []);
+            if ($mt['parent'] !== '') {
+                foreach ($m['terms'] as $p) if ($p['tax'] === $mt['tax'] && ($p['slug'] === $mt['parent'] || (string)$p['id'] === $mt['parent'])) {
+                    $pid = (int)(self::map('term', (string)$p['id']) ?? 0);
+                    if ($pid && $pid !== $id) $meta['parent'] = $pid;
+                }
+            }
+            $meta = Hooks::filter('wp_import_term', $meta, $mt);
+            DB::update('pp_entries', ['meta' => json_encode($meta, JSON_UNESCAPED_UNICODE)], 'id = ?', [$id]);
         }
         return false;
     }
@@ -369,7 +383,7 @@ final class WpImport
                 foreach (self::model()['terms'] as $t) {
                     if ($t['tax'] !== $tax || $t['slug'] !== $slug) continue;
                     $ref = (int)(self::map('term', (string)$t['id']) ?? 0);
-                    if ($ref) { $data['meta'][$tc['field']] ??= $ref; $data['meta'][$tc['field'] . 's'][] = $ref; }
+                    if ($ref) { $data['meta'][$tc['field']] ??= $ref; $data['meta']['categories'][] = $ref; }
                 }
             }
             $data = Hooks::filter('wp_import_entry', $data, $it, $lang);
@@ -599,7 +613,8 @@ final class WpImport
                 if (($it['slug'] !== (string)$k && (string)$it['id'] !== (string)$k) || $it['status'] !== 'publish') continue;
                 $l = self::langOf($it['id']);
                 if (!I18n::valid($l)) continue;
-                $to = $target === 'home' ? PP::link('', $l) : (str_starts_with((string)$target, '/') ? (string)$target : PP::link(PP::section((string)$target, $l), $l));
+                $to = self::target((string)$target, $l);
+                if ($to === '') continue;
                 [$p, $q] = self::oldPath($it);
                 Redirects::add($p . ($q !== '' ? '?' . $q : ''), self::rel($to));
                 Redirects::add('/?page_id=' . $it['id'], self::rel($to));
@@ -608,7 +623,7 @@ final class WpImport
         }
         // categorie: gli archivi del vecchio sito portano dove dice il sito, col filtro (['from' => '/archivio/x/', 'to' => '/it/portfolio/'])
         foreach ($m['terms'] as $t) {
-            $r = Hooks::filter('wp_import_term_url', null, $t);
+            $r = Hooks::filter('wp_import_term_url', null, $t + ['entry' => (int)(self::map('term', (string)$t['id']) ?? 0)]);
             if (is_array($r) && !empty($r['from']) && !empty($r['to'])) { Redirects::add($r['from'], self::rel($r['to'])); $n++; }
         }
         // redirect del plugin Redirection: si seguono fino all'indirizzo nuovo
@@ -621,6 +636,23 @@ final class WpImport
         }
         self::$counts['redirects'] = $n;
         return false;
+    }
+
+    /** Destinazione di un contenuto saltato: 'home', '/percorso/', 'category:slug' (pagina della categoria nelle storie) o la chiave di una sezione. */
+    private static function target(string $target, string $lang): string
+    {
+        if ($target === 'home') return PP::link('', $lang);
+        if (str_starts_with($target, '/')) return $target;
+        if (str_starts_with($target, 'category:')) {
+            $slug = substr($target, 9);
+            foreach (self::model()['terms'] as $t) {
+                if ($t['slug'] !== $slug) continue;
+                $id = (int)(self::map('term', (string)$t['id']) ?? 0);
+                if ($id) return PP::link(PP::section('stories', $lang) . '/' . Content::slugFor($id, $lang), $lang);
+            }
+            return '';
+        }
+        return PP::link(PP::section($target, $lang), $lang);
     }
 
     /** Indirizzo senza la base del sito (i redirect si salvano così). */

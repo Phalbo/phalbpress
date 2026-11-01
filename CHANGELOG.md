@@ -10,7 +10,17 @@ Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gesti
   - Le traduzioni di WPML diventano le lingue dello stesso contenuto. Le foto si importano una volta sola, ridotte e in WebP come al caricamento.
   - Ogni vecchio indirizzo (anche `?lang=en`, `?p=12`, `?page_id=34`) porta con un redirect 301 a quello nuovo; i link interni nei testi vengono riscritti.
   - Lavora a passi di 20 secondi e riprende da dove era rimasto; si può rilanciare (aggiorna, non duplica) o annullare. Anche da riga di comando: `php cron.php wpimport plan|run|reset|undo`.
-  - Il sito decide i tipi e cosa saltare in `config['wp_import']`, e può ritoccare ogni contenuto col filtro `wp_import_entry`.
+  - Il sito decide i tipi e cosa saltare in `config['wp_import']` (una pagina saltata può portare alla home, a una sezione o a una categoria), e può ritoccare ogni contenuto col filtro `wp_import_entry`.
+  - Le categorie portano la gerarchia di WordPress; i contatori animati diventano numeri scritti; le foto tengono la misura scelta nel vecchio sito.
+- **Portfolio (storie con categorie)**:
+  - ogni categoria usata ha la sua pagina (`/it/portfolio/ricerca/`), anche nel sito statico e senza JavaScript, con le sottocategorie (campo "Categoria madre");
+  - sopra l'elenco i filtri sono link alle categorie, con quanti lavori ha ciascuna; negli elenchi lunghi "Mostra altri" carica i successivi;
+  - quattro disposizioni nuove dell'elenco, scelte per tutto il portfolio o **per singola categoria** (anche in Modifica visuale): Riquadri, Copertine, Schermi (16:9), Indice (righe con anno, la foto compare passandoci sopra);
+  - la pagina del singolo lavoro ha quattro disposizioni: Ritratto (quella di prima, per le storie di persone), Scheda (dati in una colonna fissa a lato), Vetrina (la foto grande su fondo scuro), Racconto (immagini a tutta larghezza);
+  - i dati del lavoro (cliente, attività…) sono i campi con `'public' => chiave del testo`, più categorie e anno; in fondo altri lavori della stessa categoria, precedente e successivo.
+- Identità visiva: "Il logo contiene già il nome" (in testata il nome resta solo per i lettori di schermo).
+- Tema Ares 2.0: categorie del portfolio come il menu, griglie fitte, scheda del lavoro con i dati a lato; le foto dei lavori restano in blu e prendono i loro colori passandoci sopra. Tema Istituzionale: i dati del lavoro stanno nell'asse.
+- Gallerie nel testo: non hanno più il rientro a sinistra degli elenchi.
 - Redirect: possono distinguere i parametri dei vecchi siti WordPress (`lang`, `p`, `page_id`, `post_type`); `/?lang=en` porta alla home in quella lingua.
 - Pagine: l'indice "In questa pagina" non mostra più `&amp;` al posto di `&` nei titoli.
 

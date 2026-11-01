@@ -43,7 +43,7 @@
       "head": "cover",
       "body": "aside",
       "list": "mosaic",
-      "stories": "mosaic",
+      "stories": "tiles",
       "docs": "cards",
       "partners": "logos"
     },
@@ -52,6 +52,12 @@
     },
     "404": {
       "head": "cover"
+    },
+    "story": {
+      "work": "sheet"
+    },
+    "stories": {
+      "head": "split"
     }
   }
 }

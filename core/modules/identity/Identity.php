@@ -22,6 +22,7 @@ final class Identity
             'colors' => array_merge(array_map(fn($c) => $c[1], self::COLORS), $d['colors'] ?? []),
             'font_display' => $d['font_display'] ?? 'Petrona', 'font_text' => $d['font_text'] ?? 'Petrona',
             'buttons' => $d['buttons'] ?? 'pill',
+            'logo_has_name' => !empty($d['logo_has_name']),   // il logo contiene già il nome: in testata il nome resta solo per i lettori di schermo
             'fonts_custom' => [],
         ];
         $s = Settings::group('identity', $def);
@@ -235,6 +236,7 @@ final class Identity
             if (isset($fonts[Admin::post('font_display')])) $s['font_display'] = Admin::post('font_display');
             if (isset($fonts[Admin::post('font_text')])) $s['font_text'] = Admin::post('font_text');
             if (in_array(Admin::post('buttons'), ['pill', 'soft', 'square'], true)) $s['buttons'] = Admin::post('buttons');
+            $s['logo_has_name'] = (bool)Admin::post('logo_has_name');
             foreach (['logo' => ['svg', 'png', 'webp'], 'logo_dark' => ['svg', 'png', 'webp'], 'favicon' => ['svg', 'png'], 'share_image' => ['jpg', 'jpeg', 'png', 'webp']] as $k => $allow) {
                 if (Admin::post('remove_' . $k)) { $s[$k] = ''; if (isset($s[$k . '_svg'])) $s[$k . '_svg'] = ''; }
                 if (empty($_FILES[$k]['name'])) continue;
