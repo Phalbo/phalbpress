@@ -163,6 +163,11 @@ final class StaticSite
         $c[] = ['ok' => !$no2fa, 'label' => 'Accesso in due passaggi per tutti gli utenti', 'fix' => $no2fa . ' utenti senza: attivalo da Utenti'];
         $c[] = ['ok' => self::enabled(), 'label' => 'Sito pubblico in HTML statico', 'fix' => 'Attivalo qui sotto'];
         $c[] = ['ok' => PHP_VERSION_ID >= 80200, 'label' => 'PHP ' . PHP_VERSION, 'fix' => 'Da Site Tools → Devs → PHP Manager scegli la versione 8.2 o più recente'];
+        $here = (($https) ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . PP::base();
+        $c[] = ['ok' => !empty(PP::$config['site_url']) || (string)Settings::get('site_url', '') !== '', 'label' => 'Indirizzo del sito impostato',
+            'fix' => 'Senza, canonical, sitemap, feed ed email prendono l’indirizzo da chi visita. Usa il pulsante qui sotto per salvare ' . $here, 'act' => 'site_url'];
+        $c[] = ['ok' => (PP::$config['site_upload'] ?? true) === false, 'label' => 'Caricamento del sito del progetto dalla gestione spento',
+            'fix' => "Aggiornamenti → Sito del progetto permette a un amministratore di caricare codice PHP. Sui siti consegnati al cliente metti 'site_upload' => false in site/config.php"];
         $cfgPerm = @fileperms(PP_SITE . '/config.php');
         $c[] = ['ok' => $cfgPerm && !($cfgPerm & 0x0004), 'label' => 'config.php non leggibile da altri utenti del server', 'fix' => 'Imposta i permessi di site/config.php a 600 o 640'];
         return $c;
@@ -175,6 +180,11 @@ final class StaticSite
             if ($act === 'enable') { Settings::set('static_enabled', true); $r = self::build(); Settings::set('static_dirty', 0); Admin::flash("Sito statico attivo: {$r['files']} file generati in {$r['seconds']} s."); }
             if ($act === 'disable') { Settings::set('static_enabled', false); self::clear(); Admin::flash('Sito statico disattivato: le pagine tornano a essere generate al momento.'); }
             if ($act === 'build') { $r = self::build(); Settings::set('static_dirty', 0); Admin::flash("Rigenerati {$r['files']} file in {$r['seconds']} s."); }
+            if ($act === 'site_url') {
+                $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+                $host = preg_replace('~[^a-z0-9.:-]~i', '', (string)($_SERVER['HTTP_HOST'] ?? ''));
+                if ($host !== '') { Settings::set('site_url', ($https ? 'https://' : 'http://') . $host . PP::base()); Admin::flash('Indirizzo del sito salvato: ' . Settings::get('site_url') . '.'); Admin::changed('settings'); }
+            }
             if ($act === 'migrate') { $d = Modules::migrate(); Admin::flash($d ? 'Aggiornati: ' . implode(', ', $d) : 'Database già aggiornato.'); }
             Auth::log('system ' . $act);
             PP::redirect(Admin::u('system'));

@@ -5,7 +5,8 @@
     <ul class="rows">
       <?php foreach ($checks as $c): ?>
         <li><span><?= $c['ok'] ? '<span class="badge badge--ok">OK</span>' : '<span class="badge badge--outdated">Da fare</span>' ?> <?= e($c['label']) ?>
-          <?php if (!$c['ok'] && $c['fix']): ?><br><span class="small muted"><?= e($c['fix']) ?></span><?php endif; ?></span></li>
+          <?php if (!$c['ok'] && $c['fix']): ?><br><span class="small muted"><?= e($c['fix']) ?></span><?php endif; ?>
+          <?php if (!$c['ok'] && ($c['act'] ?? '') === 'site_url'): ?><form method="post" class="row"><?= Admin::csrfField() ?><button class="btn btn--small" name="action" value="site_url">Usa questo indirizzo</button></form><?php endif; ?></span></li>
       <?php endforeach; ?>
     </ul>
   </section>

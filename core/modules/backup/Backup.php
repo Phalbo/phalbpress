@@ -4,7 +4,7 @@ final class Backup
     /** Tabelle che un modello non porta con sé. */
     private const PRIVATE = ['pp_users', 'pp_login_attempts', 'pp_log', 'pp_tokens', 'pp_form_entries', 'pp_revisions'];
     /** Impostazioni che non passano a un altro sito. */
-    private const PRIVATE_SETTINGS = ['secret', 'static_last', 'cron_last', 'module_versions', 'forms_to'];
+    private const PRIVATE_SETTINGS = ['secret', 'static_last', 'cron_last', 'module_versions', 'forms_to', 'site_url', 'static_dirty'];
     /** File ammessi in uploads/ al ripristino. */
     private const EXT = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg', 'pdf', 'doc', 'docx', 'odt', 'ppt', 'pptx', 'xls', 'xlsx', 'ods', 'zip', 'mp4', 'mp3', 'txt', 'csv', 'woff2', 'css', 'ico'];
 
@@ -167,8 +167,8 @@ final class Backup
                     if (!empty($o['keep_users'])) continue;
                     DB::run('DELETE FROM pp_users WHERE id <> ?', [(int)$me['id']]);
                 } elseif ($t === 'pp_settings') {
-                    // restano solo la chiave segreta del sito e le versioni dei moduli
-                    DB::run("DELETE FROM pp_settings WHERE k NOT IN ('secret', 'module_versions')");
+                    // restano solo la chiave segreta del sito, le versioni dei moduli e l'indirizzo del sito
+                    DB::run("DELETE FROM pp_settings WHERE k NOT IN ('secret', 'module_versions', 'site_url')");
                 } else {
                     DB::run('DELETE FROM ' . $t);
                 }

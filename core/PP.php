@@ -47,6 +47,9 @@ final class PP
     public static function origin(): string
     {
         if (!empty(self::$config['site_url'])) return rtrim(self::$config['site_url'], '/');
+        // indirizzo salvato da Sistema (se il config non lo dice): canonical, sitemap, feed ed email non dipendono dalla richiesta
+        $saved = class_exists('Settings') ? (string)Settings::get('site_url', '') : '';
+        if ($saved !== '') return rtrim($saved, '/');
         $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
         return ($https ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . self::base();
     }
