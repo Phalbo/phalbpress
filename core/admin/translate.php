@@ -17,6 +17,6 @@
     <button class="btn btn--primary" type="button" data-queue-start <?= $enabled ? '' : 'disabled' ?>>Avvia</button>
     <button class="btn" type="button" data-queue-stop hidden>Ferma</button>
   </div>
-  <p class="hint" data-queue-status></p>
+  <p class="hint" role="status" data-queue-status></p>
   <ul class="rows" data-queue-list></ul>
 </section>

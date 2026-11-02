@@ -40,7 +40,7 @@ switch ($f['type']):
   <?php break; case 'image': ?>
     <div class="field"><span><?= e($f['label']) ?> <?= $hint ?></span>
       <?php if ($fval): ?><img src="<?= e(upload_url($fval)) ?>" alt="" class="thumb"><?php endif; ?>
-      <div class="row"><input type="text" name="<?= e($fname) ?>" value="<?= e($fval) ?>" placeholder="uploads/media/…" data-image-path><button type="button" class="btn btn--small" data-pick-image>Libreria</button></div></div>
+      <div class="row"><input type="text" name="<?= e($fname) ?>" value="<?= e($fval) ?>" placeholder="uploads/media/…" aria-label="<?= e($f['label']) ?>: percorso del file" data-image-path><button type="button" class="btn btn--small" data-pick-image>Libreria</button></div></div>
   <?php break; default:
     $it = ['number' => 'number', 'date' => 'date', 'url' => 'url'][$f['type']] ?? 'text'; ?>
     <label class="field"><?= e($f['label']) ?> <?= $hint ?><input type="<?= $it ?>" name="<?= e($fname) ?>" value="<?= e($fval) ?>"<?= $fl ?><?= $it === 'number' ? ' step="any"' : '' ?>></label>

@@ -21,7 +21,7 @@
         <?php if (in_array($type, ['news', 'story'], true)): ?><td class="nowrap"><?= e($r['pub_date']) ?></td><?php else: ?><td class="num"><?= (int)$r['menu_order'] ?></td><?php endif; ?>
         <td><div class="dots">
           <?php foreach ($r['statuses'] as $l => $s): ?>
-            <a href="<?= e(Admin::u('entry/' . $r['id'] . '/' . $l)) ?>" class="dot dot--<?= e($s) ?>" title="<?= e(I18n::name($l) . ': ' . I18n::statusLabel($s)) ?>"><?= e(I18n::label($l)) ?></a>
+            <a href="<?= e(Admin::u('entry/' . $r['id'] . '/' . $l)) ?>" class="dot dot--<?= e($s) ?>" title="<?= e(I18n::name($l) . ': ' . I18n::statusLabel($s)) ?>"><?= e(I18n::label($l)) ?><span class="sr-only">: <?= e(I18n::statusLabel($s)) ?></span></a>
           <?php endforeach; ?>
         </div></td>
       </tr>
