@@ -278,6 +278,7 @@
   if (groups.length && 'HTMLDialogElement' in window) {
     const dlg = document.createElement('dialog');
     dlg.className = 'pp-lightbox';
+    dlg.setAttribute('aria-label', ui.open || 'Image');
     dlg.innerHTML = '<figure class="pp-lightbox__fig"><img alt=""><figcaption></figcaption></figure>'
       + '<button type="button" class="pp-lightbox__btn pp-lightbox__prev"><span aria-hidden="true">‹</span><span class="sr-only"></span></button>'
       + '<button type="button" class="pp-lightbox__btn pp-lightbox__next"><span aria-hidden="true">›</span><span class="sr-only"></span></button>'

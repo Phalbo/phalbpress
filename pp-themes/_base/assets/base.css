@@ -341,7 +341,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
   .js .reveal { opacity: 1; transform: none; }
 }
-@media print { .site-head, .site-foot, .pp-banner, .pp-share { display: none !important; } .chapter { padding: 1rem 0; background: none !important; color: #000 !important; } }
+@media print { .site-head, .site-foot, .pp-banner, .pp-share { display: none !important; } .chapter { padding: 1rem 0; background: none !important; color: #000 !important; }
+  .js .reveal, .js [data-fx], .js .band > *, .js .hero > * { opacity: 1 !important; transform: none !important; } }
 .foot__legal { margin-top: 16px; font-size: var(--step-small); max-width: 62ch; opacity: 0.85; }
 .eu { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
 .eu__flag { width: 88px; height: auto; flex: none; background: transparent; }
