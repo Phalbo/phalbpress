@@ -105,7 +105,7 @@ final class Translator
         if ($kind === 'string') {
             $src = (string)DB::val('SELECT value FROM pp_strings WHERE skey = ? AND lang = ?', [$id, $from]);
             if ($src === '') {
-                $def = I18n::defaults()[$id]['text'][$from] ?? '';
+                $def = I18n::defaults()[$id]['text'][$from] ?? I18n::defaults()[$id]['text']['en'] ?? '';
                 if ($def === '') throw new RuntimeException('Testo originale vuoto');
                 Content::saveString($id, $from, $def);
                 $src = $def;
