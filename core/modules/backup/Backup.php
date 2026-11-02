@@ -119,9 +119,9 @@ final class Backup
             if (!str_starts_with($n, 'uploads/') || str_ends_with($n, '/') || str_contains($n, '..') || str_contains($n, '\\') || str_contains($n, "\0")) continue;
             $base = basename($n);
             $ext = strtolower(pathinfo($n, PATHINFO_EXTENSION));
-            if ($base !== '.htaccess' && (!in_array($ext, self::EXT, true) || $base[0] === '.')) continue;
-            if ($base === '.htaccess' && is_file(PP_ROOT . '/' . $n)) continue;   // le protezioni esistenti non si toccano
-            if (!preg_match('~^uploads(/[a-z0-9._-]+)+$~i', $n)) continue;
+            // niente file nascosti, nemmeno .htaccess: le protezioni di uploads/ sono quelle del motore, uno zip non deve poterle cambiare
+            if ($base[0] === '.' || !in_array($ext, self::EXT, true)) continue;
+            if (!preg_match('~^uploads(/[a-z0-9_-][a-z0-9._-]*)+$~i', $n)) continue;
             $dst = PP_ROOT . '/' . $n;
             if (!is_dir(dirname($dst))) mkdir(dirname($dst), 0775, true);
             $data = $zip->getFromIndex($i);
