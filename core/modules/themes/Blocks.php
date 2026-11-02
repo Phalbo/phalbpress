@@ -328,7 +328,7 @@ final class Blocks
     {
         $v = trim($v);
         if ($v === '') return '';
-        if (preg_match('~^(https?://|mailto:|tel:|/|#)~i', $v)) return $v;
+        if (preg_match('~^(https?://|mailto:|tel:|/(?!/)|#)~i', $v)) return $v;
         if (isset(PP::$config['sections'][$v])) return PP::link(PP::section($v));
         $id = DB::val("SELECT id FROM pp_entries WHERE type = 'page' AND slug = ?", [$v]);
         $e = $id ? Content::byId((int)$id, I18n::$current) : null;
