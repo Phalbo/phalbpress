@@ -19,14 +19,19 @@ final class Demo
         if (!$fresh) {
             foreach ([self::FILE, self::FILE . '-wal', self::FILE . '-shm'] as $f) if (is_file($f)) unlink($f);
         }
+        // identità visiva e disposizioni del sito valgono anche nell'anteprima (logo, colori, velo…); i menu no: puntano ai contenuti veri
+        $keep = [];
+        foreach (['identity', 'layouts', 'site_url'] as $k) if (($v = Settings::get($k)) !== null) $keep[$k] = $v;
         DB::reconnect(['driver' => 'sqlite', 'file' => self::FILE]);
         Settings::reset();
         I18n::flush();
+        Content::flush();
         if (!$fresh) {
             DB::migrate();
             self::fill(require $seed);
             file_put_contents(self::FILE . '.stamp', $stamp);
         }
+        foreach ($keep as $k => $v) if (Settings::get($k) !== $v) Settings::set($k, $v);
     }
 
     private static function media(string $v): string
