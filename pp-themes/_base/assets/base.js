@@ -211,11 +211,17 @@
   });
 
   /* ---------- modulo di contatto: prova che a compilarlo è una persona ---------- */
+  /* il gettone si chiede al server all'apertura della pagina (anche statica); il server controlla quanto tempo è passato */
   document.querySelectorAll('[data-pp-form]').forEach((form) => {
-    const t0 = Date.now();
-    form.addEventListener('submit', () => {
-      form.querySelector('[name=pp_e]').value = String(Math.round((Date.now() - t0) / 1000));
-      form.querySelector('[name=pp_k]').value = form.dataset.k;
+    const t = form.querySelector('[name=pp_t]'), k = form.querySelector('[name=pp_k]');
+    if (!t || !k) return;
+    const get = () => fetch(form.getAttribute('action').replace(/\/?$/, '/key'), { credentials: 'omit', cache: 'no-store' })
+      .then((r) => r.json()).then((j) => { t.value = String(j.t); k.value = j.k; }).catch(() => {});
+    get();
+    form.addEventListener('submit', (e) => {
+      if (k.value) return;
+      e.preventDefault();
+      get().then(() => form.submit());
     });
   });
   const hash = location.hash;
