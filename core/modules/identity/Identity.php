@@ -64,7 +64,7 @@ final class Identity
     public static function contrast(string $a, string $b): float
     {
         $l1 = self::lum($a); $l2 = self::lum($b);
-        return round((max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05), 2);
+        return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);   // senza arrotondare: 4,496 non è 4,5
     }
 
     /** Testo attenuato: il testo schiarito verso lo sfondo, ma mai sotto 4.6:1 (WCAG AA con un po' di margine). */
