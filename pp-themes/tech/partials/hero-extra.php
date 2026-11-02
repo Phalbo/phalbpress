@@ -1,0 +1,2 @@
+<?php /* Tech: il segno a quadrati nell'apertura (sopra la foto, sotto il titolo). $b = il blocco. */ ?>
+<svg class="tech-mark" viewBox="0 0 160 160" aria-hidden="true" focusable="false"><?php for ($r = 0; $r < 4; $r++) for ($c = 0; $c < 4; $c++): $k = ($r * 4 + $c * 7 + (int)$b["id"]) % 9; ?><rect x="<?= $c * 40 + 2 ?>" y="<?= $r * 40 + 2 ?>" width="36" height="36" rx="<?= $k === 3 ? 18 : 4 ?>" class="tm tm--<?= $k < 3 ? "a" : ($k < 5 ? "b" : ($k < 6 ? "c" : "o")) ?>" style="--i:<?= $r * 4 + $c ?>"/><?php endfor; ?></svg>

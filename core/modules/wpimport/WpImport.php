@@ -341,7 +341,11 @@ final class WpImport
                 }
             }
             $meta = Hooks::filter('wp_import_term', $meta, $mt);
-            DB::update('pp_entries', ['meta' => json_encode($meta, JSON_UNESCAPED_UNICODE)], 'id = ?', [$id]);
+            // il sito può dare l'ordine delle categorie (meta "_order"): va nel campo Ordine
+            $row = ['meta' => ''];
+            if (isset($meta['_order'])) { $row['menu_order'] = (int)$meta['_order']; unset($meta['_order']); }
+            $row['meta'] = json_encode($meta, JSON_UNESCAPED_UNICODE);
+            DB::update('pp_entries', $row, 'id = ?', [$id]);
         }
         return false;
     }
@@ -481,12 +485,14 @@ final class WpImport
     /** Indirizzo nuovo per un indirizzo del vecchio sito (o '' se non è un contenuto importato). */
     public static function newUrl(string $url, string $lang = ''): string
     {
-        static $byPath = null;
+        static $byPath = null, $skipTo = null;
         $m = self::model();
         if ($byPath === null) {
-            $byPath = [];
+            $byPath = []; $skipTo = [];
+            // contenuti saltati con una destinazione (es. la vecchia pagina "news" → l'archivio delle news): anche i link nei testi portano lì
+            foreach ((array)self::cfg()['skip'] as $k => $target) if (!is_int($k)) $skipTo[(string)$k] = (string)$target;
             foreach ($m['items'] as $it) {
-                if (!self::map('post', (string)$it['id'])) continue;
+                if (!self::map('post', (string)$it['id']) && !isset($skipTo[$it['slug']]) && !isset($skipTo[(string)$it['id']])) continue;
                 [$p, $q] = self::oldPath($it);
                 $byPath[rtrim($p, '/') . '/' . ($q !== '' ? '?' . $q : '')] = $it['id'];
             }
@@ -506,6 +512,10 @@ final class WpImport
         if (!$wpId) return '';
         $entry = (int)(self::map('post', (string)$wpId) ?? 0);
         $l = I18n::valid((string)($qa['lang'] ?? '')) ? (string)$qa['lang'] : ($lang ?: self::langOf($wpId));
+        if (!$entry && isset($m['items'][$wpId])) {
+            $t = $skipTo[$m['items'][$wpId]['slug']] ?? $skipTo[(string)$wpId] ?? '';
+            return $t !== '' ? self::target($t, $l) : '';
+        }
         $e = $entry ? DB::one('SELECT * FROM pp_entries WHERE id = ?', [$entry]) : null;
         if (!$e) return '';
         $href = PP::entryUrl(Content::localize('entry', $e, $l), $l);

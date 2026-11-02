@@ -13,10 +13,24 @@
       <?php $sp = (string)($c['social_place'] ?? 'footer'); ?>
       <label class="field">Icone dei social <span class="muted">(con ogni tema)</span>
         <select name="social_place">
-          <option value="footer"<?= $sp === 'footer' ? ' selected' : '' ?>>Nel footer</option>
-          <option value="header"<?= $sp === 'header' ? ' selected' : '' ?>>Nella testata</option>
-          <option value="both"<?= $sp === 'both' ? ' selected' : '' ?>>In testata e nel footer</option>
+          <?php foreach (SiteSettings::SOCIAL_PLACES as $k => $l): ?><option value="<?= $k ?>"<?= $sp === $k ? ' selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
         </select></label>
+      <div class="row">
+        <label class="field grow">Telefono<input type="text" name="phone" value="<?= e($c['phone'] ?? '') ?>" placeholder="+39 06 1234567"></label>
+        <label class="field grow">Altro telefono <span class="muted">(facoltativo)</span><input type="text" name="phone2" value="<?= e($c['phone2'] ?? '') ?>"></label>
+      </div>
+      <div class="row">
+        <label class="field grow">PEC <span class="muted">(facoltativa)</span><input type="email" name="pec" value="<?= e($c['pec'] ?? '') ?>"></label>
+        <label class="field grow">P.IVA / C.F. <span class="muted">(facoltativa)</span><input type="text" name="vat" value="<?= e($c['vat'] ?? '') ?>"></label>
+      </div>
+      <label class="field">Ragione sociale <span class="muted">(titolo della colonna dei contatti nel footer, es. Ares 2.0 S.r.l.)</span>
+        <input type="text" name="company" value="<?= e($c['company'] ?? '') ?>"></label>
+      <label class="field">Sedi <span class="muted">(una per blocco, separate da una riga vuota; la prima riga è il nome)</span>
+        <textarea name="offices" rows="6" placeholder="Sede legale Roma&#10;Via Taranto 59&#10;00182 Roma&#10;&#10;Ufficio di Napoli&#10;Via Stella 57&#10;80135 Napoli"><?= e($c['offices'] ?? '') ?></textarea></label>
+      <label class="check"><input type="checkbox" name="toolbar" value="1" <?= !empty($c['toolbar']) ? 'checked' : '' ?>> Barra sopra la testata con telefono, email e (se scelto) i social</label>
+      <label class="field">Immagine nel footer <span class="muted">(facoltativa: certificazioni, marchi; percorso da “Copia percorso” in Immagini e file)</span>
+        <input type="text" name="footer_badge" value="<?= e($c['footer_badge'] ?? '') ?>" placeholder="uploads/media/2026/11/certificazioni.png"></label>
+      <p class="hint">Testi del footer (titoli delle colonne, riga legale in fondo, nota sotto l’immagine): <a href="<?= e(Admin::u('strings')) ?>">Testi del sito</a>, gruppo Footer. Le voci della colonna dei link: <a href="<?= e(Admin::u('menus/footer')) ?>">Menu del footer</a>.</p>
       <label class="field">Finanziatore <span class="muted">(es. European Union: va nei dati strutturati per i motori di ricerca)</span>
         <input type="text" name="funder" value="<?= e($c['funder'] ?? '') ?>"></label>
       <?php $o = (array)($c['owner'] ?? []); $person = ($o['type'] ?? '') === 'person'; ?>

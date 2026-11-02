@@ -37,6 +37,7 @@ final class Layouts
                 'read' => ['Colonna di lettura', 'una colonna comoda da leggere'],
                 'wide' => ['Larga', 'testo e immagini più larghi'],
                 'aside' => ['Con barra laterale', 'indice, condivisione e altre notizie a lato'],
+                'columns' => ['A colonne', 'testo largo, gli elenchi su due colonne: per lunghe liste (clienti, partner, pubblicazioni)'],
             ]],
             'list' => ['label' => 'Elenco', 'options' => [
                 'grid' => ['Griglia di schede', 'foto, data e titolo in schede'],
@@ -52,6 +53,8 @@ final class Layouts
                 'covers' => ['Copertine', 'formato verticale come libri e riviste: per editoria e report'],
                 'screens' => ['Schermi', 'formato 16:9 largo: per video e siti'],
                 'index' => ['Indice', 'righe di testo con anno e cliente, la foto compare passandoci sopra: per ricerche e lunghi archivi'],
+                'thumbs' => ['Elenco con miniatura', 'miniatura quadrata a sinistra, titolo, cliente e anno: per ricerche e pubblicazioni'],
+                'cards' => ['Griglia', 'schede con foto 4:3, titolo e cliente, quattro per riga'],
             ]],
             'work' => ['label' => 'Scheda', 'options' => [
                 'portrait' => ['Ritratto', 'foto verticale accanto al nome, poi il testo: per le persone'],
@@ -164,6 +167,7 @@ final class Layouts
             'hint' => 'facoltativa: la pagina compare nell’elenco della madre e nel percorso sopra il titolo (es. Progetti → Progetto 1)'];
         if ($type === 'category') $out['parent'] = ['label' => 'Categoria madre', 'type' => 'entry', 'entry_type' => 'category',
             'hint' => 'facoltativa: la categoria compare tra le sottocategorie della madre (es. Comunicazione → Audiovisivi)'];
+        if ($type === 'category') $out['nav_hidden'] = ['label' => 'Nascondi nei filtri del portfolio e nel menu (la pagina e i lavori restano)', 'type' => 'checkbox'];
         $map = ['page' => 'page', 'news' => 'news-item', 'story' => 'story', 'category' => 'stories'][$type] ?? '';
         if (!$map) return $out;
         foreach (self::types()[$map][1] as $part) {

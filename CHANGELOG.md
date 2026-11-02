@@ -2,6 +2,41 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.15.0
+Le opzioni nate per il sito di Ares 2.0 ora stanno nel motore e valgono con ogni tema.
+
+- **Gestione più leggera**: Immagini e file, SEO, Redirect e Accessibilità hanno filtri e pagine (non caricano più centinaia di righe insieme; "Mostra tutto" resta).
+- **Scoraggia i motori di ricerca** (SEO): attivo a ogni nuova installazione, con un avviso in cima alla gestione finché non si toglie. Quando è attivo le pagine hanno `noindex` e robots.txt chiude tutto.
+- **Testata**:
+  - barra sottile in alto con telefoni, email e social (Impostazioni, si spegne);
+  - i social si mettono nella barra, nel footer, in tutti e due, in testata o da nessuna parte;
+  - i sottomenu si aprono passandoci sopra, con un terzo livello a lato;
+  - altezza del logo regolabile (Identità visiva).
+- **Footer**: colonne con ragione sociale, email, telefoni, PEC, partita IVA, menu del footer e sedi (Impostazioni); logo per fondi scuri, immagine di certificazioni, nota e riga legale. L'anno del copyright si aggiorna da solo, anche nel sito statico.
+- **Apertura della home**:
+  - altezza (bassa, media, alta) e grandezza del titolo;
+  - con più foto si scelgono pallini, frecce, tutti e due o niente, ogni quanti secondi cambiano e se sfumano o scorrono;
+  - niente più barra "ferma le foto": c'è un piccolo pulsante di pausa, e le foto si fermano passandoci sopra o con la tastiera.
+- **Fasce**:
+  - nuove: Riquadri con icona (fino a 6, con icone disegnate per PhalbPress e un pulsante ciascuno), Squadra (foto e ruoli), Elenco di persone (solo testo, a gruppi), Mappa;
+  - Dichiarazione centrata, con il titolo più piccolo;
+  - Elenco di contenuti a 3 o 4 colonne, con i contenuti scelti a mano;
+  - Loghi con la velocità e un link sotto (es. "La lista completa").
+- **Fasce nelle pagine**: ogni fascia può andare in fondo a una pagina (campo "Pagina"), per esempio squadra, numeri e loghi in "Chi siamo" o la mappa in "Contatti".
+- **Mappa OpenStreetMap**: si carica solo dopo il consenso (è nell'elenco dei servizi esterni della cookie policy); senza consenso resta il link alla mappa.
+- **Foto e intestazioni** (Identità visiva): foto degli elenchi a colori, in bianco e nero o virate nel colore principale; passandoci sopra prendono colore o si ingrandiscono; intestazioni delle pagine più basse ("compatte"). Le foto di apertura e intestazioni coprono tutta la larghezza anche sugli schermi molto larghi.
+- **Portfolio**:
+  - le categorie hanno un ordine e si possono nascondere da filtri e menu ("Nascondi nei filtri e nel menu"), restando raggiungibili;
+  - con aree e divisioni (es. Ricerca, Comunicazione) in alto ci sono solo le aree, grandi, e sotto le divisioni dell'area aperta;
+  - nel menu, la voce "Portfolio con le categorie" si apre sulle aree e le loro divisioni;
+  - l'intestazione usa la foto della categoria, mai quella dell'ultimo lavoro;
+  - Riquadri ora a 4 colonne, con le foto quadrate intere; due disposizioni in più: Griglia (schede 4:3, quattro per riga) ed Elenco con miniatura (foto quadrata piccola a sinistra, titolo, cliente e anno);
+  - la scheda del singolo lavoro ha titoli più misurati.
+- **Pagine**: nuova disposizione del testo "A colonne", per elenchi lunghi divisi in gruppi.
+- **News**: la foto sta nella colonna del testo, a misura.
+- Importa da WordPress: i link a pagine saltate (es. il vecchio archivio delle news) portano dove la pagina è stata mandata; l'ordine delle categorie di WordPress viene mantenuto.
+- Tema Tech: il segno a quadrati dell'apertura non sostituisce più l'apertura comune, quindi ha anche foto a scorrimento, altezza e grandezza del titolo.
+
 ## 1.14.0
 - **Importa da WordPress** (Gestione → Importa da WordPress, solo amministratori): porta in PhalbPress pagine, articoli, tipi personalizzati (es. un portfolio), categorie, foto e file, pagine madri, menu, titoli e descrizioni di Yoast.
   - Si mettono in `data/wp-import/` l'esportazione di WordPress (.xml), e se ci sono il dump del database (.sql) e uno zip della cartella uploads. Dal dump si leggono solo le traduzioni di WPML e i redirect del plugin Redirection, mai utenti e password.

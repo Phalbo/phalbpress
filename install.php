@@ -101,6 +101,8 @@ if (!$done && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 pp_seed();
             }
             pp_seed_strings();
+            // un sito nuovo nasce nascosto ai motori di ricerca: si apre da SEO quando è pronto
+            Settings::set('search_hidden', 1);
             if (!empty($_POST['placeholders']) && $start !== 'demo' && class_exists('Demo')) {
                 $n = Demo::placeholders();
                 if ($n) $note = "Messe $n foto segnaposto: le trovi cercando “segnaposto” in Immagini e file.";

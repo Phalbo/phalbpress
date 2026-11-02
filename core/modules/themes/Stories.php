@@ -40,15 +40,40 @@ final class Stories
             if ($c['_count'] && $p && isset($out[$p])) $out[$p]['_kids'] = true;
         }
         $out = array_filter($out, fn($c) => $c['_count'] > 0 || !empty($c['_kids']));
-        uasort($out, fn($a, $b) => strcoll(mb_strtolower($a['title']), mb_strtolower($b['title'])));
+        // ordine scelto in gestione (campo Ordine), poi alfabetico
+        uasort($out, fn($a, $b) => [(int)$a['menu_order'] ?: 999, mb_strtolower($a['title'])] <=> [(int)$b['menu_order'] ?: 999, mb_strtolower($b['title'])]);
         return $cache[$lang] = $out;
     }
 
-    /** Categorie di primo livello (o le figlie di $parent). */
-    public static function children(string $lang, int $parent = 0): array
+    /** Categoria nascosta nei filtri e nel menu (campo "Nascondi"): la sua pagina resta, i lavori restano in "Tutte". */
+    public static function hidden(array $c): bool { return !empty($c['meta_arr']['nav_hidden']); }
+
+    /** Categorie di primo livello (o le figlie di $parent), senza quelle nascoste se $visible. */
+    public static function children(string $lang, int $parent = 0, bool $visible = false): array
     {
         $all = self::categories($lang);
-        return array_filter($all, fn($c) => (int)($c['meta_arr']['parent'] ?? 0) === $parent || ($parent === 0 && !isset($all[(int)($c['meta_arr']['parent'] ?? 0)])));
+        return array_filter($all, fn($c) => ((int)($c['meta_arr']['parent'] ?? 0) === $parent || ($parent === 0 && !isset($all[(int)($c['meta_arr']['parent'] ?? 0)])))
+            && (!$visible || !self::hidden($c)));
+    }
+
+    /** true se le categorie hanno sottocategorie (portfolio a due livelli: aree e divisioni). */
+    public static function nested(string $lang): bool
+    {
+        foreach (self::categories($lang) as $c) if (!empty($c['meta_arr']['parent'])) return true;
+        return false;
+    }
+
+    /** Voci di menu delle categorie visibili, con le sottocategorie: [['label','href','current','external','children'=>[…]], …] */
+    public static function menu(string $lang): array
+    {
+        $here = PP::current();
+        $item = fn($c, $kids = []) => ['label' => $c['title'], 'href' => self::catUrl($c, $lang), 'current' => str_starts_with($here, self::catUrl($c, $lang)), 'external' => false, 'children' => $kids];
+        $out = [];
+        foreach (self::children($lang, 0, true) as $c) {
+            $kids = array_values(array_map(fn($k) => $item($k), self::children($lang, (int)$c['id'], true)));
+            $out[] = $item($c, $kids);
+        }
+        return $out;
     }
 
     /** Categoria per slug nella lingua (solo quelle con una pagina). */

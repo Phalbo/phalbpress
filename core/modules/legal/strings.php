@@ -71,6 +71,9 @@ return [
     'cookie_prefs' => ['group' => 'Cookie', 'text' => ['en' => 'Cookie preferences', 'it' => 'Preferenze cookie']],
     'cookie_policy_link' => ['group' => 'Cookie', 'text' => ['en' => 'Cookie policy', 'it' => 'Cookie policy']],
     'video_consent' => ['group' => 'Cookie', 'text' => ['en' => 'This video is hosted by {service}, which may set cookies.', 'it' => 'Questo video è ospitato da {service}, che può usare cookie.']],
+    'map_consent' => ['group' => 'Cookie', 'text' => ['en' => 'This map is loaded from {service}, which receives your IP address.', 'it' => 'Questa mappa si carica da {service}, che riceve il tuo indirizzo IP.']],
+    'map_accept' => ['group' => 'Cookie', 'text' => ['en' => 'Accept and show the map', 'it' => 'Accetta e mostra la mappa']],
+    'map_external' => ['group' => 'Cookie', 'text' => ['en' => 'Open the map on {service}', 'it' => 'Apri la mappa su {service}']],
     'video_accept' => ['group' => 'Cookie', 'text' => ['en' => 'Accept and play', 'it' => 'Accetta e guarda']],
     'video_external' => ['group' => 'Cookie', 'text' => ['en' => 'Watch on {service}', 'it' => 'Guarda su {service}']],
 ];

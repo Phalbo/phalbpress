@@ -11,6 +11,9 @@ final class Seo
         return $r['name'] . (isset($r['params'][0]) ? ':' . $r['params'][0] : '');
     }
 
+    /** Sito nascosto ai motori di ricerca (impostazione "Scoraggia i motori di ricerca"): noindex su ogni pagina e robots.txt chiuso. */
+    public static function hidden(): bool { return (bool)Settings::get('search_hidden', 0); }
+
     public static function clip(string $text, int $max): string
     {
         $text = trim(preg_replace('~\s+~u', ' ', html_entity_decode(strip_tags($text), ENT_QUOTES, 'UTF-8')));
@@ -51,6 +54,7 @@ final class Seo
         $site = class_exists('Identity') ? Identity::name() : PP::$config['site_name'];
         $url = PP::abs(PP::current());
         $is404 = PP::$route['name'] === '404' || !empty($ctx['noindex']) || Content::$preview;
+        if (self::hidden()) return '<title>' . e($title) . "</title>\n<meta name=\"description\" content=\"" . e($desc) . "\">\n<meta name=\"robots\" content=\"noindex, nofollow\">\n";
 
         $h = '<title>' . e($title) . "</title>\n";
         $h .= '<meta name="description" content="' . e($desc) . "\">\n";
@@ -150,6 +154,14 @@ final class Seo
     public static function admin(string $lang): void
     {
         if (!I18n::valid($lang)) $lang = I18n::$master;
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Admin::post('action') === 'visibility') {
+            $hide = (bool)Admin::post('hide');
+            Settings::set('search_hidden', $hide ? 1 : 0);
+            Auth::log('seo visibility', $hide ? 'nascosto' : 'visibile');
+            Admin::changed('seo');
+            Admin::flash($hide ? 'Il sito ora scoraggia i motori di ricerca.' : 'Il sito ora è visibile ai motori di ricerca.');
+            PP::redirect(Admin::u('seo/' . $lang));
+        }
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($_POST['seo'] ?? [] as $ref => $v) {
                 $ref = substr((string)$ref, 0, 160);
@@ -160,12 +172,19 @@ final class Seo
             Auth::log('save seo', $lang);
             Admin::changed('seo');
             Admin::flash('SEO salvata. I campi vuoti usano i valori automatici.');
-            PP::redirect(Admin::u('seo/' . $lang));
+            $back = array_intersect_key($_GET, array_flip(['kind', 'q', 'p', 'all']));
+            PP::redirect(Admin::u('seo/' . $lang) . ($back ? '?' . http_build_query($back) : ''));
         }
-        // calcola i valori automatici visitando ogni pagina nella lingua scelta
+        // filtri e pagine prima di calcolare: ogni riga visita la sua pagina, con centinaia di contenuti la pagina diventerebbe enorme
+        $all = PP::paths($lang);
+        $kinds = array_count_values($all);
+        $kind = (string)($_GET['kind'] ?? '');
+        $q = mb_strtolower(trim((string)($_GET['q'] ?? '')));
+        $sel = array_filter($all, fn($k, $path) => ($kind === '' || $k === $kind) && ($q === '' || str_contains(mb_strtolower((string)$path), $q)), ARRAY_FILTER_USE_BOTH);
+        $pg = Admin::pager(array_keys($sel), 40);
         $rows = [];
         $saved = I18n::$current;
-        foreach (PP::paths($lang) as $path => $kind) {
+        foreach (array_intersect_key($sel, array_flip($pg['items'])) as $path => $kind) {
             $seg = array_merge([$lang], $path === '' ? [] : explode('/', $path));
             PP::page($seg);
             $ref = self::ref();
@@ -173,6 +192,6 @@ final class Seo
         }
         I18n::$current = $saved;
         $titles = array_count_values(array_map(fn($r) => $r['custom']['title'] ?? $r['auto']['title'], $rows));
-        Admin::view(__DIR__ . '/admin.php', ['title' => 'SEO', 'rows' => $rows, 'lang' => $lang, 'dupes' => $titles]);
+        Admin::view(__DIR__ . '/admin.php', ['title' => 'SEO', 'rows' => $rows, 'lang' => $lang, 'dupes' => $titles, 'kinds' => $kinds, 'kind' => (string)($_GET['kind'] ?? ''), 'q' => $q, 'pager' => $pg['html'], 'found' => count($sel)]);
     }
 }

@@ -22,9 +22,16 @@ return [
                         DB::run('DELETE FROM pp_redirects WHERE id = ?', [(int)Admin::post('id')]);
                         Admin::flash('Redirect eliminato.');
                     }
-                    PP::redirect(Admin::u('redirects'));
+                    $back = array_intersect_key($_GET, array_flip(['q', 'kind', 'p', 'all']));
+                    PP::redirect(Admin::u('redirects') . ($back ? '?' . http_build_query($back) : ''));
                 }
-                Admin::view(__DIR__ . '/admin.php', ['title' => 'Redirect', 'rows' => DB::all('SELECT * FROM pp_redirects ORDER BY id DESC')]);
+                $all = DB::all('SELECT * FROM pp_redirects ORDER BY id DESC');
+                $q = mb_strtolower(trim((string)($_GET['q'] ?? '')));
+                $kind = (string)($_GET['kind'] ?? '');
+                $sel = array_values(array_filter($all, fn($r) => ($q === '' || str_contains(mb_strtolower($r['from_path'] . ' ' . $r['to_path']), $q))
+                    && ($kind === '' || ($kind === 'auto' ? (int)$r['auto'] === 1 : ($kind === 'manual' ? (int)$r['auto'] === 0 : ($kind === 'unused' ? (int)$r['hits'] === 0 : (int)$r['hits'] > 0))))));
+                $pg = Admin::pager($sel, 50);
+                Admin::view(__DIR__ . '/admin.php', ['title' => 'Redirect', 'rows' => $pg['items'], 'total' => count($all), 'found' => count($sel), 'pager' => $pg['html'], 'q' => $q, 'kind' => $kind]);
             }],
         ]);
     },

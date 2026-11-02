@@ -11,7 +11,18 @@
   </form>
 </section>
 <section class="panel">
-  <?php if (!$rows): ?><p class="empty">Nessun redirect.</p><?php else: ?>
+  <?php if ($total): ?>
+  <form method="get" class="row filters" role="search">
+    <label class="field grow">Cerca negli indirizzi<input type="search" name="q" value="<?= e($q) ?>"></label>
+    <label class="field">Mostra<select name="kind"><option value="">Tutti</option>
+      <?php foreach (['manual' => 'Aggiunti a mano', 'auto' => 'Automatici', 'used' => 'Già visitati', 'unused' => 'Mai visitati'] as $k => $l): ?><option value="<?= $k ?>" <?= $kind === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select></label>
+    <button class="btn" type="submit">Filtra</button>
+    <?php if ($q !== '' || $kind !== ''): ?><a class="btn btn--small" href="<?= e(Admin::u('redirects')) ?>">Azzera</a><?php endif; ?>
+  </form>
+  <p class="muted small"><?= (int)$found ?> di <?= (int)$total ?> redirect</p>
+  <?= $pager ?>
+  <?php endif; ?>
+  <?php if (!$rows): ?><p class="empty"><?= $total ? 'Nessun redirect corrisponde ai filtri.' : 'Nessun redirect.' ?></p><?php else: ?>
   <table class="table">
     <thead><tr><th scope="col">Da</th><th scope="col">A</th><th scope="col">Tipo</th><th scope="col" class="num">Visite</th><th></th></tr></thead>
     <tbody>
@@ -22,5 +33,6 @@
     <?php endforeach; ?>
     </tbody>
   </table>
+  <?= $pager ?>
   <?php endif; ?>
 </section>

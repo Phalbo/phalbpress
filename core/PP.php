@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.14.0';
+    public const VERSION = '1.15.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -318,7 +318,7 @@ final class PP
 
     public static function csp(): string
     {
-        $frames = implode(' ', Hooks::filter('csp_frames', ['https://www.youtube-nocookie.com', 'https://player.vimeo.com']));
+        $frames = implode(' ', Hooks::filter('csp_frames', ['https://www.youtube-nocookie.com', 'https://player.vimeo.com', 'https://www.openstreetmap.org']));
         return "default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; frame-src $frames; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
     }
 

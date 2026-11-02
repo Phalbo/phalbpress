@@ -304,3 +304,10 @@ fieldset.field { border: 0; padding: 0; margin: 0; } fieldset.field legend { fon
 .vis-lay__pic--work-sheet i:nth-child(1) { left: 6px; top: 6px; width: 46px; height: 6px; } .vis-lay__pic--work-sheet i:nth-child(2) { left: 6px; top: 17px; width: 16px; height: 26px; background: #c4ccd9; } .vis-lay__pic--work-sheet i:nth-child(3) { left: 26px; top: 17px; width: 44px; height: 26px; background: #6f86b5; }
 .vis-lay__pic--work-showcase { background: linear-gradient(#2f4570 0 64%, #eef1f6 64%); } .vis-lay__pic--work-showcase i:nth-child(1) { left: 20px; top: 4px; width: 36px; height: 18px; background: #9fb3da; } .vis-lay__pic--work-showcase i:nth-child(2) { left: 8px; top: 25px; width: 40px; height: 4px; background: #fff; } .vis-lay__pic--work-showcase i:nth-child(3) { left: 8px; top: 38px; width: 60px; height: 3px; }
 .vis-lay__pic--work-journal i:nth-child(1) { left: 6px; top: 5px; width: 50px; height: 9px; } .vis-lay__pic--work-journal i:nth-child(2) { left: 0; top: 18px; width: 76px; height: 16px; background: #6f86b5; border-radius: 0; } .vis-lay__pic--work-journal i:nth-child(3) { left: 22px; top: 38px; width: 32px; height: 5px; }
+/* 1.15: pagine degli elenchi lunghi, avviso del sito nascosto ai motori */
+.pager-adm { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; margin: 14px 0; }
+.pager-adm__links { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pager-adm [aria-current] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.hidden-site { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 14px 18px; margin-bottom: 18px; border-radius: 10px; background: var(--auto-bg); color: var(--auto); border: 1px solid color-mix(in srgb, var(--auto) 35%, transparent); font-weight: 600; }
+.hidden-site p { margin: 0; }
+.hidden-site .btn { font-weight: 600; }

@@ -53,6 +53,9 @@ final class Legal
                 'detect' => ['~\[video:[A-Za-z0-9_-]+\]~', '~(youtube\.com|youtu\.be|youtube-nocookie\.com)~i']],
             'vimeo' => ['name' => 'Vimeo', 'provider' => 'Vimeo.com Inc.', 'policy' => 'https://vimeo.com/privacy',
                 'cookies' => 'vuid, player (fino a 2 anni)', 'purpose' => 'video', 'detect' => ['~\[vimeo:\d+\]~']],
+            'openstreetmap' => ['name' => 'OpenStreetMap', 'provider' => 'OpenStreetMap Foundation', 'policy' => 'https://osmfoundation.org/wiki/Privacy_Policy',
+                'cookies' => 'nessun cookie di profilazione; riceve l’indirizzo IP per caricare la mappa', 'purpose' => 'mappa',
+                'detect' => ['~"map_lat"\s*:\s*"?-?\d~']],
         ]);
     }
 
@@ -161,7 +164,7 @@ final class Legal
         foreach ($f as $k => $s) $cfg['services'][$k] = ['name' => $s['name'], 'provider' => $s['provider']];
         $L = I18n::$current;
         $txt = [];
-        foreach (['cookie_title', 'cookie_text', 'cookie_accept', 'cookie_reject', 'cookie_customize', 'cookie_save', 'cookie_close', 'video_consent', 'video_accept', 'video_external', 'cookie_policy_link'] as $k) $txt[$k] = t($k, $L);
+        foreach (['cookie_title', 'cookie_text', 'cookie_accept', 'cookie_reject', 'cookie_customize', 'cookie_save', 'cookie_close', 'video_consent', 'video_accept', 'video_external', 'map_consent', 'map_accept', 'map_external', 'cookie_policy_link'] as $k) $txt[$k] = t($k, $L);
         $cfg['t'] = $txt;
         return '<div class="pp-consent" data-pp-consent-root data-config="' . e(json_encode($cfg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) . '" hidden></div>'
             . '<script src="' . e(PP::url('pp-assets/pp.js')) . '?v=' . PP::VERSION . '" defer></script>';

@@ -86,6 +86,11 @@ final class Checks
             Admin::flash('Dichiarazione di accessibilità aggiornata.');
             PP::redirect(Admin::u('accessibility'));
         }
-        Admin::view(__DIR__ . '/admin-a11y.php', ['title' => 'Accessibilità', 'issues' => self::run(), 'cfg' => Legal::cfg()]);
+        $all = self::run();
+        $sev = (string)($_GET['sev'] ?? '');
+        $q = mb_strtolower(trim((string)($_GET['q'] ?? '')));
+        $sel = array_values(array_filter($all, fn($i) => ($sev === '' || $i['sev'] === $sev) && ($q === '' || str_contains(mb_strtolower($i['msg'] . ' ' . $i['where']), $q))));
+        $pg = Admin::pager($sel, 50);
+        Admin::view(__DIR__ . '/admin-a11y.php', ['title' => 'Accessibilità', 'issues' => $all, 'shown' => $pg['items'], 'found' => count($sel), 'pager' => $pg['html'], 'sev' => $sev, 'q' => $q, 'cfg' => Legal::cfg()]);
     }
 }

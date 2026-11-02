@@ -19,6 +19,8 @@ return [
         // testi comuni a tutti i temi (pulsanti, etichette): il sito può riscriverli in site/strings.php
         Hooks::on('strings', fn($d) => $d + (require PP_ROOT . '/pp-themes/_base/strings.php'), 5);
         Hooks::on('fields', fn($f, $type, $row = null) => $type === 'block' ? Blocks::fields((string)($row['template'] ?? 'text')) : $f + Layouts::fields((string)$type));
+        // fasce legate a una pagina per slug (contenuti iniziali): si legano all'id quando la pagina c'è
+        Hooks::on('saved', fn($what) => Blocks::bindPages(), 30);
         Hooks::on('admin.pages', fn($p) => $p + [
             'themes' => ['label' => 'Temi', 'group' => 'Sito', 'perm' => 'admin', 'handler' => fn($seg) => Themes::admin()],
             'visual' => ['label' => 'Modifica visuale', 'group' => 'Sito', 'perm' => 'publish', 'handler' => fn($seg) => Visual::admin($seg)],

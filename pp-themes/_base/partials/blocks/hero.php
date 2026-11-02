@@ -19,9 +19,14 @@ if ($b['image']) {
         if (preg_match('~^uploads/[A-Za-z0-9/_.-]+$~', $p) && is_file(PP_ROOT . '/' . $p)) $slides[] = [$p, $alts[$n] ?? ''];
 }
 $tag = $i === 0 ? 'h1' : 'h2';
+$hcls = (in_array($m['height'] ?? '', ['short', 'medium', 'tall'], true) ? ' hero--h-' . $m['height'] : '') . (in_array($m['title_size'] ?? '', ['s', 'm', 'l'], true) ? ' hero--t-' . $m['title_size'] : '');
+$snav = in_array($m['slides_nav'] ?? '', ['dots', 'arrows', 'both', 'none'], true) ? $m['slides_nav'] : 'dots';
+$stime = max(3, min(20, (int)($m['slides_time'] ?? 0) ?: 6));
+$sfx = ($m['slides_fx'] ?? '') === 'slide' ? 'slide' : 'fade';
 ?>
-<section class="hero <?= e(Blocks::toneClass($b['tone'])) ?><?= $b['image'] ? ' hero--img' : '' ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>"<?= count($lines) > 1 ? ' data-hero data-lines="' . e(json_encode($lines, JSON_UNESCAPED_UNICODE)) . '"' : '' ?>>
-  <?php if ($b['image']): ?><figure class="hero__img<?= $slides ? ' hero__img--slides' : '' ?>"<?= $slides ? ' data-slides' : '' ?>><?= img($b['image'], $b['image_alt'], '100vw', '', false) ?><?php foreach ($slides as [$p, $alt]) echo img($p, $alt, '100vw', 'hero__slide', true); ?></figure><?php endif; ?>
+<section class="hero <?= e(Blocks::toneClass($b['tone'])) ?><?= $b['image'] ? ' hero--img' : '' ?><?= e($hcls) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>"<?= count($lines) > 1 ? ' data-hero data-lines="' . e(json_encode($lines, JSON_UNESCAPED_UNICODE)) . '"' : '' ?>>
+  <?php if ($b['image']): ?><figure class="hero__img<?= $slides ? ' hero__img--slides hero__img--' . $sfx : '' ?>"<?= $slides ? ' data-slides data-nav="' . e($snav) . '" data-time="' . $stime . '"' : '' ?>><?= img($b['image'], $b['image_alt'], '100vw', '', false) ?><?php foreach ($slides as [$p, $alt]) echo img($p, $alt, '100vw', 'hero__slide', true); ?></figure><?php endif; ?>
+  <?= PP::partial('hero-extra', ['b' => $b]) /* un tema può aggiungere un segno grafico all'apertura */ ?>
   <<?= $tag ?> class="hero__title" data-hero-title<?= $b['lg'] ?>>
     <span class="hero__l1" data-l1><?= e($b['title']) ?></span>
     <?php if ($line2 !== '' || $lines): ?><span class="hero__l2" data-l2><?= e($line2) ?></span><?php endif; ?>

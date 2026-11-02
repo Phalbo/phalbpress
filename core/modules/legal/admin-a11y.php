@@ -7,15 +7,25 @@
     <span><span class="badge badge--outdated"><?= $count['error'] ?? 0 ?> da correggere</span> <span class="badge badge--auto"><?= $count['warn'] ?? 0 ?> da verificare</span> <span class="badge badge--missing"><?= $count['info'] ?? 0 ?> note</span></span></div>
   <p class="hint">Testi alternativi, ordine dei titoli, link, tabelle, PDF con tag, contrasto dei colori, in tutte le lingue. Il tema rispetta già tastiera, focus visibile, lingua delle pagine, movimento ridotto e dimensioni del testo.</p>
   <?php if (!$issues): ?><p><span class="badge badge--ok">Nessun problema trovato</span></p><?php else: ?>
+  <form method="get" class="row filters" role="search">
+    <label class="field">Gravità<select name="sev"><option value="">Tutte</option>
+      <?php foreach (['error' => 'Da correggere', 'warn' => 'Da verificare', 'info' => 'Note'] as $k => $l): ?><option value="<?= $k ?>" <?= $sev === $k ? 'selected' : '' ?>><?= $l ?> (<?= (int)($count[$k] ?? 0) ?>)</option><?php endforeach; ?></select></label>
+    <label class="field grow">Cerca<input type="search" name="q" value="<?= e($q) ?>" placeholder="es. testo alternativo, nome della pagina"></label>
+    <button class="btn" type="submit">Filtra</button>
+    <?php if ($sev !== '' || $q !== ''): ?><a class="btn btn--small" href="<?= e(Admin::u('accessibility')) ?>">Azzera</a><?php endif; ?>
+  </form>
+  <?= $pager ?>
+  <?php if (!$shown): ?><p class="empty">Nessun controllo corrisponde ai filtri.</p><?php endif; ?>
   <table class="table">
     <tbody>
-    <?php foreach ($issues as $i): ?>
+    <?php foreach ($shown as $i): ?>
       <tr><td><span class="badge badge--<?= ['error' => 'outdated', 'warn' => 'auto', 'info' => 'missing'][$i['sev']] ?>"><?= ['error' => 'Correggi', 'warn' => 'Verifica', 'info' => 'Nota'][$i['sev']] ?></span></td>
         <td><?= e($i['msg']) ?><div class="small muted"><?= e($i['where']) ?></div></td>
         <td class="right"><a href="<?= e($i['link']) ?>">Apri</a></td></tr>
     <?php endforeach; ?>
     </tbody>
   </table>
+  <?= $pager ?>
   <?php endif; ?>
 </section>
 <section class="panel">

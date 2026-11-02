@@ -62,12 +62,25 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Lightbox**: `<dialog class="pp-lightbox">` in base.js per gallerie, `[data-lightbox]` e immagini della `.prose`; frecce, tastiera, swipe, testi da `data-ui` del body.
 - **Punto focale**: meta `image_focus` (top|bottom|left|right) → `focus_class($e)` = classe `pp-focus--X` su card, intestazione, mosaico.
 - **Pagine madri**: meta `parent` (id) o `parent_slug` nel seed → `page_parent($e)`; percorso sopra il titolo ed elenco `.children` (parte `list`) nella madre.
-- **Social**: `partials/social.php` (icone SVG dal nome o dal dominio); `social_place` = footer|header|both nelle Impostazioni.
+- **Social**: `partials/social.php` (icone SVG dal nome o dal dominio); `social_place` = footer|header|both|toolbar|toolbar_footer|none nelle Impostazioni.
+- **Barra in testata e footer** (Impostazioni, chiavi del config): `toolbar` (barra sottile con telefoni, email, social), `company`, `phone`, `phone2`, `pec`, `vat`,
+  `offices` (blocchi separati da una riga vuota, `SiteSettings::offices()`), `footer_badge` (immagine, es. certificazioni). Footer: logo per fondi scuri, frase, `footer_note`,
+  contatti, menu `footer`, sedi, riga finale `© <span data-year>` + `footer_legal`. L'anno si aggiorna da solo (firma del Scheduler con `date('Y')` + base.js).
+  Footer di base scuro: si stampano tutti e due i loghi (`foot__logo-img--night|--day`); i temi col footer chiaro hanno `foot-light` in `body_class`.
+- **Sottomenu**: si aprono passandoci sopra (e col clic/tastiera); un terzo livello si apre di lato (`nav__sub--deep`).
+  Voce di menu `section` con ref `stories:cats` = Portfolio con le sue categorie (`Stories::menu()`); con `parent=1` una voce va sotto la precedente.
 - **Newsletter**: `Forms::render('newsletter')` (email + consenso con data), esportazione CSV in Richieste.
 - **Portfolio** (`core/modules/themes/Stories.php`): una storia ha `meta.category` + `meta.categories` (id di contenuti `category`, con `meta.parent` per le sottocategorie).
   Ogni categoria usata ha la pagina `/{lang}/{sezione storie}/{slug}/` (rotta `stories-cat`, template `stories` con `$category`, in `PP::items()` quindi anche statica);
   la disposizione dell'elenco si sceglie per tipo o per categoria (meta `layout_stories`). Dati della scheda: campi del tipo `story` con `'public' => chiave del testo` (`Stories::facts`).
-- **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`).
+  Categorie: ordine con `menu_order`, `meta.nav_hidden` le toglie da filtri e menu (restano raggiungibili); con aree e divisioni (`Stories::nested()`) in alto ci sono solo le aree.
+- **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`); `logo_h` (altezza del logo in px), `photo_fx` (none|mono|tint: foto degli elenchi),
+  `photo_hover` (color|zoom|none), `band_h` (compact|tall: altezza delle intestazioni). Scritte in `identity.css` da `Identity::extraCss()`.
+- **Fasce nelle pagine**: un blocco col campo `page` (id) o `page_slug` (nel seed: la pagina può arrivare dopo, es. con l'importazione) va in fondo a quella pagina
+  (`Blocks::forPage()`, in `templates/page.php`) e non in home. `Blocks::bindPages()` (hook `saved`) trasforma `page_slug` in `page` quando la pagina esiste.
+- **Mappa** (blocco `map`): OpenStreetMap in iframe solo dopo il consenso (`data-pp-embed`, servizio `openstreetmap` in `Legal::services`, `csp_frames`); senza consenso link "Apri su OpenStreetMap".
+- **Gestione**: `Admin::pager($items, $per)` (`?p`, `?all`) per elenchi lunghi: Immagini e file, SEO, Redirect, Accessibilità hanno filtri e pagine.
+  `search_hidden` (SEO, attivo a ogni installazione): `noindex` in tutte le pagine, robots.txt `Disallow: /`, avviso in cima alla gestione finché non si toglie.
 
 ## Importa da WordPress (core/modules/wpimport)
 - File in `data/wp-import/`: `.xml` (WXR, obbligatorio), `.sql` (facoltativo: SOLO `icl_translations`, `term_taxonomy`, `redirection_items`), `.zip` di uploads (facoltativo, altrimenti scarica dal vecchio sito con `'download' => true`).
@@ -93,8 +106,13 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Il tema usa solo le variabili dell'identità** per colori e font: `--bg --ink --surface --muted --accent(-ink) --field-1(-ink) --field-2(-ink) --black(-ink) --hero-1 --hero-2 --font --font-display --radius`.
 - `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`),
   `hero_on` (`accent` | `ground`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
-- Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, steps, collection, figures, latest, text, gallery, cta, video, logos, quote, faq, newsletter, events), ordine = menu_order.
-  L'apertura può essere uno slideshow (campo `slides`: percorsi uno per riga, `slides_alts` tradotto; `[data-slides]` in base.js, pausa, niente giro con meno movimento).
+- Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, icons, steps, collection, figures, latest, text, gallery, cta, video, logos, team, roster, map, quote, faq, newsletter, events), ordine = menu_order.
+  L'apertura può essere uno slideshow (campo `slides`: percorsi uno per riga, `slides_alts` tradotto; `[data-slides]` in base.js: `data-nav` dots|arrows|both|none, `data-time` secondi,
+  `slides_fx` fade|slide, pausa al passaggio e al fuoco, pulsantino pausa, niente giro con meno movimento); `height` short|medium|tall, `title_size` s|m|l.
+  `statement` con `align=center`; `icons` (fino a 6 riquadri: icona da `partials/icon.php` – icone disegnate per PhalbPress –, titolo, testo, pulsante; `per_row`, `boxed`);
+  `collection` con `cols` 3|4 e `pick1`…`pick8` (contenuti scelti a mano); `logos` con `speed` e link sotto (`more_label`, `more_url`); `team` (tipo `person` se il sito lo definisce);
+  `roster` (testo: "Nome: ruolo" per riga, `#` = titolo di gruppo, nomi separati da virgola = elenco continuo); `map`.
+  Un tema aggiunge un segno all'apertura con `partials/hero-extra.php` (non ricopiare `blocks/hero.php`).
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
 - **Aspetto delle fasce** (`Blocks::look()`: tone con `custom`, bg_color, bg_image, bg_focus, bg_overlay, parallax, spacing, width; in `meta`, non tradotti):
   si applicano in `Blocks::decorate()` al primo `<section>` del blocco, quindi valgono con ogni tema senza toccarne i partial. Un fondo scuro (colore libero scuro
@@ -104,7 +122,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
 - **Modelli di testata** (`Layouts`, tipo `site`, parte `header`: bar|right|center|tabs|drawer): stesso HTML per tutti, classe `head-model--X` sulla testata e `hm-X` sul body, struttura in base.css. Il tema dà quello di partenza in `layouts.site.header`, il sito lo cambia cliccando la testata in Modifica visuale. Su telefono diventano tutti logo + strumenti + Menu.
 - **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, story, results, partners, contact, search, 404) ha delle parti
-  (`head`: left|center|split|cover|minimal · `body`: read|wide|aside · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic|tiles|covers|screens|index
+  (`head`: left|center|split|cover|minimal · `body`: read|wide|aside|columns · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic|tiles|cards|covers|screens|index|thumbs
   · `work` (tipo `story`, la scheda): portrait|sheet|showcase|journal · `docs`: cards|table · `partners`: cards|logos|rows),
   uguali per tutti i temi. `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina, news, storia o categoria → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json
   (`"*"` vale per tutti i tipi) → base. I template mettono la classe `head--X` sull'intestazione (partial `band`, struttura piatta: percorso, etichetta, titolo, frase, dati, foto o `.band__deco`),

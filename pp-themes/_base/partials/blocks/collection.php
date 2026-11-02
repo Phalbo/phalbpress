@@ -4,6 +4,11 @@ $limit = (int)($m['limit'] ?? 0);
 // storie nello stesso ordine della loro pagina (ordine a mano, poi data); news per data
 $order = match ($src) { 'news' => 'pub_date DESC, id DESC', 'story' => 'menu_order ASC, pub_date DESC, id DESC', default => 'menu_order ASC, id ASC' };
 $items = isset(PP::$config['types'][$src]) ? Content::entries($src, lang(), $limit, $order) : [];
+// contenuti scelti a mano, nell'ordine dei campi: prendono il posto degli ultimi
+$picked = [];
+for ($n = 1; $n <= 8; $n++) if (!empty($m['pick' . $n]) && ($pe = Content::byId((int)$m['pick' . $n], lang()))) $picked[(int)$pe['id']] = $pe;
+if ($picked) { $items = array_values($picked); $src = count(array_unique(array_column($items, 'type'))) === 1 ? $items[0]['type'] : $src; }
+$cols = in_array($m['cols'] ?? '', ['3', '4'], true) ? ' cards--' . $m['cols'] : '';
 $style = ($m['style'] ?? '') === 'cards' ? 'cards' : 'list';
 $more = trim((string)($x['more_label'] ?? ''));
 $moreUrl = ['news' => 'news', 'story' => 'stories', 'partner' => 'partners'][$src] ?? '';
@@ -14,7 +19,7 @@ $moreUrl = ['news' => 'news', 'story' => 'stories', 'partner' => 'partners'][$sr
     <?php if ($b['excerpt']): ?><p class="collection__intro reveal"<?= $b['lg'] ?>><?= e($b['excerpt']) ?></p><?php endif; ?>
   </div>
   <?php if ($style === 'cards'): ?>
-    <div class="cards"><?php foreach ($items as $e) echo PP::partial('card', ['e' => $e, 'date' => in_array($src, ['news'], true)]); ?></div>
+    <div class="cards<?= e($cols) ?>"><?php foreach ($items as $e) echo PP::partial('card', ['e' => $e, 'date' => in_array($src, ['news'], true)]); ?></div>
   <?php else: ?>
   <ul class="collection__list">
     <?php foreach ($items as $e): $em = $e['meta_arr']; $href = PP::entryUrl($e); $lg = $e['_fallback'] ? ' lang="' . e(I18n::hreflang($e['_lang'])) . '"' : '';

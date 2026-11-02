@@ -59,3 +59,5 @@ $listLay = Layouts::get('page', 'list', $page);
   <div class="cards"><?php foreach ($children as $c) echo PP::partial('card', ['e' => $c]); ?></div>
 </section>
 <?php endif; ?>
+<?php // fasce in fondo alla pagina (blocchi con il campo "Pagina"), con gli stessi blocchi della home
+if (class_exists('Blocks')) foreach (Blocks::forPage((int)$page['id']) as $bi => $pb) echo Blocks::render($pb, $bi + 1); ?>

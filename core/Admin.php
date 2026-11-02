@@ -97,6 +97,43 @@ final class Admin
 
     public static function flash(string $msg, string $type = 'ok'): void { $_SESSION['flash'][] = [$type, $msg]; }
     public static function u(string $p = ''): string { return PP::url(PP::adminSlug() . '/' . ltrim($p, '/')); }
+
+    /**
+     * Pagine di un elenco lungo: ['items' => solo quelli della pagina, 'page', 'pages', 'total', 'all' => bool, 'html' => navigazione].
+     * Legge ?p=N e ?all=1 dall'indirizzo; gli altri parametri (filtri) restano nei link.
+     */
+    public static function pager(array $items, int $per = 50): array
+    {
+        $total = count($items);
+        $all = !empty($_GET['all']);
+        $pages = max(1, (int)ceil($total / $per));
+        $page = $all ? 1 : min($pages, max(1, (int)($_GET['p'] ?? 1)));
+        $slice = $all ? $items : array_slice($items, ($page - 1) * $per, $per);
+        $q = $_GET; unset($q['p'], $q['all']);
+        $path = (string)parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+        $href = fn(array $extra) => $path . '?' . http_build_query($q + $extra);
+        $html = '';
+        if ($pages > 1 || $all) {
+            $html = '<nav class="pager-adm" aria-label="Pagine"><span class="muted small">' . $total . ' in tutto' . ($all ? '' : ' · pagina ' . $page . ' di ' . $pages) . '</span><span class="pager-adm__links">';
+            if (!$all) {
+                if ($page > 1) $html .= '<a class="btn btn--small" href="' . e($href(['p' => $page - 1])) . '" rel="prev">← Precedenti</a>';
+                $win = array_unique(array_filter([1, $page - 2, $page - 1, $page, $page + 1, $page + 2, $pages], fn($n) => $n >= 1 && $n <= $pages));
+                sort($win);
+                $last = 0;
+                foreach ($win as $n) {
+                    if ($n - $last > 1) $html .= '<span class="muted">…</span>';
+                    $html .= $n === $page ? '<span class="btn btn--small" aria-current="page">' . $n . '</span>' : '<a class="btn btn--small" href="' . e($href(['p' => $n])) . '">' . $n . '</a>';
+                    $last = $n;
+                }
+                if ($page < $pages) $html .= '<a class="btn btn--small" href="' . e($href(['p' => $page + 1])) . '" rel="next">Successivi →</a>';
+                $html .= '<a class="btn btn--small" href="' . e($href(['all' => 1])) . '">Vedi tutto</a>';
+            } else {
+                $html .= '<a class="btn btn--small" href="' . e($href([])) . '">A pagine</a>';
+            }
+            $html .= '</span></nav>';
+        }
+        return ['items' => $slice, 'page' => $page, 'pages' => $pages, 'total' => $total, 'all' => $all, 'html' => $html];
+    }
     public static function csrfField(): string { return '<input type="hidden" name="csrf" value="' . e(Auth::csrf()) . '">'; }
     public static function post(string $k, $d = '') { return $_POST[$k] ?? $d; }
     public static function json($data, int $code = 200): never
@@ -625,7 +662,8 @@ final class Admin
         krsort($months);
         $items = array_values(array_filter($all, fn($it) => ($q === '' || str_contains(mb_strtolower($it['name']), $q))
             && ($type === '' || $kind($it) === $type) && ($ym === '' || str_contains($it['path'], '/' . $ym . '/'))));
-        self::view('media', ['title' => 'Immagini e file', 'items' => $items, 'total' => count($all), 'months' => $months, 'q' => $q, 'type' => $type, 'ym' => $ym]);
+        $pg = self::pager($items, 48);
+        self::view('media', ['title' => 'Immagini e file', 'items' => $pg['items'], 'found' => count($items), 'pager' => $pg['html'], 'total' => count($all), 'months' => $months, 'q' => $q, 'type' => $type, 'ym' => $ym]);
     }
 
     /* ---------- coda di traduzione ---------- */

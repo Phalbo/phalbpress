@@ -78,8 +78,8 @@
     fig.dataset.loaded = '1';
     const f = document.createElement('iframe');
     f.src = fig.dataset.src + (fig.dataset.src.includes('?') ? '&' : '?') + 'autoplay=' + (fig.dataset.clicked ? '1' : '0');
-    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
-    f.allowFullscreen = true;
+    if (fig.dataset.kind === 'map') f.src = fig.dataset.src;
+    else { f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen = true; }
     f.title = fig.dataset.title || 'Video';
     f.loading = 'lazy';
     fig.querySelector('.pp-embed__box').replaceChildren(f);
@@ -95,10 +95,11 @@
       fig.dataset.clicked = '1';
       if (has(svc)) return load(fig);
       const box = fig.querySelector('.pp-embed__box');
+      const k = fig.dataset.kind === 'map' ? 'map' : 'video';
       box.innerHTML = `<div class="pp-embed__ask" role="group">
-        <p>${esc((T.video_consent || '').replace('{service}', name))}</p>
-        <p class="pp-embed__btns"><button type="button" class="pp-btn">${esc(T.video_accept)}</button>
-        <a class="pp-btn pp-btn--ghost" href="${esc(fig.dataset.external)}" target="_blank" rel="noopener">${esc((T.video_external || '').replace('{service}', name))}</a></p></div>`;
+        <p>${esc((T[k + '_consent'] || '').replace('{service}', name))}</p>
+        <p class="pp-embed__btns"><button type="button" class="pp-btn">${esc(T[k + '_accept'])}</button>
+        <a class="pp-btn pp-btn--ghost" href="${esc(fig.dataset.external)}" target="_blank" rel="noopener">${esc((T[k + '_external'] || '').replace('{service}', name))}</a></p></div>`;
       box.querySelector('button').addEventListener('click', () => {
         write({ ...(state ? state.s : all(false)), [svc]: true });
         load(fig);

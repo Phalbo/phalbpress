@@ -16,6 +16,8 @@ final class Ai
         $p = self::policy();
         $admin = PP::base() . '/' . PP::adminSlug() . '/';
         $out = "# robots.txt generato da PhalbPress\n";
+        // sito in lavorazione: tutto chiuso
+        if (class_exists('Seo') && Seo::hidden()) return $out . "# Il sito è nascosto ai motori di ricerca (Gestione → SEO)\nUser-agent: *\nDisallow: /\n";
         $block = $p === 'closed' ? array_merge(self::TRAINING, self::SEARCH) : ($p === 'search' ? self::TRAINING : []);
         foreach ($block as $bot) $out .= "User-agent: $bot\nDisallow: /\n\n";
         if ($p !== 'closed') foreach (self::SEARCH as $bot) $out .= "User-agent: $bot\nAllow: /\nDisallow: $admin\n\n";

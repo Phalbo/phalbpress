@@ -43,6 +43,10 @@
     </form>
   </aside>
   <main class="main" id="main">
+    <?php if (class_exists('Seo') && Seo::hidden()): ?>
+      <div class="hidden-site" role="note"><p>Il sito è nascosto ai motori di ricerca: Google non lo indicizza finché non lo apri.</p>
+        <a class="btn btn--small" href="<?= e(Admin::u('seo')) ?>">Apri il sito ai motori di ricerca</a></div>
+    <?php endif; ?>
     <?php foreach ($flash as [$ft, $fm]): ?>
       <p class="flash flash--<?= e($ft) ?>" role="status"><?= e($fm) ?></p>
     <?php endforeach; ?>

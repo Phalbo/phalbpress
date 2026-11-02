@@ -20,7 +20,7 @@
     "text": "Source Serif 4"
   },
   "buttons": "pill",
-  "body_class": "photo-hero",
+  "body_class": "photo-hero foot-light",
   "motion": {
     "marks": {
       ".card": [

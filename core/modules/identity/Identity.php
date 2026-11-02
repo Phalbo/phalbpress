@@ -23,6 +23,10 @@ final class Identity
             'font_display' => $d['font_display'] ?? 'Petrona', 'font_text' => $d['font_text'] ?? 'Petrona',
             'buttons' => $d['buttons'] ?? 'pill',
             'logo_has_name' => !empty($d['logo_has_name']),   // il logo contiene già il nome: in testata il nome resta solo per i lettori di schermo
+            'logo_h' => (int)($d['logo_h'] ?? 0),               // altezza del logo in testata (px); 0 = quella del tema
+            'photo_fx' => (string)($d['photo_fx'] ?? ''),        // foto negli elenchi: '' come il tema, none, mono (bianco e nero), tint (virate nel colore principale)
+            'photo_hover' => (string)($d['photo_hover'] ?? ''),  // passandoci sopra: '' come il tema, color (tornano a colori), zoom, none
+            'band_h' => (string)($d['band_h'] ?? ''),            // altezza delle intestazioni delle pagine interne: '' come il tema, compact, tall
             'fonts_custom' => [],
         ];
         $s = Settings::group('identity', $def);
@@ -154,6 +158,33 @@ final class Identity
             . "--hero-1:{$c['hero1']};--hero-2:{$c['hero2']};\n"
             . "--font:" . $fb($s['font_text']) . ";--font-display:" . $fb($s['font_display']) . ";\n"
             . "--radius:" . ($s['buttons'] === 'square' ? '0px' : ($s['buttons'] === 'soft' ? '10px' : '999px')) . ";\n}\n";
+        $css .= self::extraCss($s);
+        return $css;
+    }
+
+    /** Altezza del logo ed effetto sulle foto degli elenchi: valgono con ogni tema (identity.css viene dopo il tema). */
+    private static function extraCss(array $s): string
+    {
+        $css = '';
+        $h = max(0, min(160, (int)($s['logo_h'] ?? 0)));
+        if ($h >= 16) $css .= ".site-head .brand__logo{height:{$h}px;max-height:none}\n@media (max-width:960px){.site-head .brand__logo{height:" . min($h, 44) . "px}}\n";
+        // foto degli elenchi (schede, portfolio, gallerie, altri lavori): mai quelle aperte, che restano a colori
+        $box = ':is(.story__pic,.card__img,.worknav__pic,.gallery__item,.collection__pic)';
+        $item = ':is(.story,.card,.worknav__item,.gallery__item,.collection__item)';
+        $fx = (string)($s['photo_fx'] ?? '');
+        if ($fx !== '') {
+            $css .= "{$box}{position:relative}\n{$box}::after{content:\"\";position:absolute;inset:0;pointer-events:none;border-radius:inherit;transition:opacity .5s cubic-bezier(.16,1,.3,1);opacity:0}\n";
+            $css .= "{$box} img{transition:filter .5s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);filter:" . ($fx === 'none' ? 'none' : 'grayscale(1) contrast(1.08)') . "}\n";
+            if ($fx === 'tint') $css .= "{$box}::after{background:color-mix(in srgb,var(--accent) 40%,#fff);mix-blend-mode:multiply;opacity:1}\n";
+        }
+        $hv = (string)($s['photo_hover'] ?? '');
+        if ($hv === 'color') $css .= "{$item}:is(:hover,:focus-within) {$box} img{filter:none}\n{$item}:is(:hover,:focus-within) {$box}::after{opacity:0}\n";
+        if ($hv === 'zoom') $css .= "{$item}:is(:hover,:focus-within) {$box} img{transform:scale(1.05)}\n";
+        if ($hv === 'none') $css .= "{$item}:is(:hover,:focus-within) {$box} img{transform:none}\n";
+        if ($css !== '') $css .= "@media (prefers-reduced-motion:reduce){{$box} img,{$box}::after{transition:none}}\n";
+        // intestazioni delle pagine interne più basse o più alte
+        if (($s['band_h'] ?? '') === 'compact') $css .= ".site-main .band{padding-top:clamp(2rem,4vw,3.25rem)!important;padding-bottom:clamp(1.75rem,3vw,2.75rem)!important;min-height:0!important}\n.site-main .band.head--cover.band--img{min-height:min(40svh,380px)!important}\n.site-main .band .band__title{font-size:clamp(2rem,1.2rem + 2.6vw,3.6rem)}\n.site-main .band.band--long .band__title{font-size:clamp(1.7rem,1.1rem + 1.8vw,2.8rem)}\n.site-main .head--split .band__img img{max-height:340px;min-height:220px}\n";
+        if (($s['band_h'] ?? '') === 'tall') $css .= ".site-main .band.head--cover.band--img{min-height:min(80svh,760px)!important}\n";
         return $css;
     }
 
@@ -237,6 +268,10 @@ final class Identity
             if (isset($fonts[Admin::post('font_text')])) $s['font_text'] = Admin::post('font_text');
             if (in_array(Admin::post('buttons'), ['pill', 'soft', 'square'], true)) $s['buttons'] = Admin::post('buttons');
             $s['logo_has_name'] = (bool)Admin::post('logo_has_name');
+            $s['logo_h'] = max(0, min(160, (int)Admin::post('logo_h')));
+            $s['photo_fx'] = in_array(Admin::post('photo_fx'), ['none', 'mono', 'tint'], true) ? Admin::post('photo_fx') : '';
+            $s['photo_hover'] = in_array(Admin::post('photo_hover'), ['color', 'zoom', 'none'], true) ? Admin::post('photo_hover') : '';
+            $s['band_h'] = in_array(Admin::post('band_h'), ['compact', 'tall'], true) ? Admin::post('band_h') : '';
             foreach (['logo' => ['svg', 'png', 'webp'], 'logo_dark' => ['svg', 'png', 'webp'], 'favicon' => ['svg', 'png'], 'share_image' => ['jpg', 'jpeg', 'png', 'webp']] as $k => $allow) {
                 if (Admin::post('remove_' . $k)) { $s[$k] = ''; if (isset($s[$k . '_svg'])) $s[$k . '_svg'] = ''; }
                 if (empty($_FILES[$k]['name'])) continue;

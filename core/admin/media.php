@@ -31,7 +31,8 @@
     <button class="btn" type="submit">Filtra</button>
     <?php if ($q || $type || $ym): ?><a class="btn btn--small" href="<?= e(Admin::u('media')) ?>">Azzera</a><?php endif; ?>
   </form>
-  <p class="muted small"><?= count($items) ?> di <?= $total ?> file</p>
+  <p class="muted small"><?= (int)$found ?> di <?= $total ?> file</p>
+  <?= $pager ?>
   <?php if (!$items): ?><p class="empty"><?= $total ? 'Nessun file corrisponde ai filtri.' : 'La libreria è vuota.' ?></p><?php endif; ?>
   <ul class="grid">
     <?php foreach ($items as $it): ?>
@@ -48,4 +49,5 @@
       </li>
     <?php endforeach; ?>
   </ul>
+  <?= $pager ?>
 </section>

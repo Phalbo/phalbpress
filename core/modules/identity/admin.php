@@ -14,6 +14,8 @@
           <p class="hint"><?= e($hintLogo) ?></p>
           <?php if ($s['logo']): ?><label class="check"><input type="checkbox" name="remove_logo" value="1"> Togli il logo</label><?php endif; ?>
           <label class="check"><input type="checkbox" name="logo_has_name" value="1" <?= !empty($s['logo_has_name']) ? 'checked' : '' ?>> Il logo contiene già il nome (in testata non si ripete)</label>
+          <label class="field">Altezza del logo in testata <span class="muted">(px; vuoto = quella del tema. Sul telefono al massimo 44)</span>
+            <input type="number" name="logo_h" min="0" max="160" step="2" value="<?= (int)($s['logo_h'] ?? 0) ?: '' ?>" placeholder="es. 56"></label>
         </div>
       </div>
       <div class="logo-row">
@@ -66,6 +68,21 @@
         </select></label>
     </div>
     <p class="hint">Tutti i font sono ospitati sul sito (nessuna richiesta a Google Fonts, che il Garante considera un trasferimento di dati). Atkinson Hyperlegible Next è disegnato per la massima leggibilità; Source Serif 4 copre anche il cirillico.</p>
+    <div class="row">
+      <label class="field">Foto negli elenchi <span class="muted">(schede, portfolio, gallerie)</span>
+        <select name="photo_fx">
+          <?php foreach (['' => 'Come le mostra il tema', 'none' => 'A colori', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_fx'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+        </select></label>
+      <label class="field">Passandoci sopra
+        <select name="photo_hover">
+          <?php foreach (['' => 'Come fa il tema', 'color' => 'Tornano a colori', 'zoom' => 'Si ingrandiscono appena', 'none' => 'Niente'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_hover'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+        </select></label>
+    </div>
+    <p class="hint">Le foto aperte (la pagina di un lavoro, l’apertura della home) restano sempre a colori.</p>
+    <label class="field">Intestazioni delle pagine interne <span class="muted">(titolo in alto di pagine, news, portfolio)</span>
+      <select name="band_h">
+        <?php foreach (['' => 'Come il tema', 'compact' => 'Basse: titolo di misura, si arriva subito al contenuto', 'tall' => 'Alte'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_h'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+      </select></label>
     <fieldset class="row">
       <legend class="field">Pulsanti</legend>
       <label class="check"><input type="radio" name="buttons" value="pill" <?= $s['buttons'] === 'pill' ? 'checked' : '' ?>> Arrotondati</label>

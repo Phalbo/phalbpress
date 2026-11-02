@@ -2,7 +2,22 @@
 final class SiteSettings
 {
     /** Chiavi della configurazione che si possono cambiare dalla gestione (salvate in pp_settings, chiave "site_config"). */
-    public const KEYS = ['contact_email', 'mail_from', 'social', 'social_place', 'funder', 'owner', 'translation'];
+    public const KEYS = ['contact_email', 'mail_from', 'social', 'social_place', 'funder', 'owner', 'translation',
+        'company', 'phone', 'phone2', 'pec', 'vat', 'offices', 'toolbar', 'footer_badge'];
+    /** Dove vanno le icone dei social. */
+    public const SOCIAL_PLACES = ['footer' => 'Nel footer', 'header' => 'Nella testata', 'both' => 'In testata e nel footer', 'toolbar' => 'Nella barra sopra la testata',
+        'toolbar_footer' => 'Nella barra sopra la testata e nel footer', 'none' => 'Da nessuna parte'];
+
+    /** Sedi: blocchi separati da una riga vuota, la prima riga è il nome (es. "Sede legale Roma"). → [['label','lines'=>[…]], …] */
+    public static function offices(): array
+    {
+        $out = [];
+        foreach (preg_split('~\R\s*\R~', trim((string)(PP::$config['offices'] ?? ''))) as $blk) {
+            $lines = array_values(array_filter(array_map('trim', preg_split('~\R~', $blk)), 'strlen'));
+            if ($lines) $out[] = ['label' => array_shift($lines), 'lines' => $lines];
+        }
+        return $out;
+    }
 
     /** Le impostazioni salvate vincono su site/config.php. Si chiama dopo la connessione al database. */
     public static function apply(): void
@@ -50,7 +65,15 @@ final class SiteSettings
                     'contact_email' => $email('contact_email'),
                     'mail_from' => $email('mail_from'),
                     'social' => $social,
-                    'social_place' => in_array(Admin::post('social_place'), ['header', 'footer', 'both'], true) ? Admin::post('social_place') : 'footer',
+                    'social_place' => isset(self::SOCIAL_PLACES[(string)Admin::post('social_place')]) ? Admin::post('social_place') : 'footer',
+                    'company' => trim(strip_tags((string)Admin::post('company'))),
+                    'phone' => trim(strip_tags((string)Admin::post('phone'))),
+                    'phone2' => trim(strip_tags((string)Admin::post('phone2'))),
+                    'pec' => $email('pec'),
+                    'vat' => trim(strip_tags((string)Admin::post('vat'))),
+                    'offices' => trim(strip_tags((string)Admin::post('offices'))),
+                    'toolbar' => Admin::post('toolbar') ? 1 : 0,
+                    'footer_badge' => preg_match('~^(uploads|site/assets)/[A-Za-z0-9/_.-]+\.(svg|png|webp|jpe?g)$~', trim((string)Admin::post('footer_badge'))) ? trim((string)Admin::post('footer_badge')) : '',
                     'funder' => trim(strip_tags((string)Admin::post('funder'))),
                     'owner' => self::ownerFromPost(),
                     // la chiave non si rimostra: campo vuoto = resta quella di prima

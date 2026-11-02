@@ -24,7 +24,8 @@
     const item = b.closest('.nav__item');
     b.addEventListener('click', () => {
       const open = b.getAttribute('aria-expanded') !== 'true';
-      document.querySelectorAll('[data-sub][aria-expanded="true"]').forEach((o) => { if (o !== b) { o.setAttribute('aria-expanded', 'false'); o.closest('.nav__item').classList.remove('is-open'); } });
+      // si chiudono gli altri sottomenu, non quelli che contengono questo (terzo livello)
+      document.querySelectorAll('[data-sub][aria-expanded="true"]').forEach((o) => { const it = o.closest('.nav__item'); if (o !== b && !it.contains(b)) { o.setAttribute('aria-expanded', 'false'); it.classList.remove('is-open'); } });
       b.setAttribute('aria-expanded', open ? 'true' : 'false');
       item.classList.toggle('is-open', open);
     });
@@ -130,6 +131,9 @@
     };
     hero.querySelectorAll('[data-say]').forEach((b) => b.addEventListener('click', () => show(b.dataset.say)));
   });
+
+  /* ---------- anno del footer: le pagine statiche possono essere state generate l'anno prima ---------- */
+  document.querySelectorAll('[data-year]').forEach((y) => { y.textContent = String(new Date().getFullYear()); });
 
   /* ---------- elenchi lunghi: i primi N, poi "Mostra altri" (senza JS si vedono tutti) ---------- */
   document.querySelectorAll('[data-more]').forEach((list) => {
@@ -271,21 +275,68 @@
     dlg.addEventListener('touchend', (ev) => { if (x0 === null) return; const dx = ev.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) show(idx + (dx < 0 ? 1 : -1)); x0 = null; });
   }
 
-  /* ---------- apertura con più foto: scorrono da sole, con pausa; con "meno movimento" restano ferme ---------- */
+  /* ---------- apertura con più foto: puntini e/o frecce, tempo e passaggio scelti nel blocco.
+     Si ferma passandoci sopra o arrivandoci con la tastiera; una piccola icona la mette in pausa (WCAG 2.2.2); con "meno movimento" resta ferma ---------- */
   document.querySelectorAll('[data-slides]').forEach((fig) => {
     const slides = Array.from(fig.querySelectorAll('img'));
     if (slides.length < 2) return;
-    let i = 0, timer = null;
+    const hero = fig.closest('section');
+    const nav = fig.dataset.nav || 'dots';
+    const ms = (parseInt(fig.dataset.time, 10) || 6) * 1000;
+    let i = 0, timer = null, held = false, paused = reduce;
+    const ctl = document.createElement('div');
+    ctl.className = 'slides-ctl slides-ctl--' + nav;
+    const dots = [];
+    const go = (n) => {
+      slides[i].classList.remove('is-active');
+      i = (n + slides.length) % slides.length;
+      slides[i].classList.add('is-active');
+      fig.style.setProperty('--slide', String(i));
+      dots.forEach((d, k) => d.setAttribute('aria-current', k === i ? 'true' : 'false'));
+    };
+    const tick = () => { clearInterval(timer); timer = null; if (!paused && !held && !document.hidden) timer = setInterval(() => go(i + 1), ms); };
     slides.forEach((s, n) => s.classList.toggle('is-active', n === 0));
-    const go = (n) => { slides[i].classList.remove('is-active'); i = (n + slides.length) % slides.length; slides[i].classList.add('is-active'); };
-    const btn = document.createElement('button');
-    btn.type = 'button'; btn.className = 'hero__pause';
-    const play = () => { stop(); timer = setInterval(() => go(i + 1), 6000); btn.setAttribute('aria-pressed', 'false'); btn.textContent = ui.pause || 'Pause'; };
-    const stop = () => { clearInterval(timer); timer = null; btn.setAttribute('aria-pressed', 'true'); btn.textContent = ui.play || 'Play'; };
-    btn.addEventListener('click', () => (timer ? stop() : play()));
-    fig.closest('section').appendChild(btn);
-    if (reduce) stop(); else play();
-    document.addEventListener('visibilitychange', () => { if (document.hidden && timer) { clearInterval(timer); timer = 'paused'; } else if (!document.hidden && timer === 'paused') play(); });
+    if (nav === 'dots' || nav === 'both') {
+      const ul = document.createElement('div');
+      ul.className = 'slides-ctl__dots';
+      slides.forEach((s, n) => {
+        const d = document.createElement('button');
+        d.type = 'button'; d.className = 'slides-ctl__dot';
+        d.setAttribute('aria-label', (ui.slide || 'Photo {n}').replace('{n}', String(n + 1)));
+        d.setAttribute('aria-current', n === 0 ? 'true' : 'false');
+        d.addEventListener('click', () => { go(n); tick(); });
+        dots.push(d); ul.appendChild(d);
+      });
+      ctl.appendChild(ul);
+    }
+    if (nav === 'arrows' || nav === 'both') {
+      ['prev', 'next'].forEach((dir) => {
+        const a = document.createElement('button');
+        a.type = 'button'; a.className = 'slides-ctl__arrow slides-ctl__arrow--' + dir;
+        a.setAttribute('aria-label', ui[dir] || dir);
+        a.addEventListener('click', () => { go(i + (dir === 'next' ? 1 : -1)); tick(); });
+        hero.appendChild(a);
+      });
+    }
+    const pause = document.createElement('button');
+    pause.type = 'button'; pause.className = 'slides-ctl__pause';
+    const label = () => { pause.setAttribute('aria-label', paused ? (ui.play || 'Play') : (ui.pause || 'Pause')); pause.setAttribute('aria-pressed', paused ? 'true' : 'false'); };
+    pause.addEventListener('click', () => { paused = !paused; label(); tick(); });
+    label();
+    ctl.appendChild(pause);
+    hero.appendChild(ctl);
+    hero.classList.add('has-slides');
+    // ferma passandoci sopra o col fuoco dentro l'apertura, riparte uscendo
+    hero.addEventListener('mouseenter', () => { held = true; tick(); });
+    hero.addEventListener('mouseleave', () => { held = false; tick(); });
+    hero.addEventListener('focusin', () => { held = true; tick(); });
+    hero.addEventListener('focusout', (e) => { if (!hero.contains(e.relatedTarget)) { held = false; tick(); } });
+    // scorrimento col dito
+    let x0 = null;
+    hero.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
+    hero.addEventListener('touchend', (e) => { if (x0 === null) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) { go(i + (dx < 0 ? 1 : -1)); tick(); } x0 = null; });
+    document.addEventListener('visibilitychange', tick);
+    tick();
   });
 
   /* ---------- titoli: niente parole spezzate; se una parola non entra nella colonna, il titolo si riduce un po' ---------- */

@@ -57,7 +57,13 @@
       "work": "sheet"
     },
     "stories": {
-      "head": "split"
+      "head": "cover"
+    },
+    "news-item": {
+      "head": "left"
+    },
+    "news": {
+      "head": "cover"
     }
   }
 }

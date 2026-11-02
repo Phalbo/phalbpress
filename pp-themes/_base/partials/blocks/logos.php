@@ -2,8 +2,10 @@
 /* Loghi dei partner (dal tipo "partner": logo, nome, sito). Scorrono piano in un nastro, o restano fermi in griglia; con "meno movimento" sempre fermi. */
 $partners = isset(PP::$config['types']['partner']) ? array_values(array_filter(Content::entries('partner', lang()), fn($p) => $p['image'])) : [];
 $still = ($m['motion'] ?? '') === 'still' || count($partners) < 4;
+$speed = in_array($m['speed'] ?? '', ['slow', 'slower', 'fast'], true) ? ' logos--' . $m['speed'] : '';
+$more = trim((string)($x['more_label'] ?? '')); $moreUrl = Blocks::href((string)($m['more_url'] ?? ''));
 ?>
-<section class="logos <?= $still ? 'logos--still' : 'logos--run' ?> <?= e(Blocks::toneClass($b['tone'])) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>"<?= $b['title'] ? ' aria-labelledby="' . e($b['id_attr']) . '-h"' : ' aria-label="' . e(t('partners_title')) . '"' ?>>
+<section class="logos <?= $still ? 'logos--still' : 'logos--run' . $speed ?> <?= e(Blocks::toneClass($b['tone'])) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>"<?= $b['title'] ? ' aria-labelledby="' . e($b['id_attr']) . '-h"' : ' aria-label="' . e(t('partners_title')) . '"' ?>>
   <?php if ($b['title']): ?><h2 id="<?= e($b['id_attr']) ?>-h" class="logos__head reveal"<?= $b['lg'] ?>><?= e($b['title']) ?></h2><?php endif; ?>
   <div class="logos__track">
     <ul class="logos__list">
@@ -17,4 +19,5 @@ $still = ($m['motion'] ?? '') === 'still' || count($partners) < 4;
     </ul>
     <?php endif; ?>
   </div>
+  <?php if ($more !== '' && $moreUrl !== ''): ?><p class="logos__more"><a class="btn btn--dark" href="<?= e($moreUrl) ?>"><?= e($more) ?></a></p><?php endif; ?>
 </section>

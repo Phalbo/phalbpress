@@ -15,6 +15,7 @@ final class Menus
     {
         $s = ['home' => 'home'];
         foreach (array_keys(PP::$config['sections'] ?? []) as $k) $s[$k] = $k . '_title';
+        if (isset(PP::$config['types']['category'], PP::$config['sections']['stories'])) $s['stories:cats'] = 'stories_cats_menu';
         return Hooks::filter('menu_sections', $s);
     }
 
@@ -47,6 +48,14 @@ final class Menus
                 if (!$e) continue;
                 $href = PP::entryUrl($e, $lang);
                 $label = $label ?: $e['title'];
+            } elseif ($it['kind'] === 'section' && $it['ref'] === 'stories:cats') {
+                // categorie del portfolio: le voci nascono da sole dalle categorie visibili (con le divisioni come terzo livello)
+                if (!class_exists('Stories')) continue;
+                $cats = Stories::menu($lang);
+                if (!empty($it['parent']) && $out) { $out[count($out) - 1]['children'] = array_merge($out[count($out) - 1]['children'], $cats); foreach ($cats as $c) if ($c['current']) $out[count($out) - 1]['current'] = true; continue; }
+                $href = PP::link(PP::section('stories', $lang), $lang);
+                $out[] = ['label' => $label ?: t('stories_title', $lang), 'href' => $href, 'current' => str_starts_with($here, $href), 'external' => false, 'children' => $cats];
+                continue;
             } elseif ($it['kind'] === 'section') {
                 $k = (string)$it['ref'];
                 $href = $k === 'home' ? PP::link('', $lang) : PP::link(PP::section($k, $lang), $lang);
