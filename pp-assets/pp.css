@@ -33,7 +33,7 @@
 .pp-embed figcaption { font-size: .875rem; margin-top: 8px; opacity: .8; }
 @media (prefers-reduced-motion: reduce) { .pp-btn, .pp-embed__play span { transition: none; } }
 .pp-banner__choices[hidden] { display: none; }
-/* modulo di contatto: l'esito arriva nell'ancora (#pp-form-ok / #pp-form-err), anche sulle pagine statiche */
+/* moduli: l'esito arriva nell'ancora (#pp-form-ok, #pp-form-newsletter-err…), anche sulle pagine statiche */
 .pp-form { margin-bottom: 32px; max-width: 40rem; }
 .prose > .pp-form, .prose + .pp-form { margin-top: 1.5em; }
 .pp-form__msg { display: none; padding: 14px 16px; border-left: 4px solid var(--accent, #c00); background: var(--surface, #f4f4f4); margin: 0 0 20px; }

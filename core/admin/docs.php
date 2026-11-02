@@ -17,7 +17,7 @@
           <div class="muted small"><?= $r['file'] ? e(basename($r['file'])) : 'nessun file' ?> · [doc:<?= (int)$r['id'] ?>]</div></td>
         <td><?= e(PP::$config['doc_categories'][$r['category']] ?? $r['category']) ?></td>
         <td><?= $r['status'] === 'published' ? '<span class="pill pill--on">Pubblicato</span>' : '<span class="pill">Bozza</span>' ?></td>
-        <td><div class="dots"><?php foreach ($r['statuses'] as $l => $s): ?><a href="<?= e(Admin::u('doc/' . $r['id'] . '/' . $l)) ?>" class="dot dot--<?= e($s) ?>" title="<?= e(I18n::name($l) . ': ' . I18n::statusLabel($s)) ?>"><?= e(I18n::label($l)) ?></a><?php endforeach; ?></div></td>
+        <td><div class="dots"><?php foreach ($r['statuses'] as $l => $s): ?><a href="<?= e(Admin::u('doc/' . $r['id'] . '/' . $l)) ?>" class="dot dot--<?= e($s) ?>" title="<?= e(I18n::name($l) . ': ' . I18n::statusLabel($s)) ?>"><?= e(I18n::label($l)) ?><span class="sr-only">: <?= e(I18n::statusLabel($s)) ?></span></a><?php endforeach; ?></div></td>
         <td class="small"><?= $r['files'] ? e(strtoupper(implode(' ', $r['files']))) : '<span class="muted">solo comune</span>' ?></td>
       </tr>
     <?php endforeach; ?>

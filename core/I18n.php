@@ -56,7 +56,7 @@ final class I18n
             if (isset(self::$cache[$l][$key]) && self::$cache[$l][$key] !== '') return self::$cache[$l][$key];
         }
         $d = self::defaults()[$key] ?? null;
-        if (is_array($d)) return $d['text'][$lang] ?? $d['text'][self::$master] ?? '';
+        if (is_array($d)) return $d['text'][$lang] ?? $d['text'][self::$master] ?? $d['text']['en'] ?? '';   // i testi dei moduli hanno sempre l'inglese
         return $key;
     }
 

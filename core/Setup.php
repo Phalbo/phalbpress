@@ -167,6 +167,9 @@ final class Setup
         if (in_array($slug, ['admin', 'core', 'site', 'uploads', 'data', 'download', 'form', 'search'], true)) throw new RuntimeException('Scegli un indirizzo della gestione meno prevedibile di “' . $slug . '”.');
         $url = rtrim(trim((string)($p['site_url'] ?? '')), '/');
         if ($url !== '' && !preg_match('~^https?://[^\s/]+(/[^\s]*)?$~', $url)) throw new RuntimeException('Indirizzo del sito non valido (es. https://progetto.eu).');
+        // vuoto: quello da cui si sta installando (canonical, sitemap ed email non devono dipendere da chi visita)
+        $host = preg_replace('~[^a-z0-9.:-]~i', '', (string)($_SERVER['HTTP_HOST'] ?? ''));
+        if ($url === '' && $host !== '') $url = (self::https() ? 'https://' : 'http://') . $host . self::base();
         $over = ['db' => $db, 'admin_slug' => $slug, 'site_url' => $url, 'debug' => false];
         $export = var_export($over, true);
         $export = str_replace("'__DATA__'", "__DIR__ . '/../data/site.sqlite'", $export);
@@ -268,8 +271,8 @@ final class Setup
       <?php endif; ?>
       <label class="field">Indirizzo della gestione <span class="muted">(il sito risponderà su /<?= $e($slug) ?>/)</span>
         <input type="text" name="admin_slug" value="<?= $e($_POST['admin_slug'] ?? $slug) ?>" pattern="[a-z0-9][a-z0-9-]{2,40}" required></label>
-      <label class="field">Indirizzo del sito <span class="muted">(facoltativo: si capisce da solo)</span>
-        <input type="url" name="site_url" value="<?= $e($_POST['site_url'] ?? '') ?>" placeholder="<?= $e($guess) ?>"></label>
+      <label class="field">Indirizzo del sito <span class="muted">(quello da cui stai installando; cambialo se il sito avrà un altro dominio)</span>
+        <input type="url" name="site_url" value="<?= $e($_POST['site_url'] ?? $guess) ?>" placeholder="<?= $e($guess) ?>"></label>
       <button class="btn btn--primary">Prova la connessione e continua</button>
     </form>
   <?php endif; ?>

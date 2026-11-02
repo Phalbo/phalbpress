@@ -62,7 +62,10 @@ final class Starter
         $machine = ['sl', 'sr', 'sq', 'es']; // valori iniziali scritti senza revisione madrelingua
         foreach (I18n::defaults() as $k => $d) {
             $m = $d['text'][I18n::$master] ?? '';
-            if ($m !== '' && !DB::val('SELECT 1 FROM pp_strings WHERE skey = ? AND lang = ?', [$k, I18n::$master])) Content::saveString($k, I18n::$master, $m);
+            // lingua originale che il testo non ha (es. spagnolo): si parte dall'inglese, segnato da rivedere
+            $fromEn = $m === '' && ($d['text']['en'] ?? '') !== '';
+            if ($fromEn) $m = $d['text']['en'];
+            if ($m !== '' && !DB::val('SELECT 1 FROM pp_strings WHERE skey = ? AND lang = ?', [$k, I18n::$master])) Content::saveString($k, I18n::$master, $m, $fromEn);
             foreach ($d['text'] as $l => $v) {
                 if ($l === I18n::$master || !I18n::valid($l)) continue;
                 if (DB::val('SELECT 1 FROM pp_strings WHERE skey = ? AND lang = ?', [$k, $l])) continue;

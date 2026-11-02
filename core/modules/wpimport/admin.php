@@ -1,7 +1,7 @@
 <?php
 $steps = WpImport::STEPS;
 $cur = array_search($state['step'], $steps, true);
-$noteLabels = ['missing' => 'File non trovati', 'media_error' => 'File non importati', 'entry_error' => 'Contenuti con errori', 'no_master' => 'Senza la lingua principale (importati come bozza)', 'menu' => 'Menu', 'static' => 'Sito statico'];
+$noteLabels = ['missing' => 'File non trovati', 'media_error' => 'File non importati', 'entry_error' => 'Contenuti con errori', 'no_master' => 'Senza la lingua principale (importati come bozza)', 'menu' => 'Menu', 'static' => 'Sito statico', 'retry' => 'Riprovati'];
 ?>
 <header class="head"><h1>Importa da WordPress</h1></header>
 

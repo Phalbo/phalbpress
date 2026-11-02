@@ -13,6 +13,8 @@ DirectoryIndex index.html index.php
   RewriteRule ^site/(config|config\.sample|strings|seed)\.php$ - [F,L]
   RewriteRule ^site/(modules|theme/templates|theme/partials)/ - [F,L]
   RewriteRule ^pp-themes/.+\.(php|json)$ - [F,L]
+  RewriteRule ^(site|pp-assets)/.+\.php$ - [F,L]
+  RewriteRule ^uploads/.+\.(php\d?|phtml|phar|shtml)$ - [F,L]
   RewriteRule ^cron\.php$ - [F,L]
   RewriteRule (^|/)\.(?!well-known) - [F,L]
   RewriteRule \.(md|lock|sqlite|log|bak|sql|zip)$ - [F,L]

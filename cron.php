@@ -15,6 +15,8 @@ if (!empty($argv[1])) {
     exit(0);
 }
 $r = Scheduler::tick(true);
+// una rigenerazione del sito statico rimasta indietro (salvataggio interrotto)
+if (class_exists('StaticSite') && ($b = StaticSite::pending())) echo 'sito statico rigenerato: ' . $b['files'] . ' file' . PHP_EOL;
 echo date('Y-m-d H:i') . ' ' . ($r ? 'aggiornato: ' . $r : 'niente da fare') . PHP_EOL;
 // moduli con lavori periodici (es. controllo degli aggiornamenti del motore)
 try { Hooks::fire('cron'); } catch (Throwable $e) { echo 'cron: ' . $e->getMessage() . PHP_EOL; }

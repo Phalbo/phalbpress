@@ -80,7 +80,8 @@ final class Sanitizer
 
     private static function safeUrl(string $u): bool
     {
-        $u = trim(html_entity_decode($u, ENT_QUOTES, 'UTF-8'));
+        // i browser ignorano tabulazioni e a capo dentro lo schema ("java\tscript:"): si tolgono prima di giudicare
+        $u = preg_replace('~[\x00-\x20\x7f]+~', '', html_entity_decode($u, ENT_QUOTES, 'UTF-8'));
         if ($u === '' || $u[0] === '/' || $u[0] === '#' || $u[0] === '?') return true;
         return (bool)preg_match('~^(https?:|mailto:|tel:)~i', $u) || !preg_match('~^[a-z][a-z0-9+.-]*:~i', $u);
     }

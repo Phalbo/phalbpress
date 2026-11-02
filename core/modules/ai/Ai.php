@@ -20,8 +20,9 @@ final class Ai
         if (class_exists('Seo') && Seo::hidden()) return $out . "# Il sito è nascosto ai motori di ricerca (Gestione → SEO)\nUser-agent: *\nDisallow: /\n";
         $block = $p === 'closed' ? array_merge(self::TRAINING, self::SEARCH) : ($p === 'search' ? self::TRAINING : []);
         foreach ($block as $bot) $out .= "User-agent: $bot\nDisallow: /\n\n";
-        if ($p !== 'closed') foreach (self::SEARCH as $bot) $out .= "User-agent: $bot\nAllow: /\nDisallow: $admin\n\n";
-        $out .= "User-agent: *\nAllow: /\nDisallow: $admin\nDisallow: " . PP::base() . "/install.php\n\n";
+        // niente Disallow della gestione: il suo indirizzo non si pubblica (ha già X-Robots-Tag: noindex)
+        if ($p !== 'closed') foreach (self::SEARCH as $bot) $out .= "User-agent: $bot\nAllow: /\n\n";
+        $out .= "User-agent: *\nAllow: /\n\n";
         $out .= 'Sitemap: ' . PP::abs(PP::url('sitemap.xml')) . "\n";
         return $out;
     }

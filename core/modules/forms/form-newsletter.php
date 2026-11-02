@@ -1,10 +1,11 @@
 <?php /* Iscrizione alla newsletter. Il tema può sostituirlo con partials/form-newsletter.php (stesse variabili: $form $action $key $privacy $email). */ ?>
-<div class="pp-form pp-form--nl" id="pp-form">
-  <p class="pp-form__msg pp-form__msg--ok" id="pp-form-ok" role="status" tabindex="-1"><?= e(t('nl_ok')) ?></p>
-  <p class="pp-form__msg pp-form__msg--err" id="pp-form-err" role="alert" tabindex="-1"><?= e(t('nl_error')) ?></p>
-  <form method="post" action="<?= e($action) ?>" data-pp-form data-k="<?= e($key) ?>">
+<?php $id = Forms::anchor($form); ?>
+<div class="pp-form pp-form--nl" id="<?= e($id) ?>">
+  <p class="pp-form__msg pp-form__msg--ok" id="<?= e($id) ?>-ok" role="status" tabindex="-1"><?= e(t('nl_ok')) ?></p>
+  <p class="pp-form__msg pp-form__msg--err" id="<?= e($id) ?>-err" role="alert" tabindex="-1"><?= e(t('nl_error')) ?></p>
+  <form method="post" action="<?= e($action) ?>" data-pp-form>
     <input type="hidden" name="lang" value="<?= e(lang()) ?>">
-    <input type="hidden" name="pp_e" value="0">
+    <input type="hidden" name="pp_t" value="">
     <input type="hidden" name="pp_k" value="">
     <div class="pp-form__trap" aria-hidden="true"><label>Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <div class="pp-nl__row">

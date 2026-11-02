@@ -18,7 +18,7 @@ return [
             if ($path === 'robots.txt') return ['type' => 'text/plain; charset=utf-8', 'body' => Ai::robots()];
             if ($path === 'llms.txt') return ['type' => 'text/plain; charset=utf-8', 'body' => Ai::llms(I18n::$master)];
             if ($path === 'llms-full.txt') return ['type' => 'text/plain; charset=utf-8', 'body' => Ai::full(I18n::$master)];
-            if (preg_match('~^([a-z]{2})/llms\.txt$~', $path, $m) && I18n::valid($m[1])) return ['type' => 'text/plain; charset=utf-8', 'body' => Ai::llms($m[1])];
+            if (preg_match('~^([a-z]{2,3}(?:-[a-z]{2,4})?)/llms\.txt$~', $path, $m) && I18n::valid($m[1])) return ['type' => 'text/plain; charset=utf-8', 'body' => Ai::llms($m[1])];
             return null;
         });
         Hooks::on('head', fn($ctx) => '<link rel="alternate" type="text/plain" title="llms.txt" href="' . e(PP::url('llms.txt')) . "\">\n", 20);

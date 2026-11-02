@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.16.0';
+    public const VERSION = '1.17.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -47,6 +47,9 @@ final class PP
     public static function origin(): string
     {
         if (!empty(self::$config['site_url'])) return rtrim(self::$config['site_url'], '/');
+        // indirizzo salvato da Sistema (se il config non lo dice): canonical, sitemap, feed ed email non dipendono dalla richiesta
+        $saved = class_exists('Settings') ? (string)Settings::get('site_url', '') : '';
+        if ($saved !== '') return rtrim($saved, '/');
         $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
         return ($https ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . self::base();
     }
@@ -120,6 +123,8 @@ final class PP
 
     public static function themes(): array
     {
+        static $cache = null;   // la lista non cambia durante la richiesta (viene letta decine di volte per pagina)
+        if ($cache !== null) return $cache;
         $out = [];
         foreach (glob(PP_ROOT . '/pp-themes/*/theme.json') as $f) {
             $slug = basename(dirname($f));
@@ -127,7 +132,7 @@ final class PP
             $out[$slug] = (json_decode((string)file_get_contents($f), true) ?: []) + ['slug' => $slug];
         }
         uasort($out, fn($a, $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
-        return $out;
+        return $cache = $out;
     }
 
     /** Cerca un file del tema: personalizzazioni del sito → tema attivo → base comune. */

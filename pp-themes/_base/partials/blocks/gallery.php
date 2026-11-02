@@ -1,5 +1,5 @@
 <?php
-$imgs = array_values(array_filter(array_map('trim', preg_split('~\R~', (string)($m['images'] ?? '')))));
+$imgs = array_values(array_filter(array_map('trim', preg_split('~\R~', (string)($m['images'] ?? ''))), fn($p) => preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif|avif)$~i', $p) && is_file(PP_ROOT . '/' . $p)));
 $alts = array_map('trim', preg_split('~\R~', (string)($x['alts'] ?? '')));
 ?>
 <section class="gallery gallery--<?= min(count($imgs), 6) ?> <?= e(Blocks::toneClass($b['tone'])) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>"<?= $b['title'] ? ' aria-labelledby="' . e($b['id_attr']) . '-h"' : '' ?>>

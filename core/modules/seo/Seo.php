@@ -70,7 +70,7 @@ final class Seo
         if ($img) $og['og:image'] = PP::abs(PP::url($img));
         foreach ($og as $k => $v) $h .= '<meta property="' . $k . '" content="' . e($v) . "\">\n";
         $h .= '<meta name="twitter:card" content="' . ($img ? 'summary_large_image' : 'summary') . "\">\n";
-        $h .= '<script type="application/ld+json">' . json_encode(self::jsonld($ctx, $title, $desc, $img, $url), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . "</script>\n";
+        $h .= '<script type="application/ld+json">' . json_encode(self::jsonld($ctx, $title, $desc, $img, $url), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) . "</script>\n";
         return $h;
     }
 

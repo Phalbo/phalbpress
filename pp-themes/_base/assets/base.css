@@ -341,7 +341,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   *, *::before, *::after { animation-duration: 1ms !important; transition-duration: 1ms !important; scroll-behavior: auto !important; }
   .js .reveal { opacity: 1; transform: none; }
 }
-@media print { .site-head, .site-foot, .pp-banner, .pp-share { display: none !important; } .chapter { padding: 1rem 0; background: none !important; color: #000 !important; } }
+@media print { .site-head, .site-foot, .pp-banner, .pp-share { display: none !important; } .chapter { padding: 1rem 0; background: none !important; color: #000 !important; }
+  .js .reveal, .js [data-fx], .js .band > *, .js .hero > * { opacity: 1 !important; transform: none !important; } }
 .foot__legal { margin-top: 16px; font-size: var(--step-small); max-width: 62ch; opacity: 0.85; }
 .eu { display: flex; align-items: center; gap: 16px; margin-top: 24px; }
 .eu__flag { width: 88px; height: auto; flex: none; background: transparent; }
@@ -734,7 +735,13 @@ body:not(.photo-hero) .hero__pause { display: none; }
 .logos--run .logos__list { animation: pp-logos 40s linear infinite; }
 .logos--run .logos__track:hover .logos__list, .logos--run .logos__track:focus-within .logos__list { animation-play-state: paused; }
 @keyframes pp-logos { to { transform: translateX(-100%); } }
-@media (prefers-reduced-motion: reduce) { .logos--run .logos__list { animation: none; } .logos--run .logos__list[aria-hidden] { display: none; } .logos--run .logos__track { justify-content: center; } .logos--run .logos__list { flex-wrap: wrap; justify-content: center; } }
+/* pulsante per fermare il nastro (2.2.2: chi usa il touch non ha il passaggio del mouse) */
+.logos.is-paused .logos__list { animation-play-state: paused; }
+.logos__pause { justify-self: center; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; border: 1px solid currentColor; background: transparent; color: inherit; cursor: pointer; opacity: .75; }
+.logos__pause:hover, .logos__pause:focus-visible { opacity: 1; }
+.logos__pause::before { content: ""; width: 8px; height: 10px; border-left: 3px solid currentColor; border-right: 3px solid currentColor; box-sizing: border-box; }
+.logos__pause[aria-pressed="true"]::before { width: 0; height: 0; border: 0; border-left: 9px solid currentColor; border-top: 6px solid transparent; border-bottom: 6px solid transparent; translate: 1px 0; }
+@media (prefers-reduced-motion: reduce) { .logos__pause { display: none; } .logos--run .logos__list { animation: none; } .logos--run .logos__list[aria-hidden] { display: none; } .logos--run .logos__track { justify-content: center; } .logos--run .logos__list { flex-wrap: wrap; justify-content: center; } }
 
 /* ---------- citazione ---------- */
 .quote__fig { margin: 0 auto; max-width: 980px; display: grid; gap: 22px; justify-items: center; text-align: center; }
@@ -928,6 +935,8 @@ body:not(.photo-hero) .hero__pause { display: none; }
 /* sottomenu: al passaggio del mouse sui computer; terzo livello di lato */
 @media (hover: hover) and (min-width: 961px) {
   .nav__item--sub:hover > .nav__sub, .nav__item--sub:focus-within > .nav__sub { display: block; }
+  /* Esc chiude anche il sottomenu aperto col mouse o col fuoco (WCAG 1.4.13), finché non si esce dalla voce */
+  .sub-esc .nav__item--sub:not(.is-open):hover > .nav__sub, .sub-esc .nav__item--sub:not(.is-open):focus-within > .nav__sub { display: none; }
   .nav__sub > .nav__item--deep { position: relative; display: flex; align-items: center; justify-content: space-between; }
   .nav__sub > .nav__item--deep > a { flex: 1; }
   .nav__sub > .nav__item--deep > .nav__subbtn { height: 40px; }

@@ -25,10 +25,16 @@ final class Admin
         if ($migrated) self::flash('Aggiornamento applicato: ' . implode(', ', $migrated));
         // riserva per i contenuti programmati, se cron.php non è attivo
         if ($_SERVER['REQUEST_METHOD'] === 'GET') { try { Scheduler::tick(); } catch (Throwable $e) {} }
+        if (class_exists('StaticSite')) StaticSite::catchUp();   // una rigenerazione del sito statico rimasta a metà
 
         $pages = self::pages();
         $deny = fn() => self::view('error', ['title' => 'Permesso negato', 'message' => 'Il tuo ruolo (' . (Auth::ROLES[Auth::role()] ?? Auth::role()) . ') non comprende questa sezione.']);
-        // permessi per le sezioni del core
+        // permessi per le sezioni del core. La lingua nell'indirizzo si normalizza prima: una lingua che non esiste
+        // vale come l'originale (così la decide anche la pagina), altrimenti un traduttore passerebbe con /doc/5/xx
+        if (in_array($a, ['doc', 'strings'], true)) {
+            $li = $a === 'doc' ? 2 : 1;
+            if (!I18n::valid((string)($seg[$li] ?? ''))) $seg[$li] = I18n::$master;
+        }
         $need = ['docs' => 'translate', 'doc' => (($seg[2] ?? I18n::$master) === I18n::$master ? 'site' : 'translate'), 'media' => 'content',
             'strings' => 'translate', 'translate' => 'translate'][$a] ?? null;
         if ($need && !Auth::can($need)) { $deny(); return; }
@@ -283,6 +289,7 @@ final class Admin
 
     public static function fieldValue(array $f, $v)
     {
+        if (!is_scalar($v) && $v !== null) $v = '';   // un array al posto di un valore (meta[x][]=…) non deve rompere il salvataggio
         $v = is_string($v) ? trim($v) : $v;
         return match ($f['type']) {
             'number' => $v === '' || $v === null ? '' : (string)(0 + str_replace(',', '.', (string)$v)),
@@ -527,6 +534,7 @@ final class Admin
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $act = (string)self::post('action');
             if ($act === 'delete' && !$isNew) {
+                if (!Auth::can('site')) { Admin::flash('Solo i redattori possono eliminare un documento.', 'error'); PP::redirect(self::u('doc/' . $row['id'] . '/' . $lang)); }
                 Content::deleteItem('doc', (int)$row['id']);
                 Auth::log('delete doc', (string)$row['id']);
                 self::changed('doc');

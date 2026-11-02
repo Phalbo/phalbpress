@@ -3,6 +3,7 @@ final class Forms
 {
     private const MAX_PER_HOUR = 5;
     private const MIN_SECONDS = 3;
+    private const MAX_AGE = 4 * 3600;
 
     public static function strings(): array
     {
@@ -38,6 +39,24 @@ final class Forms
         return $s;
     }
 
+    /** Gettone di un modulo per un momento: HMAC(nome del modulo, ora di rilascio) con la chiave segreta del sito. */
+    private static function token(string $form, int $ts): string
+    {
+        return substr(hash_hmac('sha256', 'form:' . $form . ':' . $ts, self::secret()), 0, 32);
+    }
+
+    /**
+     * GET /form/{nome}/key: il browser chiede un gettone quando la pagina si apre (funziona anche con le pagine statiche,
+     * che non possono avere un gettone dentro). Il server poi controlla che dal rilascio all'invio siano passati
+     * almeno MIN_SECONDS e non più di MAX_AGE: un invio diretto senza passare dalla pagina non ce l'ha.
+     */
+    public static function key(string $form): array
+    {
+        $ts = time();
+        header('Cache-Control: no-store');
+        return ['type' => 'application/json; charset=utf-8', 'body' => json_encode(['t' => $ts, 'k' => self::token($form, $ts)])];
+    }
+
     public static function email(): string
     {
         return (string)(Settings::get('forms_to') ?: (PP::$config['contact_email'] ?? ''));
@@ -49,7 +68,7 @@ final class Forms
         $privacy = class_exists('Legal') ? PP::link(Legal::slug('privacy')) : '#';
         $email = self::email();
         $action = PP::url('form/' . $form);
-        $key = substr(hash_hmac('sha256', 'form:' . $form, self::secret()), 0, 16);
+        $key = '';   // non serve più: il gettone lo chiede il browser (resta la variabile per i temi che sostituiscono il modulo)
         ob_start();
         require $file;
         $html = (string)ob_get_clean();
@@ -78,54 +97,55 @@ final class Forms
         return $out . '</aside>';
     }
 
-    /** Torna alla pagina di partenza con l'esito nell'ancora (#pp-form-ok / #pp-form-err): funziona anche con le pagine statiche. */
-    private static function back(bool $ok): never
+    /** Ancora del modulo: "pp-form" per il contatto, "pp-form-<nome>" per gli altri (più moduli nella stessa pagina non hanno id uguali). */
+    public static function anchor(string $form): string { return 'pp-form' . ($form === 'contact' ? '' : '-' . $form); }
+
+    /** Torna alla pagina di partenza con l'esito nell'ancora (#pp-form-ok, #pp-form-newsletter-err…): funziona anche con le pagine statiche. */
+    private static function back(bool $ok, string $form = 'contact'): never
     {
         $ref = (string)($_SERVER['HTTP_REFERER'] ?? '');
         $path = parse_url($ref, PHP_URL_PATH) ?: PP::link('');
         $host = parse_url($ref, PHP_URL_HOST);
-        if ($host && $host !== ($_SERVER['HTTP_HOST'] ?? '') && $host !== parse_url(PP::origin(), PHP_URL_HOST)) $path = PP::link('');
+        if (($host && $host !== ($_SERVER['HTTP_HOST'] ?? '') && $host !== parse_url(PP::origin(), PHP_URL_HOST)) || str_starts_with($path, '//')) $path = PP::link('');
         header('Cache-Control: no-store');
-        PP::redirect($path . '#pp-form-' . ($ok ? 'ok' : 'err'), 303);
+        PP::redirect($path . '#' . self::anchor($form) . '-' . ($ok ? 'ok' : 'err'), 303);
     }
 
     public static function submit(string $form): void
     {
         $p = $_POST;
         $lang = I18n::valid((string)($p['lang'] ?? '')) ? $p['lang'] : I18n::$master;
-        $key = substr(hash_hmac('sha256', 'form:' . $form, self::secret()), 0, 16);
         $ipHash = substr(hash_hmac('sha256', (string)($_SERVER['REMOTE_ADDR'] ?? ''), self::secret()), 0, 24);
 
-        // trappole: campo nascosto compilato, token del browser assente o sbagliato, modulo inviato troppo in fretta
-        $elapsed = (int)($p['pp_e'] ?? 0);
-        if (!empty($p['website']) || !hash_equals($key, (string)($p['pp_k'] ?? '')) || $elapsed < self::MIN_SECONDS) self::back(false);
+        // trappole: campo nascosto compilato, gettone assente o falso, modulo inviato troppo in fretta o con un gettone vecchio
+        $ts = (int)($p['pp_t'] ?? 0);
+        $age = time() - $ts;
+        if (!empty($p['website']) || !hash_equals(self::token($form, $ts), (string)($p['pp_k'] ?? '')) || $age < self::MIN_SECONDS || $age > self::MAX_AGE) self::back(false, $form);
+        $recent = (int)DB::val('SELECT COUNT(*) FROM pp_form_entries WHERE ip = ? AND at > ?', [$ipHash, date('Y-m-d H:i:s', time() - 3600)]);
+        if ($recent >= self::MAX_PER_HOUR) self::back(false, $form);
 
         if ($form === 'newsletter') {
             $email = trim((string)($p['email'] ?? ''));
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($p['privacy'])) self::back(false);
-            $recent = (int)DB::val("SELECT COUNT(*) FROM pp_form_entries WHERE data LIKE ? AND at > ?", ['%"_ip":"' . $ipHash . '"%', date('Y-m-d H:i:s', time() - 3600)]);
-            if ($recent >= self::MAX_PER_HOUR) self::back(false);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($p['privacy'])) self::back(false, $form);
             // un indirizzo una volta sola: se c'è già, si risponde comunque "iscritto"
             if (!DB::val("SELECT id FROM pp_form_entries WHERE form = 'newsletter' AND data LIKE ?", ['%"email":' . json_encode(strtolower($email)) . '%'])) {
                 $data = Hooks::filter('form_data', ['name' => '', 'email' => strtolower($email), 'org' => '', 'message' => 'newsletter', 'consent' => Content::now(),
                     'page' => parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_PATH) ?: '', '_ip' => $ipHash], $form, $p);
-                DB::insert('pp_form_entries', ['form' => 'newsletter', 'lang' => $lang, 'data' => json_encode($data, JSON_UNESCAPED_UNICODE), 'at' => Content::now(), 'is_read' => 0]);
+                DB::insert('pp_form_entries', ['form' => 'newsletter', 'lang' => $lang, 'data' => json_encode($data, JSON_UNESCAPED_UNICODE), 'at' => Content::now(), 'is_read' => 0, 'ip' => $ipHash]);
             }
-            self::back(true);
+            self::back(true, $form);
         }
         $name = mb_substr(trim(strip_tags((string)($p['name'] ?? ''))), 0, 120);
         $email = trim((string)($p['email'] ?? ''));
         $org = mb_substr(trim(strip_tags((string)($p['org'] ?? ''))), 0, 160);
         $msg = mb_substr(trim(strip_tags((string)($p['message'] ?? ''))), 0, 5000);
-        if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($msg) < 5 || empty($p['privacy'])) self::back(false);
+        if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($msg) < 5 || empty($p['privacy'])) self::back(false, $form);
 
-        $recent = (int)DB::val("SELECT COUNT(*) FROM pp_form_entries WHERE data LIKE ? AND at > ?", ['%"_ip":"' . $ipHash . '"%', date('Y-m-d H:i:s', time() - 3600)]);
-        if ($recent >= self::MAX_PER_HOUR) self::back(false);
 
         $page = parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_PATH) ?: '';
         $data = ['name' => $name, 'email' => $email, 'org' => $org, 'message' => $msg, 'page' => $page, '_ip' => $ipHash];
         $data = Hooks::filter('form_data', $data, $form, $p);
-        DB::insert('pp_form_entries', ['form' => $form, 'lang' => $lang, 'data' => json_encode($data, JSON_UNESCAPED_UNICODE), 'at' => Content::now(), 'is_read' => 0]);
+        DB::insert('pp_form_entries', ['form' => $form, 'lang' => $lang, 'data' => json_encode($data, JSON_UNESCAPED_UNICODE), 'at' => Content::now(), 'is_read' => 0, 'ip' => $ipHash]);
 
         $to = self::email();
         if ($to && function_exists('mail')) {
@@ -138,7 +158,7 @@ final class Forms
             $headers = 'From: ' . $clean($site) . ' <' . $clean($from) . ">\r\nReply-To: " . $clean($email) . "\r\nContent-Type: text/plain; charset=UTF-8";
             @mail($to, '=?UTF-8?B?' . base64_encode('[' . $site . '] ' . $clean($name)) . '?=', $body, $headers);
         }
-        self::back(true);
+        self::back(true, $form);
     }
 
     public static function admin(string $id): void
@@ -164,8 +184,9 @@ final class Forms
             header('Content-Disposition: attachment; filename="newsletter-' . date('Y-m-d') . '.csv"');
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
+            $safe = fn($v) => preg_match('~^[=+\-@\t\r]~', (string)$v) ? "'" . $v : (string)$v;   // niente formule in Excel
             fputcsv($out, ['email', 'lingua', 'consenso'], ';');
-            foreach ($rows as $r) if ($r['form'] === 'newsletter') fputcsv($out, [$r['d']['email'] ?? '', $r['lang'], $r['d']['consent'] ?? $r['at']], ';');
+            foreach ($rows as $r) if ($r['form'] === 'newsletter') fputcsv($out, array_map($safe, [$r['d']['email'] ?? '', $r['lang'], $r['d']['consent'] ?? $r['at']]), ';');
             exit;
         }
         if ($id === 'csv') {

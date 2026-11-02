@@ -5,15 +5,17 @@
     <ul class="rows">
       <?php foreach ($checks as $c): ?>
         <li><span><?= $c['ok'] ? '<span class="badge badge--ok">OK</span>' : '<span class="badge badge--outdated">Da fare</span>' ?> <?= e($c['label']) ?>
-          <?php if (!$c['ok'] && $c['fix']): ?><br><span class="small muted"><?= e($c['fix']) ?></span><?php endif; ?></span></li>
+          <?php if (!$c['ok'] && $c['fix']): ?><br><span class="small muted"><?= e($c['fix']) ?></span><?php endif; ?>
+          <?php if (!$c['ok'] && ($c['act'] ?? '') === 'site_url'): ?><form method="post" class="row"><?= Admin::csrfField() ?><button class="btn btn--small" name="action" value="site_url">Usa questo indirizzo</button></form><?php endif; ?></span></li>
       <?php endforeach; ?>
     </ul>
   </section>
   <section class="panel stack">
     <h2>Sito statico</h2>
-    <p class="hint">Con il sito statico attivo, dopo ogni salvataggio le pagine pubbliche vengono scritte come file HTML: chi visita il sito non esegue PHP e non tocca il database. La gestione e i download dei documenti restano dinamici.</p>
+    <p class="hint">Con il sito statico attivo, dopo ogni salvataggio le pagine pubbliche vengono riscritte come file HTML (qualche secondo dopo, senza far aspettare chi salva): chi visita il sito non esegue PHP e non tocca il database. La gestione e i download dei documenti restano dinamici.</p>
     <p><?= $enabled ? '<span class="badge badge--ok">Attivo</span>' : '<span class="badge badge--missing">Spento</span>' ?>
-      <?php if ($last): ?><span class="small muted">Ultima generazione: <?= e($last['at']) ?> · <?= (int)$last['files'] ?> file · <?= e($last['seconds']) ?> s</span><?php endif; ?></p>
+      <?php if ($last): ?><span class="small muted">Ultima generazione: <?= e($last['at']) ?> · <?= (int)$last['files'] ?> file · <?= e($last['seconds']) ?> s</span><?php endif; ?>
+      <?php if ($enabled && StaticSite::dirty()): ?><br><span class="badge badge--auto">In corso</span> <span class="small muted">le pagine si stanno rigenerando dopo l’ultimo salvataggio: ricarica tra qualche secondo</span><?php endif; ?></p>
     <form method="post" class="row">
       <?= Admin::csrfField() ?>
       <?php if ($enabled): ?>

@@ -20,9 +20,15 @@
   if (nav) nav.addEventListener('click', (e) => { if (e.target.closest('a')) setNav(false); });
 
   /* ---------- sottomenu ---------- */
+  const hoverNav = window.matchMedia('(hover: hover) and (min-width: 961px)');
   document.querySelectorAll('[data-sub]').forEach((b) => {
     const item = b.closest('.nav__item');
+    // al passaggio del mouse il sottomenu si apre col CSS: il pulsante dice lo stesso a chi usa lo screen reader
+    item.addEventListener('mouseenter', () => { if (hoverNav.matches && !root.classList.contains('sub-esc')) b.setAttribute('aria-expanded', 'true'); });
+    item.addEventListener('mouseleave', () => { root.classList.remove('sub-esc'); if (!item.classList.contains('is-open')) b.setAttribute('aria-expanded', 'false'); });
+    item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) root.classList.remove('sub-esc'); });
     b.addEventListener('click', () => {
+      root.classList.remove('sub-esc');
       const open = b.getAttribute('aria-expanded') !== 'true';
       // si chiudono gli altri sottomenu, non quelli che contengono questo (terzo livello)
       document.querySelectorAll('[data-sub][aria-expanded="true"]').forEach((o) => { const it = o.closest('.nav__item'); if (o !== b && !it.contains(b)) { o.setAttribute('aria-expanded', 'false'); it.classList.remove('is-open'); } });
@@ -41,7 +47,9 @@
     if (e.key !== 'Escape') return;
     if (langs && langs.open) { langs.open = false; langs.querySelector('summary').focus(); }
     if (toggle && toggle.getAttribute('aria-expanded') === 'true') { setNav(false); toggle.focus(); }
-    document.querySelectorAll('[data-sub][aria-expanded="true"]').forEach((o) => { o.setAttribute('aria-expanded', 'false'); o.closest('.nav__item').classList.remove('is-open'); o.focus(); });
+    const opened = document.querySelectorAll('[data-sub][aria-expanded="true"]');
+    if (opened.length) root.classList.add('sub-esc');
+    opened.forEach((o) => { o.setAttribute('aria-expanded', 'false'); o.closest('.nav__item').classList.remove('is-open'); o.focus(); });
   });
 
   /* ---------- testata: stato "scorso" ---------- */
@@ -211,15 +219,33 @@
   });
 
   /* ---------- modulo di contatto: prova che a compilarlo è una persona ---------- */
+  /* nastro dei loghi: pulsante per fermarlo e farlo ripartire */
+  document.querySelectorAll('[data-logos-pause]').forEach((b) => {
+    const box = b.closest('.logos');
+    if (!box) return;
+    b.hidden = false;
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      box.classList.toggle('is-paused', on);
+    });
+  });
+
+  /* il gettone si chiede al server all'apertura della pagina (anche statica); il server controlla quanto tempo è passato */
   document.querySelectorAll('[data-pp-form]').forEach((form) => {
-    const t0 = Date.now();
-    form.addEventListener('submit', () => {
-      form.querySelector('[name=pp_e]').value = String(Math.round((Date.now() - t0) / 1000));
-      form.querySelector('[name=pp_k]').value = form.dataset.k;
+    const t = form.querySelector('[name=pp_t]'), k = form.querySelector('[name=pp_k]');
+    if (!t || !k) return;
+    const get = () => fetch(form.getAttribute('action').replace(/\/?$/, '/key'), { credentials: 'omit', cache: 'no-store' })
+      .then((r) => r.json()).then((j) => { t.value = String(j.t); k.value = j.k; }).catch(() => {});
+    get();
+    form.addEventListener('submit', (e) => {
+      if (k.value) return;
+      e.preventDefault();
+      get().then(() => form.submit());
     });
   });
   const hash = location.hash;
-  if (hash === '#pp-form-ok' || hash === '#pp-form-err') { const m = document.querySelector(hash); if (m) m.focus(); }
+  if (/^#pp-form(-[a-z0-9_-]+)?-(ok|err)$/.test(hash)) { const m = document.querySelector(hash); if (m) m.focus(); }
 
   /* ---------- copia link ---------- */
   document.querySelectorAll('[data-share-copy]').forEach((b) => {
@@ -278,6 +304,7 @@
   if (groups.length && 'HTMLDialogElement' in window) {
     const dlg = document.createElement('dialog');
     dlg.className = 'pp-lightbox';
+    dlg.setAttribute('aria-label', ui.open || 'Image');
     dlg.innerHTML = '<figure class="pp-lightbox__fig"><img alt=""><figcaption></figcaption></figure>'
       + '<button type="button" class="pp-lightbox__btn pp-lightbox__prev"><span aria-hidden="true">‹</span><span class="sr-only"></span></button>'
       + '<button type="button" class="pp-lightbox__btn pp-lightbox__next"><span aria-hidden="true">›</span><span class="sr-only"></span></button>'

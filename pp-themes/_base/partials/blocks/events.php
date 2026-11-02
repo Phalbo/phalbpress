@@ -1,6 +1,6 @@
 <?php
 /* Prossimi eventi nella home (c'è solo se gli eventi sono accesi). */
-$items = class_exists('Events') ? Events::list(lang(), 'upcoming', max(1, (int)($m['limit'] ?? 3))) : [];
+$items = class_exists('Events') && Events::enabled() ? Events::list(lang(), 'upcoming', max(1, (int)($m['limit'] ?? 3))) : [];
 $more = trim((string)($x['more_label'] ?? ''));
 ?>
 <section class="eventsblock <?= e(Blocks::toneClass($b['tone'])) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>" aria-labelledby="<?= e($b['id_attr']) ?>-h">

@@ -64,7 +64,7 @@ final class Identity
     public static function contrast(string $a, string $b): float
     {
         $l1 = self::lum($a); $l2 = self::lum($b);
-        return round((max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05), 2);
+        return (max($l1, $l2) + 0.05) / (min($l1, $l2) + 0.05);   // senza arrotondare: 4,496 non è 4,5
     }
 
     /** Testo attenuato: il testo schiarito verso lo sfondo, ma mai sotto 4.6:1 (WCAG AA con un po' di margine). */
@@ -364,6 +364,7 @@ final class Identity
             }
             if (isset($_POST['claim'])) Content::saveString('claim', I18n::$master, (string)$_POST['claim']);
             self::save($s);
+            Settings::set('identity_previous', null);   // salvata a mano: questa è la nuova versione di partenza
             Auth::log('save identity');
             Admin::changed('identity');
             Admin::flash('Identità visiva salvata.');
@@ -372,11 +373,12 @@ final class Identity
         Admin::view(__DIR__ . '/admin.php', ['title' => 'Identità visiva', 's' => $s, 'fonts' => self::fonts(), 'checks' => self::checks($s['colors'])]);
     }
 
-    /** Applica colori, font e forma dei pulsanti suggeriti da un tema. La versione precedente resta in 'identity_previous'. */
+    /** Applica colori, font e forma dei pulsanti suggeriti da un tema. La versione di partenza (prima della prima variante provata) resta in 'identity_previous'. */
     public static function apply(array $colors, ?string $display = null, ?string $text = null, ?string $buttons = null): void
     {
         $s = self::get();
-        Settings::set('identity_previous', ['colors' => $s['colors'], 'font_display' => $s['font_display'], 'font_text' => $s['font_text'], 'buttons' => $s['buttons']]);
+        // si tiene la versione di prima della prima variante: provarne più di una e tornare indietro riporta a quella di partenza
+        if (!Settings::get('identity_previous')) Settings::set('identity_previous', ['colors' => $s['colors'], 'font_display' => $s['font_display'], 'font_text' => $s['font_text'], 'buttons' => $s['buttons']]);
         foreach ($colors as $k => $v) if (isset(self::COLORS[$k]) && preg_match('~^#[0-9a-f]{6}$~i', (string)$v)) $s['colors'][$k] = strtolower($v);
         $fonts = self::fonts();
         if ($display && isset($fonts[$display])) $s['font_display'] = $display;

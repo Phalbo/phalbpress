@@ -86,6 +86,7 @@ return [
     'lb_prev' => ['group' => 'Generale', 'note' => 'foto ingrandita: precedente', 'text' => ['en' => 'Previous image', 'it' => 'Immagine precedente']],
     'lb_next' => ['group' => 'Generale', 'note' => 'foto ingrandita: successiva', 'text' => ['en' => 'Next image', 'it' => 'Immagine successiva']],
     'lb_open' => ['group' => 'Generale', 'note' => 'pulsante sulle foto: apre la versione grande', 'text' => ['en' => 'Enlarge image', 'it' => 'Ingrandisci l’immagine']],
+    'logos_pause' => ['group' => 'Generale', 'note' => 'nastro dei loghi che scorre: pulsante per fermarlo', 'text' => ['en' => 'Pause the moving logos', 'it' => 'Ferma lo scorrimento dei loghi']],
     'slides_pause' => ['group' => 'Generale', 'note' => 'apertura con più foto: ferma', 'text' => ['en' => 'Pause slideshow', 'it' => 'Ferma le foto']],
     'slides_play' => ['group' => 'Generale', 'note' => 'apertura con più foto: riprendi', 'text' => ['en' => 'Play slideshow', 'it' => 'Fai scorrere le foto']],
     'social_label' => ['group' => 'Generale', 'note' => 'icone dei social, per i lettori di schermo', 'text' => ['en' => 'Social media', 'it' => 'Social']],

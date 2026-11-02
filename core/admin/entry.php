@@ -28,7 +28,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
 <?php if ($autoTranslate): ?>
   <section class="panel queue" data-autoqueue data-kind="entry" data-id="<?= (int)$row['id'] ?>">
     <h2>Traduzione in corso</h2>
-    <p class="hint" data-queue-status>Preparo le lingue…</p>
+    <p class="hint" role="status" data-queue-status>Preparo le lingue…</p>
     <ul class="rows" data-queue-list></ul>
   </section>
 <?php endif; ?>
