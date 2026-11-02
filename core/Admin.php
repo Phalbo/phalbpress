@@ -25,6 +25,7 @@ final class Admin
         if ($migrated) self::flash('Aggiornamento applicato: ' . implode(', ', $migrated));
         // riserva per i contenuti programmati, se cron.php non è attivo
         if ($_SERVER['REQUEST_METHOD'] === 'GET') { try { Scheduler::tick(); } catch (Throwable $e) {} }
+        if (class_exists('StaticSite')) StaticSite::catchUp();   // una rigenerazione del sito statico rimasta a metà
 
         $pages = self::pages();
         $deny = fn() => self::view('error', ['title' => 'Permesso negato', 'message' => 'Il tuo ruolo (' . (Auth::ROLES[Auth::role()] ?? Auth::role()) . ') non comprende questa sezione.']);

@@ -10,6 +10,64 @@ final class StaticSite
 
     private static function manifestFile(): string { return PP_ROOT . '/data/static-manifest.json'; }
 
+    /**
+     * Dopo un salvataggio: il sito è "da rigenerare" e la rigenerazione parte a fine richiesta, dopo aver mandato la risposta
+     * al browser (PHP-FPM, come SiteGround), così chi salva non aspetta. Più salvataggi vicini (es. la Modifica visuale)
+     * non fanno più rigenerazioni insieme: chi trova il lucchetto lascia il segno e la rigenerazione in corso ripassa alla fine.
+     * Se una rigenerazione si interrompe, la riprende il primo accesso alla gestione o cron.php.
+     */
+    public static function later(): void
+    {
+        Settings::set('static_dirty', (string)microtime(true));
+        static $queued = false;
+        if ($queued) return;
+        $queued = true;
+        register_shutdown_function(function () {
+            ignore_user_abort(true);
+            if (function_exists('fastcgi_finish_request')) @fastcgi_finish_request();
+            try { self::pending(); } catch (Throwable $e) { error_log('PhalbPress sito statico: ' . $e->getMessage()); }
+        });
+    }
+
+    /** C'è una rigenerazione in attesa? (timestamp del salvataggio, 0 = no) */
+    public static function dirty(): float
+    {
+        Settings::reset();
+        return (float)Settings::get('static_dirty', 0);
+    }
+
+    /** Rigenera se c'è qualcosa in attesa e nessun'altra rigenerazione è in corso. */
+    public static function pending(): ?array
+    {
+        if (!self::enabled() || !self::dirty()) return null;
+        if (!is_dir(PP_ROOT . '/data')) mkdir(PP_ROOT . '/data', 0775, true);
+        $fh = @fopen(PP_ROOT . '/data/static.lock', 'c');
+        if (!$fh || !flock($fh, LOCK_EX | LOCK_NB)) return null;
+        $res = null;
+        try {
+            for ($i = 0; $i < 3; $i++) {
+                $mark = (string)Settings::get('static_dirty', '0');
+                if (class_exists('SiteSettings')) SiteSettings::apply();   // valori salvati in questa richiesta o in un'altra
+                $res = self::build();
+                Settings::reset();
+                // un salvataggio arrivato durante la rigenerazione: si ripassa una volta, con i dati nuovi
+                if ((string)Settings::get('static_dirty', '0') === $mark) { Settings::set('static_dirty', 0); break; }
+            }
+        } finally {
+            flock($fh, LOCK_UN);
+            fclose($fh);
+        }
+        return $res;
+    }
+
+    /** Una rigenerazione rimasta indietro (interrotta o mai partita) da più di un minuto: si fa a fine richiesta. */
+    public static function catchUp(): void
+    {
+        if (!self::enabled()) return;
+        $d = self::dirty();
+        if ($d && $d < microtime(true) - 60) self::later();
+    }
+
     /** Genera tutte le pagine pubbliche in HTML. */
     public static function build(): array
     {
@@ -114,9 +172,9 @@ final class StaticSite
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $act = Admin::post('action');
-            if ($act === 'enable') { Settings::set('static_enabled', true); $r = self::build(); Admin::flash("Sito statico attivo: {$r['files']} file generati in {$r['seconds']} s."); }
+            if ($act === 'enable') { Settings::set('static_enabled', true); $r = self::build(); Settings::set('static_dirty', 0); Admin::flash("Sito statico attivo: {$r['files']} file generati in {$r['seconds']} s."); }
             if ($act === 'disable') { Settings::set('static_enabled', false); self::clear(); Admin::flash('Sito statico disattivato: le pagine tornano a essere generate al momento.'); }
-            if ($act === 'build') { $r = self::build(); Admin::flash("Rigenerati {$r['files']} file in {$r['seconds']} s."); }
+            if ($act === 'build') { $r = self::build(); Settings::set('static_dirty', 0); Admin::flash("Rigenerati {$r['files']} file in {$r['seconds']} s."); }
             if ($act === 'migrate') { $d = Modules::migrate(); Admin::flash($d ? 'Aggiornati: ' . implode(', ', $d) : 'Database già aggiornato.'); }
             Auth::log('system ' . $act);
             PP::redirect(Admin::u('system'));
