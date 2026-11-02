@@ -40,7 +40,15 @@ final class Backup
         if ($kind === 'template') $tables = array_values(array_diff($tables, self::PRIVATE));
         foreach ($tables as $t) {
             $rows = DB::all('SELECT * FROM ' . $t);
-            if ($t === 'pp_settings' && $kind === 'template') $rows = array_values(array_filter($rows, fn($r) => !in_array($r['k'], self::PRIVATE_SETTINGS, true)));
+            if ($t === 'pp_settings' && $kind === 'template') {
+                $rows = array_values(array_filter($rows, fn($r) => !in_array($r['k'], self::PRIVATE_SETTINGS, true)));
+                // la chiave API della traduzione è di questo sito: non passa a un altro
+                foreach ($rows as &$r) if ($r['k'] === 'site_config') {
+                    $v = json_decode((string)$r['v'], true);
+                    if (is_array($v) && isset($v['translation']['api_key'])) { $v['translation']['api_key'] = ''; $r['v'] = json_encode($v, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES); }
+                }
+                unset($r);
+            }
             $zip->addFromString('db/' . $t . '.json', json_encode($rows, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
         }
         $files = 0;
