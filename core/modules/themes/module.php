@@ -14,7 +14,9 @@ require_once __DIR__ . '/Demo.php';
 return [
     'name' => 'themes',
     'label' => 'Temi e blocchi',
-    'version' => '1.1.0',
+    'version' => '1.2.0',
+    // 1.2.0: le fasce che avevano perso i testi cambiando tipo li ritrovano dalle versioni precedenti
+    'migrate' => fn() => Blocks::recover(),
     'boot' => function () {
         // testi comuni a tutti i temi (pulsanti, etichette): il sito può riscriverli in site/strings.php
         Hooks::on('strings', fn($d) => $d + (require PP_ROOT . '/pp-themes/_base/strings.php'), 5);

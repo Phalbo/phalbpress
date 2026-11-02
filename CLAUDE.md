@@ -118,6 +118,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   `statement` con `align=center`; `icons` (fino a 6 riquadri: icona da `partials/icon.php` – icone disegnate per PhalbPress –, titolo, testo, pulsante; `per_row`, `boxed`);
   `collection` con `cols` 3|4 e `pick1`…`pick8` (contenuti scelti a mano); `logos` con `speed` e link sotto (`more_label`, `more_url`); `team` (tipo `person` se il sito lo definisce);
   `roster` (testo: "Nome: ruolo" per riga, `#` = titolo di gruppo, nomi separati da virgola = elenco continuo); `map`.
+  Cambiare tipo non perde niente: `Blocks::ITEMS` (voci di icons, steps, faq, figures) e `Blocks::carry()` passano le voci al tipo nuovo; la gestione salva
+  anche i valori dei campi che il modulo non mostra (extra e meta restano), e al cambio di tipo i campi del tipo nuovo non inviati tengono il loro valore.
   Un tema aggiunge un segno all'apertura con `partials/hero-extra.php` (non ricopiare `blocks/hero.php`).
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
 - **Aspetto delle fasce** (`Blocks::look()`: tone con `custom`, bg_color, bg_image, bg_focus, bg_overlay, parallax, spacing, width; in `meta`, non tradotti):

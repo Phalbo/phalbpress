@@ -87,7 +87,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
       <?php if ($uses !== null): ?>
         <label class="field">Tipo di blocco
           <select name="template"><?php foreach (Blocks::kinds() as $bk => $bd): ?><option value="<?= e($bk) ?>" <?= $row['template'] === $bk ? 'selected' : '' ?>><?= e($bd['label']) ?></option><?php endforeach; ?></select></label>
-        <p class="hint">Cambiando tipo, salva per vedere i campi giusti. L’ordine decide la posizione nella home.</p>
+        <p class="hint">Cambiando tipo, salva per vedere i campi giusti: i contenuti restano (riquadri, passi, domande e numeri passano da un tipo all’altro) e tornando al tipo di prima ritrovi tutto. L’ordine decide la posizione nella pagina.</p>
       <?php endif; ?>
       <?php if ($type === 'page'): ?>
         <label class="check"><input type="checkbox" name="in_menu" value="1" <?= $row['in_menu'] ? 'checked' : '' ?>> Mostra nel menu automatico</label>

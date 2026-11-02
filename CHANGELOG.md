@@ -2,6 +2,13 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.15.3
+- **Fasce: cambiare tipo non cancella più i contenuti.**
+  - Riquadri con icona, Passi, Domande frequenti e Numeri si passano le voci: titolo, testo, pulsante e link vanno al tipo nuovo, anche nelle altre lingue.
+  - I campi che il tipo nuovo non usa restano salvati: tornando al tipo di prima si ritrova tutto com'era.
+  - Lo stesso vale per ogni scheda: i valori dei campi che il modulo non mostra non si perdono più al salvataggio.
+- Le fasce che avevano già perso i testi cambiando tipo li ritrovano da sole con l'aggiornamento, dalle versioni precedenti.
+
 ## 1.15.2
 - **Sito del progetto da zip** (Aggiornamenti, solo amministratori): si carica una versione nuova della cartella `site/` senza FTP.
   - `config.php` non si tocca; i file che nella versione nuova non ci sono più vengono tolti; prima viene fatta una copia della versione di adesso (in Backup e modelli).

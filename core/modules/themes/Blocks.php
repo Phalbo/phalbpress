@@ -87,6 +87,86 @@ final class Blocks
         return Hooks::filter('block_kinds', $k);
     }
 
+    /**
+     * Blocchi fatti di voci (riquadri, passi, domande, numeri): per ognuno le chiavi della voce n.
+     * t = titolo, d = testo, b = testo del pulsante (tradotti, in extra); u = link, i = icona, v = valore (comuni, in meta).
+     * Servono a cambiare tipo a una fascia senza perdere i contenuti (carry).
+     */
+    public const ITEMS = [
+        'icons' => ['max' => 6, 't' => 'i%d_t', 'd' => 'i%d_d', 'b' => 'i%d_btn', 'u' => 'i%d_url', 'i' => 'i%d_icon'],
+        'steps' => ['max' => 4, 't' => 's%d_t', 'd' => 's%d_d'],
+        'faq' => ['max' => 6, 't' => 'q%d', 'd' => 'a%d'],
+        'figures' => ['max' => 4, 't' => 'n%d_l', 'v' => 'n%d_v'],
+    ];
+
+    /**
+     * Cambiando tipo a una fascia: le voci del tipo di prima riempiono quelle vuote del tipo nuovo
+     * (titolo → titolo, testo → testo, pulsante e link → pulsante e link). Le chiavi del tipo di prima restano,
+     * così tornando indietro si ritrova tutto com'era. Lavora su meta ($m) e su extra di una lingua ($x).
+     */
+    public static function carry(string $to, array &$m, array &$x): void
+    {
+        $dst = self::ITEMS[$to] ?? null;
+        if (!$dst) return;
+        $empty = fn($v) => $v === null || $v === '' || $v === [];
+        for ($n = 1; $n <= $dst['max']; $n++) {
+            foreach (self::ITEMS as $kind => $src) {
+                if ($kind === $to) continue;
+                $got = false;
+                foreach (['t', 'd', 'b'] as $part) {
+                    if (!isset($dst[$part], $src[$part])) continue;
+                    $from = sprintf($src[$part], $n); $into = sprintf($dst[$part], $n);
+                    if ($empty($x[$into] ?? null) && !$empty($x[$from] ?? null)) { $x[$into] = $x[$from]; $got = true; }
+                }
+                foreach (['u', 'i', 'v'] as $part) {
+                    if (!isset($dst[$part], $src[$part])) continue;
+                    $from = sprintf($src[$part], $n); $into = sprintf($dst[$part], $n);
+                    if ($empty($m[$into] ?? null) && !$empty($m[$from] ?? null)) { $m[$into] = $m[$from]; $got = true; }
+                }
+                if ($got) break;   // una voce prende i contenuti da un solo tipo
+            }
+        }
+    }
+
+    /** true se la fascia non ha nessun titolo o testo nelle voci del suo tipo. */
+    public static function itemsEmpty(string $kind, array $x): bool
+    {
+        $k = self::ITEMS[$kind] ?? null;
+        if (!$k) return false;
+        for ($n = 1; $n <= $k['max']; $n++) foreach (['t', 'd'] as $part) if (isset($k[$part]) && trim((string)($x[sprintf($k[$part], $n)] ?? '')) !== '') return false;
+        return true;
+    }
+
+    /**
+     * Una volta (aggiornamento a 1.15.3): ai blocchi che avevano perso i testi cambiando tipo li ridà dalle versioni precedenti.
+     * Tornano le chiavi che oggi mancano e che non sono campi del tipo attuale; quelle del tipo attuale solo se la fascia è vuota.
+     */
+    public static function recover(): int
+    {
+        $fixed = 0;
+        foreach (DB::all("SELECT e.id, e.template, e.meta, t.lang, t.extra FROM pp_entries e JOIN pp_entry_tr t ON t.entry_id = e.id WHERE e.type = 'block'") as $r) {
+            $x = json_decode((string)$r['extra'], true) ?: [];
+            $m = json_decode((string)$r['meta'], true) ?: [];
+            $own = array_keys(self::kinds()[$r['template']]['fields'] ?? []);
+            $wasEmpty = self::itemsEmpty((string)$r['template'], $x);
+            $old = [];
+            foreach (DB::all("SELECT data FROM pp_revisions WHERE kind = 'entry' AND ref_id = ? AND lang = ? ORDER BY id ASC", [(int)$r['id'], $r['lang']]) as $rev) {
+                $d = json_decode((string)$rev['data'], true) ?: [];
+                $ex = json_decode((string)($d['extra'] ?? ''), true) ?: [];
+                foreach ($ex as $k => $v) if ($v !== '' && $v !== null) $old[$k] = $v;   // le più recenti vincono
+            }
+            $new = $x;
+            foreach ($old as $k => $v) if (!array_key_exists($k, $new) && (!in_array($k, $own, true) || $wasEmpty)) $new[$k] = $v;
+            $m2 = $m;
+            self::carry((string)$r['template'], $m2, $new);
+            if ($new === $x && $m2 === $m) continue;
+            DB::run('UPDATE pp_entry_tr SET extra = ? WHERE entry_id = ? AND lang = ?', [json_encode($new, JSON_UNESCAPED_UNICODE), (int)$r['id'], $r['lang']]);
+            if ($m2 !== $m) DB::run('UPDATE pp_entries SET meta = ? WHERE id = ?', [json_encode($m2, JSON_UNESCAPED_UNICODE), (int)$r['id']]);
+            $fixed++;
+        }
+        return $fixed;
+    }
+
     /** Campi dei riquadri con icona: fino a 6 riquadri. */
     private static function iconFields(callable $tr): array
     {

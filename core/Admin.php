@@ -326,6 +326,7 @@ final class Admin
             self::view('error', ['title' => 'Permesso negato', 'message' => Auth::role() === 'author' ? 'Gli autori possono modificare solo i propri contenuti finché sono in bozza.' : 'Non puoi modificare questo contenuto.']); return;
         }
         $canPublish = Auth::can('publish');
+        $prevTemplate = (string)($row['template'] ?? '');
         if ($type === 'block' && class_exists('Blocks') && $_SERVER['REQUEST_METHOD'] === 'POST' && $isMaster && isset(Blocks::kinds()[(string)self::post('template')])) $row['template'] = (string)self::post('template');
         $fields = self::fields($type, $row);
 
@@ -356,12 +357,22 @@ final class Admin
                 PP::redirect(self::u('entry/' . $row['id'] . '/' . $lang));
             }
 
-            // campi personalizzati
-            $meta = Content::meta($row); $extra = [];
+            // campi personalizzati. I valori dei campi che il modulo non mostra (es. di un altro tipo di fascia) restano:
+            // cambiare tipo o disposizione non cancella niente, e tornando indietro si ritrova tutto.
+            $meta = Content::meta($row);
+            $prevTr = $isNew ? null : Content::tr('entry', (int)$row['id'], $lang);
+            $extra = json_decode((string)($prevTr['extra'] ?? ''), true) ?: [];
+            $key = fn($k) => is_string($k) && preg_match('~^[a-z][a-z0-9_]{0,60}$~', $k);
+            foreach ((array)($_POST['x'] ?? []) as $k => $v) if ($key($k) && !isset($fields[$k]) && is_string($v)) $extra[$k] = trim($v);
+            if ($isMaster) foreach ((array)($_POST['meta'] ?? []) as $k => $v) if ($key($k) && !isset($fields[$k]) && is_string($v)) $meta[$k] = trim($v);
+            // fascia che cambia tipo: il modulo mostrava i campi del tipo di prima, quindi quelli del tipo nuovo non arrivano
+            // e tengono il valore che avevano; poi le voci di prima (riquadri, passi, domande, numeri) passano al tipo nuovo
+            $carried = $type === 'block' && class_exists('Blocks') && !$isNew && $prevTemplate !== '' && $prevTemplate !== $row['template'];
             foreach ($fields as $k => $f) {
-                if ($f['translatable']) $extra[$k] = self::fieldValue($f, $_POST['x'][$k] ?? '');
-                elseif ($isMaster) $meta[$k] = self::fieldValue($f, $_POST['meta'][$k] ?? '');
+                if ($f['translatable']) { if (!$carried || array_key_exists($k, (array)($_POST['x'] ?? []))) $extra[$k] = self::fieldValue($f, $_POST['x'][$k] ?? ''); }
+                elseif ($isMaster) { if (!$carried || array_key_exists($k, (array)($_POST['meta'] ?? []))) $meta[$k] = self::fieldValue($f, $_POST['meta'][$k] ?? ''); }
             }
+            if ($carried) Blocks::carry($row['template'], $meta, $extra);
             if (isset($meta['video'])) $meta['video'] = self::youtubeId((string)$meta['video']);
             $text = ['title' => self::post('title'), 'excerpt' => self::post('excerpt'), 'body' => self::post('body'),
                 'image_alt' => self::post('image_alt'), 'slug' => Media::slug((string)self::post('slug')), 'extra' => $extra];
@@ -395,6 +406,15 @@ final class Admin
                 if (!$wasLive) DB::update('pp_entries', ['status' => 'draft'], 'id = ?', [$row['id']]);
                 Content::saveText('entry', (int)$row['id'], $lang, $text);
                 if (!$wasLive) DB::update('pp_entries', ['status' => $status], 'id = ?', [$row['id']]);
+                // le altre lingue della fascia seguono il cambio di tipo (senza toccare il resto della traduzione)
+                if ($carried) foreach (I18n::others() as $ol) {
+                    $tr = Content::tr('entry', (int)$row['id'], $ol);
+                    if (!$tr) continue;
+                    $ox = json_decode((string)($tr['extra'] ?? ''), true) ?: [];
+                    $om = $meta;
+                    Blocks::carry($row['template'], $om, $ox);
+                    DB::run('UPDATE pp_entry_tr SET extra = ? WHERE entry_id = ? AND lang = ?', [json_encode($ox, JSON_UNESCAPED_UNICODE), (int)$row['id'], $ol]);
+                }
                 if ($row['slug'] !== 'home') {
                     $s = (string)DB::val('SELECT slug FROM pp_entry_tr WHERE entry_id = ? AND lang = ?', [$row['id'], $lang]);
                     if ($s !== '') DB::update('pp_entries', ['slug' => $s], 'id = ?', [$row['id']]);
