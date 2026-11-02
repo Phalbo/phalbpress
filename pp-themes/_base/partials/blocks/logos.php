@@ -19,5 +19,6 @@ $more = trim((string)($x['more_label'] ?? '')); $moreUrl = Blocks::href((string)
     </ul>
     <?php endif; ?>
   </div>
+  <?php if (!$still): ?><button type="button" class="logos__pause" aria-pressed="false" aria-label="<?= e(t('logos_pause')) ?>" data-logos-pause hidden></button><?php endif; ?>
   <?php if ($more !== '' && $moreUrl !== ''): ?><p class="logos__more"><a class="btn btn--dark" href="<?= e($moreUrl) ?>"><?= e($more) ?></a></p><?php endif; ?>
 </section>

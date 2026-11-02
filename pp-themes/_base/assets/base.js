@@ -211,6 +211,18 @@
   });
 
   /* ---------- modulo di contatto: prova che a compilarlo è una persona ---------- */
+  /* nastro dei loghi: pulsante per fermarlo e farlo ripartire */
+  document.querySelectorAll('[data-logos-pause]').forEach((b) => {
+    const box = b.closest('.logos');
+    if (!box) return;
+    b.hidden = false;
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      box.classList.toggle('is-paused', on);
+    });
+  });
+
   /* il gettone si chiede al server all'apertura della pagina (anche statica); il server controlla quanto tempo è passato */
   document.querySelectorAll('[data-pp-form]').forEach((form) => {
     const t = form.querySelector('[name=pp_t]'), k = form.querySelector('[name=pp_k]');
