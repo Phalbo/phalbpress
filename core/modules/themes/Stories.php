@@ -19,7 +19,8 @@ final class Stories
     public static function catIds(array $s): array
     {
         $m = $s['meta_arr'] ?? Content::meta($s);
-        $ids = array_map('intval', (array)($m['categories'] ?? []));
+        $cats = $m['categories'] ?? [];
+        $ids = array_map('intval', is_string($cats) ? preg_split('~[^0-9]+~', $cats) : (array)$cats);
         if (!empty($m['category'])) array_unshift($ids, (int)$m['category']);
         return array_values(array_unique(array_filter($ids)));
     }
