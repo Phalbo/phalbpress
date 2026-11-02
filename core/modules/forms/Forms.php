@@ -84,7 +84,7 @@ final class Forms
         $ref = (string)($_SERVER['HTTP_REFERER'] ?? '');
         $path = parse_url($ref, PHP_URL_PATH) ?: PP::link('');
         $host = parse_url($ref, PHP_URL_HOST);
-        if ($host && $host !== ($_SERVER['HTTP_HOST'] ?? '') && $host !== parse_url(PP::origin(), PHP_URL_HOST)) $path = PP::link('');
+        if (($host && $host !== ($_SERVER['HTTP_HOST'] ?? '') && $host !== parse_url(PP::origin(), PHP_URL_HOST)) || str_starts_with($path, '//')) $path = PP::link('');
         header('Cache-Control: no-store');
         PP::redirect($path . '#pp-form-' . ($ok ? 'ok' : 'err'), 303);
     }
@@ -164,8 +164,9 @@ final class Forms
             header('Content-Disposition: attachment; filename="newsletter-' . date('Y-m-d') . '.csv"');
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF");
+            $safe = fn($v) => preg_match('~^[=+\-@\t\r]~', (string)$v) ? "'" . $v : (string)$v;   // niente formule in Excel
             fputcsv($out, ['email', 'lingua', 'consenso'], ';');
-            foreach ($rows as $r) if ($r['form'] === 'newsletter') fputcsv($out, [$r['d']['email'] ?? '', $r['lang'], $r['d']['consent'] ?? $r['at']], ';');
+            foreach ($rows as $r) if ($r['form'] === 'newsletter') fputcsv($out, array_map($safe, [$r['d']['email'] ?? '', $r['lang'], $r['d']['consent'] ?? $r['at']]), ';');
             exit;
         }
         if ($id === 'csv') {
