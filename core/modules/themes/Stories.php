@@ -8,11 +8,15 @@
  */
 final class Stories
 {
+    private static array $all = [];
+    private static array $cats = [];
+
+    public static function flush(): void { self::$all = []; self::$cats = []; }
+
     /** Storie pubblicate nella lingua, dalla più recente. */
     public static function all(string $lang): array
     {
-        static $cache = [];
-        return $cache[$lang] ??= Content::entries('story', $lang, 0, 'menu_order ASC, pub_date DESC, id DESC');
+        return self::$all[$lang] ??= Content::entries('story', $lang, 0, 'menu_order ASC, pub_date DESC, id DESC');
     }
 
     /** Id delle categorie di una storia. */
@@ -28,7 +32,7 @@ final class Stories
     /** Categorie usate da almeno una storia pubblicata (con le loro madri), in ordine di titolo: [id => entry localizzata + _count]. */
     public static function categories(string $lang): array
     {
-        static $cache = [];
+        $cache = &self::$cats;
         if (isset($cache[$lang])) return $cache[$lang];
         if (!isset(PP::$config['types']['category'])) return $cache[$lang] = [];
         $count = [];

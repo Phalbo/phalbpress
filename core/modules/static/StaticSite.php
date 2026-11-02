@@ -72,6 +72,7 @@ final class StaticSite
     public static function build(): array
     {
         $t0 = microtime(true);
+        Content::flush();   // slug e storie letti prima del salvataggio, nella stessa richiesta
         @set_time_limit(300);
         $old = is_file(self::manifestFile()) ? (json_decode((string)file_get_contents(self::manifestFile()), true) ?: []) : [];
         $written = [];

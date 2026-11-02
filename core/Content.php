@@ -59,10 +59,19 @@ final class Content
         return I18n::hash($parts);
     }
 
+    private static array $slugs = [];
+
+    /** Dimentica gli slug e le storie già letti in questa richiesta (dopo un salvataggio, prima del sito statico, cambiando database). */
+    public static function flush(): void
+    {
+        self::$slugs = [];
+        if (class_exists('Stories')) Stories::flush();
+    }
+
     /** Slug di un contenuto in una lingua: quello della lingua, altrimenti quello originale. */
     public static function slugFor(int $id, string $lang): string
     {
-        static $cache = [];
+        $cache = &self::$slugs;
         $k = $id . ':' . $lang;
         if (isset($cache[$k])) return $cache[$k];
         $s = (string)DB::val("SELECT slug FROM pp_entry_tr WHERE entry_id = ? AND lang = ? AND slug <> ''", [$id, $lang]);
@@ -197,6 +206,7 @@ final class Content
         if ($kind === 'entry' && $lang === I18n::$master) DB::run("UPDATE pp_entries SET slug = ? WHERE id = ? AND slug <> 'home'", [$data['slug'], $id]);
         if ($old) self::revision($kind, $id, $lang, $old);
         if ($kind === 'entry' && $old && $old['slug'] !== '' && $old['slug'] !== $data['slug']) Redirects::slugChanged($id, $lang, $old['slug'], $data['slug']);
+        if ($kind === 'entry') self::flush();   // il sito statico rigenerato in questa stessa richiesta deve vedere lo slug nuovo
     }
 
     /* ---------- revisioni ---------- */
