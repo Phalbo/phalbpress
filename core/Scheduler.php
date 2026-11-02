@@ -11,7 +11,9 @@ final class Scheduler
         $last = (int)Settings::get('cron_at', 0);
         if (!$force && $last > time() - 300) return '';
         // l'anno nel footer (© …): col sito statico le pagine vanno rigenerate al cambio d'anno
-        $sig = date('Y') . ':' . md5(implode(',', array_column(DB::all('SELECT id FROM pp_entries WHERE ' . Content::live() . ' ORDER BY id'), 'id')));
+        // con eventi pubblicati anche il giorno: "prossimi" e "passati" cambiano a mezzanotte senza che nessuno salvi
+        $day = DB::val("SELECT 1 FROM pp_entries WHERE type = 'event' AND " . Content::live() . ' LIMIT 1') ? date('Y-m-d') : date('Y');
+        $sig = $day . ':' . md5(implode(',', array_column(DB::all('SELECT id FROM pp_entries WHERE ' . Content::live() . ' ORDER BY id'), 'id')));
         Settings::set('cron_at', time());
         $prev = Settings::get('cron_sig');
         if ($sig === $prev) return '';
