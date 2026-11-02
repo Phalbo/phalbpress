@@ -120,6 +120,8 @@ final class PP
 
     public static function themes(): array
     {
+        static $cache = null;   // la lista non cambia durante la richiesta (viene letta decine di volte per pagina)
+        if ($cache !== null) return $cache;
         $out = [];
         foreach (glob(PP_ROOT . '/pp-themes/*/theme.json') as $f) {
             $slug = basename(dirname($f));
@@ -127,7 +129,7 @@ final class PP
             $out[$slug] = (json_decode((string)file_get_contents($f), true) ?: []) + ['slug' => $slug];
         }
         uasort($out, fn($a, $b) => ($a['order'] ?? 99) <=> ($b['order'] ?? 99));
-        return $out;
+        return $cache = $out;
     }
 
     /** Cerca un file del tema: personalizzazioni del sito → tema attivo → base comune. */
