@@ -589,7 +589,8 @@ final class WpImport
             return $t !== '' ? self::target($t, $l) : '';
         }
         $e = $entry ? DB::one('SELECT * FROM pp_entries WHERE id = ?', [$entry]) : null;
-        if (!$e) return '';
+        // una bozza (es. un gruppo senza la lingua principale) non ha pagina pubblica: niente redirect né link verso un 404
+        if (!$e || $e['status'] !== 'published') return '';
         $href = PP::entryUrl(Content::localize('entry', $e, $l), $l);
         return $href !== '' ? $href . (!empty($u['fragment']) ? '#' . $u['fragment'] : '') : '';
     }
