@@ -2,6 +2,15 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.15.1
+- **Azzera il sito** (Backup e modelli, solo amministratori): riporta il sito come appena installato senza toccare `site/` e `config.php`. Si sceglie:
+  - se fare prima un backup completo (spento di base);
+  - cosa tenere: immagini e file caricati, i file da importare da WordPress, i backup, gli altri utenti (chi azzera resta sempre, con la sua password);
+  - da dove ripartire: contenuti iniziali del sito, contenuti di esempio o vuoto.
+
+  Serve la password e la parola AZZERA. Il sito ripartito è nascosto ai motori di ricerca; se ci sono file da importare si apre Importa da WordPress.
+- Importa da WordPress: le foto già importate si ritrovano anche dopo aver azzerato il sito (o rifatto il database) e non vengono rifatte né duplicate. Il collegamento sta anche in `data/wp-media-map.json`.
+
 ## 1.15.0
 Le opzioni nate per il sito di Ares 2.0 ora stanno nel motore e valgono con ogni tema.
 

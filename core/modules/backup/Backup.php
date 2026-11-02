@@ -135,6 +135,79 @@ final class Backup
         return ['tables' => count($done), 'files' => $files, 'manifest' => $m];
     }
 
+    /**
+     * Azzera il sito: database da capo e contenuti di partenza, come una nuova installazione, senza toccare site/ e config.php.
+     * $o: backup (prima un backup completo), keep_uploads, keep_import (file in data/wp-import), keep_backups, keep_users, start (seed|demo|empty).
+     * L'amministratore che azzera resta sempre, con la sua password. Ritorna un riepilogo.
+     */
+    public static function wipe(array $o): array
+    {
+        $me = Auth::user();
+        if (!$me || ($me['role'] ?? '') !== 'admin') throw new RuntimeException('Solo un amministratore può azzerare il sito.');
+        @set_time_limit(900);
+        $out = ['backup' => '', 'files' => 0];
+        if (!empty($o['backup'])) $out['backup'] = self::export('full', true);
+        // le foto importate da WordPress si ritrovano anche col database nuovo (se restano)
+        if (class_exists('WpImport')) { try { WpImport::saveMediaMap(); } catch (Throwable $e) {} }
+        if (class_exists('StaticSite')) StaticSite::clear();
+
+        $pdo = DB::pdo();
+        $pdo->beginTransaction();
+        try {
+            foreach (self::tables() as $t) {
+                if ($t === 'pp_users') {
+                    if (!empty($o['keep_users'])) continue;
+                    DB::run('DELETE FROM pp_users WHERE id <> ?', [(int)$me['id']]);
+                } elseif ($t === 'pp_settings') {
+                    // restano solo la chiave segreta del sito e le versioni dei moduli
+                    DB::run("DELETE FROM pp_settings WHERE k NOT IN ('secret', 'module_versions')");
+                } else {
+                    DB::run('DELETE FROM ' . $t);
+                }
+            }
+            $pdo->commit();
+        } catch (Throwable $e) {
+            $pdo->rollBack();
+            throw $e;
+        }
+        Settings::reset();
+
+        if (empty($o['keep_uploads'])) {
+            $out['files'] = self::empty(PP_ROOT . '/uploads');
+            @unlink(PP_ROOT . '/data/wp-media-map.json');
+        }
+        $import = PP_ROOT . '/data/wp-import';
+        if (is_dir($import)) {
+            if (empty($o['keep_import'])) self::empty($import);
+            else foreach (['state.json', 'model.ser'] as $f) @unlink($import . '/' . $f);   // l'importazione riparte dall'inizio
+        }
+        if (empty($o['keep_backups'])) {
+            foreach (glob(self::dir() . '/*.zip') ?: [] as $f) if (basename($f) !== $out['backup']) @unlink($f);
+        }
+        @unlink(PP_ROOT . '/data/demo-preview.sqlite');
+
+        require_once PP_ROOT . '/core/Starter.php';
+        Starter::start(in_array($o['start'] ?? '', ['seed', 'demo', 'empty'], true) ? $o['start'] : (Starter::hasSeed() ? 'seed' : 'empty'));
+        Hooks::fire('saved', 'install');
+        if (class_exists('Identity')) Identity::write();
+        Auth::log('wipe', ($o['start'] ?? '') . ($out['backup'] ? ' backup ' . $out['backup'] : ''));
+        return $out;
+    }
+
+    /** Svuota una cartella (non le protezioni .htaccess). Ritorna quanti file ha cancellato. */
+    private static function empty(string $dir): int
+    {
+        if (!is_dir($dir)) return 0;
+        $n = 0;
+        $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS), RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($it as $f) {
+            if ($f->isDir() && !$f->isLink()) { @rmdir($f->getPathname()); continue; }
+            if ($f->getFilename() === '.htaccess') continue;
+            if (@unlink($f->getPathname())) $n++;
+        }
+        return $n;
+    }
+
     public static function list(): array
     {
         $out = [];
@@ -170,6 +243,15 @@ final class Backup
                 } elseif ($act === 'delete') {
                     unlink(self::file((string)Admin::post('name')));
                     Admin::flash('Eliminato.');
+                } elseif ($act === 'wipe') {
+                    if (Admin::post('confirm') !== 'AZZERA') throw new RuntimeException('Scrivi AZZERA per confermare.');
+                    $hash = (string)DB::val('SELECT pass_hash FROM pp_users WHERE id = ?', [(int)(Auth::user()['id'] ?? 0)]);
+                    if ($hash === '' || !password_verify((string)Admin::post('password'), $hash)) throw new RuntimeException('Password errata: il sito non è stato toccato.');
+                    $r = self::wipe(['backup' => (bool)Admin::post('backup'), 'keep_uploads' => (bool)Admin::post('keep_uploads'), 'keep_import' => (bool)Admin::post('keep_import'),
+                        'keep_backups' => (bool)Admin::post('keep_backups'), 'keep_users' => (bool)Admin::post('keep_users'), 'start' => (string)Admin::post('start')]);
+                    Admin::flash('Sito azzerato e ripartito da capo' . ($r['backup'] ? '. Backup di prima: ' . $r['backup'] : '') . ($r['files'] ? '. File cancellati: ' . $r['files'] : '') . '.');
+                    $wp = glob(PP_ROOT . '/data/wp-import/*.xml') ?: [];
+                    PP::redirect(Admin::u($wp && class_exists('WpImport') ? 'wpimport' : ''));
                 } elseif ($act === 'restore') {
                     if (Admin::post('confirm') !== 'RIPRISTINA') throw new RuntimeException('Scrivi RIPRISTINA per confermare.');
                     if (!empty($_FILES['zip']['tmp_name']) && is_uploaded_file($_FILES['zip']['tmp_name'])) {
@@ -185,6 +267,8 @@ final class Backup
             } catch (Throwable $e) { Admin::flash($e->getMessage(), 'error'); }
             PP::redirect(Admin::u('backup'));
         }
-        Admin::view(__DIR__ . '/admin.php', ['title' => 'Backup e modelli', 'files' => self::list(), 'zip' => class_exists('ZipArchive')]);
+        require_once PP_ROOT . '/core/Starter.php';
+        Admin::view(__DIR__ . '/admin.php', ['title' => 'Backup e modelli', 'files' => self::list(), 'zip' => class_exists('ZipArchive'),
+            'hasSeed' => Starter::hasSeed(), 'hasDemo' => class_exists('Demo'), 'hasImport' => (bool)(glob(PP_ROOT . '/data/wp-import/*.xml') ?: [])]);
     }
 }

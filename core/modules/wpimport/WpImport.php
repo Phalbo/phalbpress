@@ -79,6 +79,34 @@ final class WpImport
         DB::upsert('pp_wp_map', ['kind' => $kind, 'wp_key' => $key, 'ref' => $ref], ['kind', 'wp_key']);
     }
 
+    /* ---------- foto già importate (anche dopo "Azzera il sito") ----------
+       Il collegamento file di WordPress → file nuovo sta nel database e anche in data/wp-media-map.json, accanto agli upload:
+       se il database riparte da zero ma le foto restano, l'importazione le ritrova invece di rifarle. */
+
+    private static ?array $kept = null;
+
+    public static function mediaMapFile(): string { return PP_ROOT . '/data/wp-media-map.json'; }
+
+    private static function kept(string $orig): string
+    {
+        if (self::$kept === null) self::$kept = is_file(self::mediaMapFile()) ? (json_decode((string)file_get_contents(self::mediaMapFile()), true) ?: []) : [];
+        $rel = (string)(self::$kept[$orig] ?? '');
+        return $rel !== '' && str_starts_with($rel, 'uploads/') && !str_contains($rel, '..') && is_file(PP_ROOT . '/' . $rel) ? $rel : '';
+    }
+
+    /** Scrive la mappa delle foto (quelle del database più quelle già nel file, se il file c'è ancora). */
+    public static function saveMediaMap(): void
+    {
+        self::migrate();
+        $map = is_file(self::mediaMapFile()) ? (json_decode((string)file_get_contents(self::mediaMapFile()), true) ?: []) : [];
+        foreach (DB::all("SELECT wp_key, ref FROM pp_wp_map WHERE kind = 'media' AND ref <> ''") as $r) $map[$r['wp_key']] = $r['ref'];
+        $map = array_filter($map, fn($rel) => is_string($rel) && is_file(PP_ROOT . '/' . $rel));
+        if (!$map) { @unlink(self::mediaMapFile()); return; }
+        ksort($map);
+        file_put_contents(self::mediaMapFile(), json_encode($map, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+        self::$kept = $map;
+    }
+
     /* ---------- gruppi di traduzioni ---------- */
 
     /** Lingua di un contenuto di WordPress (WPML) o la lingua principale del sito. */
@@ -151,6 +179,7 @@ final class WpImport
         if ($dry) return ['uploads/media/' . $orig, $alt];
         $done = self::map('media', $orig);
         if ($done !== null) return [$done, $alt];
+        if (($have = self::kept($orig)) !== '') { self::setMap('media', $orig, $have); return [$have, $alt]; }
         $c = self::cfg();
         $base = self::model()['base'];
         $tmp = '';
@@ -274,6 +303,7 @@ final class WpImport
             $s['counts'] = self::$counts; $s['notes'] = self::$notes;
             self::save($s);
         }
+        if (($s['step'] ?? '') !== 'scan') self::saveMediaMap();
         if ($s['step'] === 'done' && empty($s['finished'])) {
             $s['finished'] = Content::now();
             self::save($s);
@@ -687,6 +717,7 @@ final class WpImport
         }
         DB::run('DELETE FROM pp_wp_map');
         @unlink(self::stateFile());
+        @unlink(self::mediaMapFile());   // le foto importate non ci sono più
         return $n;
     }
 }

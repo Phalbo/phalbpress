@@ -35,3 +35,30 @@
   <?php endforeach; ?></ul>
   <?php endif; ?>
 </section>
+<section class="panel stack panel--danger">
+  <h2>Azzera il sito</h2>
+  <p>Cancella contenuti, testi, menu, impostazioni, redirect, richieste e registro, e fa ripartire il sito come appena installato. <strong>Il codice in <code>site/</code> e <code>config.php</code> non si toccano</strong>; il tuo utente resta, con la sua password.</p>
+  <form method="post" class="stack"><?= Admin::csrfField() ?>
+    <fieldset class="stack">
+      <legend>Prima</legend>
+      <label class="check"><input type="checkbox" name="backup" value="1"> Fai prima un backup completo (database e file: con molte foto ci vuole qualche minuto)</label>
+    </fieldset>
+    <fieldset class="stack">
+      <legend>Cosa tenere</legend>
+      <label class="check"><input type="checkbox" name="keep_uploads" value="1" checked> <span>Immagini e file caricati. Se poi reimporti da WordPress, le foto già importate vengono ritrovate e non rifatte.</span></label>
+      <?php if ($hasImport): ?><label class="check"><input type="checkbox" name="keep_import" value="1" checked> <span>I file da importare in <code>data/wp-import/</code> (esportazione, dump e zip delle foto)</span></label><?php endif; ?>
+      <label class="check"><input type="checkbox" name="keep_backups" value="1" checked> I backup sul server</label>
+      <label class="check"><input type="checkbox" name="keep_users" value="1" checked> Gli altri utenti (redattori, traduttori…)</label>
+    </fieldset>
+    <fieldset class="stack">
+      <legend>Da dove ripartire</legend>
+      <?php if ($hasSeed): ?><label class="check"><input type="radio" name="start" value="seed" checked> <span>I contenuti iniziali del sito (<code>site/seed.php</code>)</span></label><?php endif; ?>
+      <?php if ($hasDemo): ?><label class="check"><input type="radio" name="start" value="demo"> I contenuti di esempio</label><?php endif; ?>
+      <label class="check"><input type="radio" name="start" value="empty"<?= $hasSeed ? '' : ' checked' ?>> Vuoto</label>
+    </fieldset>
+    <label class="field">La tua password<input type="password" name="password" autocomplete="current-password" required></label>
+    <label class="field">Per confermare scrivi AZZERA<input type="text" name="confirm" autocomplete="off" required></label>
+    <button class="btn btn--danger" name="action" value="wipe">Azzera il sito</button>
+  </form>
+  <p class="hint">Non si torna indietro, se non con un backup. Il sito ripartito è nascosto ai motori di ricerca, come dopo l’installazione.<?php if ($hasImport): ?> Alla fine si apre Importa da WordPress.<?php endif; ?></p>
+</section>

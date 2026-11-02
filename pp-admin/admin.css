@@ -311,3 +311,7 @@ fieldset.field { border: 0; padding: 0; margin: 0; } fieldset.field legend { fon
 .hidden-site { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 20px; padding: 14px 18px; margin-bottom: 18px; border-radius: 10px; background: var(--auto-bg); color: var(--auto); border: 1px solid color-mix(in srgb, var(--auto) 35%, transparent); font-weight: 600; }
 .hidden-site p { margin: 0; }
 .hidden-site .btn { font-weight: 600; }
+/* Azzera il sito */
+.panel--danger { border: 1px solid var(--out); margin-top: 24px; }
+.panel--danger h2 { color: var(--out); }
+.panel--danger fieldset legend { font-weight: 700; margin-bottom: 6px; padding: 0; }

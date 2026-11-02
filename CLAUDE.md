@@ -79,6 +79,9 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Fasce nelle pagine**: un blocco col campo `page` (id) o `page_slug` (nel seed: la pagina può arrivare dopo, es. con l'importazione) va in fondo a quella pagina
   (`Blocks::forPage()`, in `templates/page.php`) e non in home. `Blocks::bindPages()` (hook `saved`) trasforma `page_slug` in `page` quando la pagina esiste.
 - **Mappa** (blocco `map`): OpenStreetMap in iframe solo dopo il consenso (`data-pp-embed`, servizio `openstreetmap` in `Legal::services`, `csp_frames`); senza consenso link "Apri su OpenStreetMap".
+- **Contenuti di partenza**: `core/Starter.php` (`seed()`, `strings()`, `start('seed'|'demo'|'empty')`), usato da install.php e da **Azzera il sito**
+  (`Backup::wipe()`: svuota le tabelle tranne l'utente che azzera e le impostazioni `secret`/`module_versions`, poi `Starter::start()`; opzioni backup, keep_uploads, keep_import, keep_backups, keep_users).
+  Le foto importate da WordPress sono anche in `data/wp-media-map.json` (`WpImport::saveMediaMap()`): un'importazione col database nuovo le ritrova.
 - **Gestione**: `Admin::pager($items, $per)` (`?p`, `?all`) per elenchi lunghi: Immagini e file, SEO, Redirect, Accessibilità hanno filtri e pagine.
   `search_hidden` (SEO, attivo a ogni installazione): `noindex` in tutte le pagine, robots.txt `Disallow: /`, avviso in cima alla gestione finché non si toglie.
 
