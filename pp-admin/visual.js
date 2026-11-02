@@ -130,7 +130,7 @@
     list.querySelectorAll('.vis-item').forEach((li) => li.classList.toggle('is-current', Number(li.dataset.id) === id));
     if (scroll) toFrame({ type: 'select', id, scroll: true });
     try { panel.innerHTML = await html('panel/' + id); }
-    catch (e) { panel.innerHTML = '<p class="flash flash--error">' + e.message + '</p>'; return; }
+    catch (e) { const p = document.createElement('p'); p.className = 'flash flash--error'; p.textContent = e.message; panel.replaceChildren(p); return; }
     const form = panel.querySelector('[data-vis-form]');
     if (!form) return;
     show(form);
@@ -175,7 +175,7 @@
     partOpen = d;
     const q = 'layout?type=' + encodeURIComponent(d.ptype) + '&part=' + encodeURIComponent(d.part) + '&entry=' + (d.entry || 0);
     try { panel.innerHTML = await html(q); }
-    catch (e) { panel.innerHTML = '<p class="flash flash--error">' + e.message + '</p>'; return; }
+    catch (e) { const p = document.createElement('p'); p.className = 'flash flash--error'; p.textContent = e.message; panel.replaceChildren(p); return; }
     const form = panel.querySelector('[data-vis-layout]');
     if (!form) return;
     const send = async (extra = {}) => {

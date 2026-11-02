@@ -4,6 +4,8 @@
   const CSRF = body.dataset.csrf;
   const BASE = body.dataset.base;
   const ROOT = body.dataset.root || '';
+  // messaggio d'errore come testo, mai come HTML (arriva dal server)
+  const err = (msg) => { const p = document.createElement('p'); p.className = 'flash flash--error'; p.textContent = msg; return p; };
 
   const api = async (path, data = {}) => {
     const fd = new FormData();
@@ -60,7 +62,7 @@
         b.addEventListener('click', () => done(i.path));
         g.appendChild(b);
       });
-    } catch (e) { list.innerHTML = `<p class="flash flash--error">${e.message}</p>`; }
+    } catch (e) { list.replaceChildren(err(e.message)); }
   });
 
   const pickDoc = () => dialog('Inserisci un documento', async (list, done) => {
@@ -75,7 +77,7 @@
         b.addEventListener('click', () => done(i.id));
         list.firstChild.appendChild(b);
       });
-    } catch (e) { list.innerHTML = `<p class="flash flash--error">${e.message}</p>`; }
+    } catch (e) { list.replaceChildren(err(e.message)); }
   });
 
   window.ppPickImage = pickImage;   // usato anche dalla Modifica visuale
@@ -203,7 +205,9 @@
       const j = jobs[i];
       status.textContent = `${i + 1} di ${jobs.length}…`;
       const li = document.createElement('li');
-      li.innerHTML = `<span>${j.label} → <strong>${j.lang.toUpperCase()}</strong></span><span class="muted">in corso</span>`;
+      const lab = document.createElement('span'), lng = document.createElement('strong'), st = document.createElement('span');
+      lng.textContent = j.lang.toUpperCase(); lab.append(j.label + ' → ', lng); st.className = 'muted'; st.textContent = 'in corso';
+      li.append(lab, st);
       list.prepend(li);
       try {
         const r = await api('translate', { kind: j.kind, id: j.id, lang: j.lang, last: i === jobs.length - 1 ? 1 : '' });
