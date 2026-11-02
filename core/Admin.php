@@ -288,6 +288,7 @@ final class Admin
 
     public static function fieldValue(array $f, $v)
     {
+        if (!is_scalar($v) && $v !== null) $v = '';   // un array al posto di un valore (meta[x][]=…) non deve rompere il salvataggio
         $v = is_string($v) ? trim($v) : $v;
         return match ($f['type']) {
             'number' => $v === '' || $v === null ? '' : (string)(0 + str_replace(',', '.', (string)$v)),
