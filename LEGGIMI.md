@@ -18,8 +18,9 @@ PHP 8.1+ e MySQL/MariaDB (SiteGround). Niente WordPress, niente plugin di terzi,
   - indirizzo della gestione personalizzato;
   - blocco dopo i tentativi falliti.
 - **Immagini**: nomi file ripuliti; le immagini vengono raddrizzate, ridotte, convertite in WebP e private dei dati GPS.
-- **Temi**: 7 temi intercambiabili (Tipografico, Istituzionale, Editoriale, Manifesto, Documentario, Minimalista, Tech) con anteprima prima di attivarli. I contenuti non cambiano.
-- **Home a blocchi**: apertura, dichiarazione, passi, elenchi, numeri, ultime news, testo, galleria, invito, video. Si riordinano e si traducono.
+- **Temi**: 16 temi intercambiabili (Tipografico, Editoriale, Manifesto, Documentario, Tech, ACE, Adrestia, Ares 2.0, FINE, Rebus, Sic2Sic, European Excellence, Sustainability Champion, SME Star, Cultural Ambassador, People's Choice) con anteprima prima di attivarli, anche con contenuti di esempio e con i colori del sito. I contenuti non cambiano. Ogni tema può avere **varianti di colore** (Identità visiva) e i **provini** generano una copia navigabile del sito per ogni tema, da far vedere al cliente (Temi → Genera i provini).
+- **Home a blocchi**: apertura (anche a scorrimento), dichiarazione, riquadri con icona, passi, elenchi (anche scelti a mano), numeri, ultime news, testo, galleria, invito, video, loghi, squadra, elenco di persone, mappa, citazione, FAQ, newsletter, eventi. Si riordinano, si traducono, si mettono anche in fondo alle pagine interne. Cambiare tipo a una fascia non perde i contenuti.
+- **Importazione da WordPress** (Sito → Importa da WordPress): export WXR, dump SQL facoltativo (solo le tabelle di WPML e Redirection) e zip delle immagini; mantiene indirizzi e redirect.
 - **Novità 1.2**: indirizzi tradotti per lingua, menu principale e footer, redirect, ricerca interna, modulo di contatto, programmazione,
   versioni precedenti, duplica, anteprima delle bozze, campi personalizzati, categorie delle news, ruoli (redattore, autore, traduttore),
   password dimenticata, registro attività, backup e modelli, sostituzione dei file mantenendo il link.
@@ -64,7 +65,10 @@ Per provarlo in locale senza MySQL: `'driver' => 'sqlite'` in `config.php`, poi 
 | ChatGPT, Claude, Perplexity | AI search |
 | Privacy, cookie, dichiarazione accessibilità | Privacy e cookie / Accessibilità |
 | Sito statico, controlli, versioni, programmati | Sistema |
-| Aspetto del sito | Temi (anteprima con i tuoi colori o con quelli del tema, poi Attiva) |
+| Aspetto del sito | Temi (anteprima con i tuoi colori o con quelli del tema, poi Attiva); provini per il cliente |
+| Velo e testo sulle foto, spazi, riquadro, logo chiaro, varianti di colore | Identità visiva |
+| Nuova versione della cartella del progetto (`site/`) senza FTP | Aggiornamenti → Sito del progetto (chiede la password; copia della versione di prima in Backup e modelli) |
+| Ripartire da capo (database nuovo, stessi file) | Backup e modelli → Azzera il sito (scegli cosa tenere: foto, importazione, backup, utenti) |
 | Home | **Modifica visuale**: clicchi una fascia nell'anteprima e ne cambi fondo, immagine, parallasse, spazio, larghezza; sposti, nascondi, aggiungi. I testi da Blocchi della home |
 | Voci del menu, link esterni, footer | Menu |
 | Indirizzo di una pagina | campo Indirizzo sotto il titolo: si compila da solo dal titolo, in ogni lingua. Se lo cambi, il vecchio porta al nuovo |
@@ -100,13 +104,13 @@ In `site/config.php` resta `publish_machine_translations => false` per nasconder
 
 **Gestione → Aggiornamenti → Aggiorna.** Il sito:
 1. scarica l'ultima release da https://github.com/Phalbo/phalbpress e controlla la firma (accetta solo release firmate con la chiave del motore);
-2. fa una copia di sicurezza completa (database e file caricati, in Backup e modelli);
-3. sostituisce solo `core/`, `pp-admin/`, `pp-assets/`, `pp-themes/`, `index.php`, `cron.php`: `site/`, `uploads/` e `data/` non si toccano, `install.php` non viene rimesso;
+2. fa una copia di sicurezza del database (in Backup e modelli; i file caricati non cambiano con un aggiornamento);
+3. sostituisce solo `core/`, `pp-admin/`, `pp-assets/`, `pp-themes/`, `index.php`, `cron.php` e la documentazione: `site/`, `uploads/` e `data/` non si toccano, `install.php` non viene rimesso;
 4. applica le modifiche al database e rigenera le pagine statiche.
 
 Se qualcosa va storto durante la sostituzione, rimette da solo la versione di prima. Dopo, il pulsante **Torna alla X.Y.Z** rimette la versione precedente.
 Se la gestione non si aprisse più: File Manager → `data/updates/prev-X.Y.Z/` → sposta le cartelle al posto di quelle attuali.
-Il `.htaccess` non viene sovrascritto (può avere https e HSTS attivati a mano): se la nuova versione ne ha uno diverso, la pagina lo segnala.
+Il `.htaccess` non viene sovrascritto (può avere https e HSTS attivati a mano): se la nuova versione ne ha uno diverso, la pagina lo segnala e la copia nuova sta in `data/updates/htaccess-X.Y.Z.txt`: confrontala e riporta a mano le righe nuove (es. la `frame-src` di OpenStreetMap per la mappa, i blocchi dei file PHP sotto `site/`, `pp-assets/`, `uploads/`).
 
 Con `cron.php` attivo, quando esce una versione nuova arriva un'email agli amministratori (`'update' => ['notify' => false]` in `config.php` per spegnerla).
 
@@ -152,7 +156,7 @@ Resta da fare ogni tanto: aggiornare la versione di PHP su SiteGround quando que
 
 ## Backup
 
-Gestione → Backup e modelli: un .zip con tutto il database e i file caricati, da scaricare; da lì si ripristina anche (prima viene fatta da sola una copia di sicurezza). SiteGround fa comunque il suo backup giornaliero. Le pagine statiche si rigenerano da Sistema → Rigenera ora.
+Gestione → Backup e modelli: un .zip con tutto il database e, se vuoi, i file caricati, da scaricare; da lì si ripristina anche (prima viene fatta da sola una copia di sicurezza). Un **Modello** è lo stesso zip senza utenti, richieste e chiave API: serve a far nascere un altro sito. **Azzera il sito** svuota il database e riparte dai contenuti del progetto (chiede password e la parola AZZERA; si sceglie cosa tenere). SiteGround fa comunque il suo backup giornaliero. Le pagine statiche si rigenerano da Sistema → Rigenera ora.
 
 ---
 

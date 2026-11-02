@@ -46,7 +46,8 @@ uploads/ data/       file caricati; SQLite, manifest statico, backups/
 - `pp_entries` (type, slug base, template, menu_order, in_menu, status, pub_date, publish_at, unpublish_at, author_id, image, meta JSON)
   + `pp_entry_tr` (lang, title, excerpt, body, image_alt, **slug** per lingua, **extra** JSON = campi traducibili, src_hash, auto).
 - Slug: ogni lingua ha il suo (`Content::slugFor`), nasce dal titolo tradotto; se cambia su un contenuto pubblicato nasce un redirect 301 automatico.
-- Campi personalizzati in `config['types'][tipo]['fields']`: `'k' => 'Etichetta'` o `['label','type'=>text|textarea|number|date|url|select|image|checkbox|entry,
+  Per le pagine sono riservati (`Content::uniqueSlug`) gli indirizzi delle sezioni e dei moduli (news, portfolio, eventi, pagine legali, ricerca), `provini` e i file generati: una pagina con quello slug sarebbe irraggiungibile.
+- Campi personalizzati in `config['types'][tipo]['fields']`: `'k' => 'Etichetta'` o `['label','type'=>text|textarea|number|date|url|select|image|checkbox|color|entry|entries,
   'options','entry_type','translatable','hint']`. Non traducibili → `meta`; traducibili → `pp_entry_tr.extra` (nel template: `$e['x']['k']`).
 - `pp_revisions` (ultime N versioni per contenuto e lingua, `config['revisions_keep']`), `pp_redirects`, `pp_tokens` (reset password), `pp_form_entries`.
 - `pp_docs` + `pp_doc_tr` + `pp_doc_files`; `pp_strings`; `pp_seo`; `pp_settings` (theme, menus, identity, legal…); `pp_users` (role, langs, totp_secret); `pp_log`.
@@ -101,12 +102,12 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   `search_hidden` (SEO, attivo a ogni installazione): `noindex` in tutte le pagine, robots.txt `Disallow: /`, avviso in cima alla gestione finché non si toglie.
 
 ## Importa da WordPress (core/modules/wpimport)
-- File in `data/wp-import/`: `.xml` (WXR, obbligatorio), `.sql` (facoltativo: SOLO `icl_translations`, `term_taxonomy`, `redirection_items`), `.zip` di uploads (facoltativo, altrimenti scarica dal vecchio sito con `'download' => true`).
+- File in `data/wp-import/`: `.xml` (WXR, obbligatorio), `.sql` (facoltativo: SOLO `icl_translations`, `term_taxonomy`, `redirection_items`; gli `INSERT` devono avere l'elenco delle colonne, formato phpMyAdmin: con `mysqldump`/WP-CLI le tre tabelle vengono ignorate), `.zip` di uploads (facoltativo; le voci devono contenere `uploads/`, cioè va zippata la cartella e non il suo contenuto). Senza zip i file si scaricano dal vecchio sito: `download` è attivo di default, `'download' => false` lo spegne.
 - `WpSource` legge (XMLReader, una riga SQL alla volta) e salva il modello in `data/wp-import/model.ser`; `WpContent::html()` converte gli shortcode (liste `WRAP`/`DROP`, il resto tiene il testo);
   `WpImport` lavora a passi `scan → media → terms → entries → links → menu → redirects` con stato in `state.json`, collegamenti in `pp_wp_map` (kind: media|post|entry|term|termgroup).
 - Gruppi di traduzione = `trid` di WPML; senza la lingua principale il contenuto diventa bozza. Slug di WordPress mantenuti. Foto con `Media::upload` (stesso trattamento del caricamento).
-- Config del sito `wp_import`: `types` (wp → pp), `taxonomies` (`['tax' => ['type','field']]`), `drafts`, `skip` (lista o `'slug' => 'home'|chiave sezione|'/percorso/'` per il redirect), `download`, `menu`.
-- Filtri: `wp_import_entry` ($data con type, title, excerpt, body, slug, image, image_alt, meta, extra, skip), `wp_import_term_url` (→ `['from','to']`), `wp_import_menu_item`.
+- Config del sito `wp_import`: `types` (wp → pp), `taxonomies` (`['tax' => ['type','field']]`), `drafts`, `skip` (lista o `'slug' => 'home'|chiave sezione|'/percorso/'|'category:slug'` per il redirect), `download`, `menu`.
+- Filtri: `wp_import_entry` ($data con type, title, excerpt, body, slug, image, image_alt, meta, extra, skip), `wp_import_term` (termine prima del salvataggio), `wp_import_term_url` (→ `['from','to']`), `wp_import_menu_item`.
 - CLI: `php cron.php wpimport plan|run|reset|undo` (hook `cli` dei moduli: `Hooks::first('cli', $args)`).
 
 ## Rotte pubbliche
@@ -128,7 +129,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   L'apertura può essere uno slideshow (campo `slides`: percorsi uno per riga, `slides_alts` tradotto; `[data-slides]` in base.js: `data-nav` dots|arrows|both|none, `data-time` secondi,
   `slides_fx` fade|slide, pausa al passaggio e al fuoco, pulsantino pausa, niente giro con meno movimento); `height` short|medium|tall, `title_size` s|m|l.
   `statement` con `align=center`; `icons` (fino a 6 riquadri: icona da `partials/icon.php` – icone disegnate per PhalbPress –, titolo, testo, pulsante; `per_row`, `boxed`);
-  `collection` con `cols` 3|4 e `pick1`…`pick8` (contenuti scelti a mano); `logos` con `speed` e link sotto (`more_label`, `more_url`); `team` (tipo `person` se il sito lo definisce);
+  `collection` con `cols` 3|4 e `picks` (contenuti scelti a mano, campo `entries`; i vecchi `pick1`…`pick8` vengono migrati); `logos` con `speed` e link sotto (`more_label`, `more_url`); `team` (tipo `person` se il sito lo definisce);
   `roster` (testo: "Nome: ruolo" per riga, `#` = titolo di gruppo, nomi separati da virgola = elenco continuo); `map`.
   Cambiare tipo non perde niente: `Blocks::ITEMS` (voci di icons, steps, faq, figures) e `Blocks::carry()` passano le voci al tipo nuovo; la gestione salva
   anche i valori dei campi che il modulo non mostra (extra e meta restano), e al cambio di tipo i campi del tipo nuovo non inviati tengono il loro valore.
@@ -141,7 +142,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   o velo scuro) diventa `chapter--ink`, uno chiaro `chapter--paper`: testi e riquadri seguono le regole del tema per quei toni. CSS in `pp-assets/pp.css`
   (dopo tema e identità), parallasse in `_base/assets/base.js`. Un tema nuovo deve reggere `chapter--custom`, `chapter--has-bg`, `chapter--over-dark|light`,
   `chapter--sp-compact|wide`, `chapter--w-narrow|full`: per colori di card e testi usare `--surface` e `--muted`, che quelle classi ridefiniscono.
-- **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`.
+- **Modifica visuale** (`core/modules/themes/Visual.php`, `pp-admin/visual.js`, anteprima con `&edit=1` → `pp-admin/visual-frame.js`): permesso `publish`; gestisce le fasce della home e le disposizioni delle pagine interne (per tipo o per singola pagina, news, storia o categoria).
 - **Modelli di testata** (`Layouts`, tipo `site`, parte `header`: bar|right|center|tabs|drawer): stesso HTML per tutti, classe `head-model--X` sulla testata e `hm-X` sul body, struttura in base.css. Il tema dà quello di partenza in `layouts.site.header`, il sito lo cambia cliccando la testata in Modifica visuale. Su telefono diventano tutti logo + strumenti + Menu.
 - **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, story, results, partners, contact, search, 404) ha delle parti
   (`head`: left|center|split|cover|minimal · `body`: read|wide|aside|columns · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic|tiles|cards|covers|screens|index|thumbs
@@ -178,7 +179,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 | `admin.pages` | filter | `slug => ['label','group','handler','perm']` |
 | `cron` | fire | lavori periodici dei moduli, da `cron.php` |
 | `cli` | first($args) | comandi dei moduli: `php cron.php <comando> …` (restituire true se gestito) |
-| `wp_import_entry` / `wp_import_term_url` / `wp_import_menu_item` | filter | ritocchi del sito all'importazione da WordPress |
+| `wp_import_entry` / `wp_import_term` / `wp_import_term_url` / `wp_import_menu_item` | filter | ritocchi del sito all'importazione da WordPress |
 
 ## Repo e release
 - Repo pubblico `Phalbo/phalbpress`: SOLO il motore (+ `tools/`, `skeleton/` per il pacchetto completo, `.github/`). Mai `site/`, `uploads/`, `data/`.
@@ -188,6 +189,14 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Commit e release: solo il messaggio.** Niente righe `Co-Authored-By`, niente link alle sessioni, niente firme di strumenti: il repo è pubblico.
 - Gli zip non devono mai avere una data fissa nei file: OPcache rilegge un file solo se la data cambia (`BUILT` in `tools/build.php`, `Updater::fresh()`).
 - Le migrazioni del database devono restare additive (colonne e tabelle nuove), così il ritorno alla versione precedente non rompe nulla.
+
+## Stato al 3 novembre 2026 (ramo `audit-1.17`)
+- Sulla `main` c'è la 1.16.0 (tag `v1.16.0` da creare da Andrea se non l'ha già fatto). Sul ramo `audit-1.17`, creato da `main`, ci sono le correzioni dell'audit notturno: un commit per correzione, `VERSION` non alzata, nessun tag.
+- **`AUDIT.md`** nella radice: riassunto, tabella dei problemi con gravità, file:riga, riproduzione, correzione e stato (corretto nel commit / da decidere), cosa è stato provato e cosa no. È il punto di partenza della prossima sessione.
+- Corretti sul ramo (tutti ricontrollati: `php -l`, rotte 200 su Ares e demo, gestione senza avvisi, `StaticSite::build()`, provini, 16 temi a 1440/390 senza scroll, `tools/build.php`): permessi del traduttore su documenti e testi; JSON-LD con `</script>`; `innerHTML` nella gestione; chiave API nel modello di backup; robots.txt con l'indirizzo della gestione; `.htaccess` da zip di backup; PHP sotto `pp-assets/`, `site/`, `uploads/`; slug delle pagine uguali alle sezioni; ordine originale/traduzioni nell'import WordPress; categorie "3,5" del portfolio; slideshow nell'anteprima demo; galleria senza validazione; testi dei moduli con lingua originale non en/it; contrasto arrotondato; `llms.txt` per lingua; fascia Eventi con eventi spenti; `PP::themes()` senza cache; stampa, lightbox, puntini delle traduzioni, campo immagine, coda di traduzione (accessibilità); redirect `//` e CSV dei moduli; `fieldValue` con array.
+- **Da decidere con Andrea, in ordine** (dettagli in AUDIT.md): P1 rigenerazione completa del sito statico a ogni salvataggio (4,9 s su Ares); C3/C4 WordPress (file mancanti per sempre, loop su un file che fa morire PHP); S12 antispam dei moduli; S19/S15 `site_upload` acceso di default e `site_url` vuoto su Ares; A5/A6/A7 accessibilità (h1 in home, pausa dei loghi, sottomenu col mouse); C9 eventi col sito statico; C10 anteprima demo (cache e identità); C12 id dei moduli duplicati.
+- Sui siti già installati l'`.htaccess` non si aggiorna da solo: le nuove righe (`site|pp-assets` e `uploads/*.php`) vanno copiate a mano, come la `frame-src` di OpenStreetMap della 1.16.
+- Le correzioni "da decidere" che entrano nella 1.17 vanno fatte sul ramo e poi unite in `main` con `## 1.17.0` in CHANGELOG.md.
 
 ## Test locale
 Sito dimostrativo (progetto inventato "Common Ground", 3 lingue, foto con le misure stampate sopra): `php tools/demo.php` (o `--force` per rifarlo) copia `tools/demo/site` in `site/`,
