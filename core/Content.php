@@ -158,6 +158,15 @@ final class Content
         $slug = Media::slug($slug) ?: 'pagina';
         $base = $slug; $i = 1;
         $reserved = array_merge(I18n::codes(), [PP::adminSlug(), 'download', 'core', 'site', 'uploads', 'data', 'pp-admin', 'pp-assets', 'pp-themes', 'form']);
+        if ($type === 'page') {
+            // una pagina non può avere l'indirizzo di una sezione (news, portfolio, eventi, pagine legali, ricerca…): sarebbe irraggiungibile
+            foreach (PP::items() as $it) {
+                if ($it['kind'] === 'page' || !isset($it['paths'][$lang])) continue;
+                $first = explode('/', (string)$it['paths'][$lang])[0];
+                if ($first !== '') $reserved[] = $first;
+            }
+            $reserved = array_merge($reserved, ['provini', 'feed', 'ics', 'search', 'sitemap.xml', 'robots.txt', 'llms.txt', 'install.php', 'index.php', 'cron.php']);
+        }
         while (in_array($slug, $reserved, true) || DB::val('SELECT 1 FROM pp_entry_tr t JOIN pp_entries e ON e.id = t.entry_id WHERE e.type = ? AND t.lang = ? AND t.slug = ? AND e.id <> ?', [$type, $lang, $slug, $exceptId])) {
             $slug = $base . '-' . (++$i);
         }
