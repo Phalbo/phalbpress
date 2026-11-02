@@ -935,6 +935,8 @@ body:not(.photo-hero) .hero__pause { display: none; }
 /* sottomenu: al passaggio del mouse sui computer; terzo livello di lato */
 @media (hover: hover) and (min-width: 961px) {
   .nav__item--sub:hover > .nav__sub, .nav__item--sub:focus-within > .nav__sub { display: block; }
+  /* Esc chiude anche il sottomenu aperto col mouse o col fuoco (WCAG 1.4.13), finché non si esce dalla voce */
+  .sub-esc .nav__item--sub:not(.is-open):hover > .nav__sub, .sub-esc .nav__item--sub:not(.is-open):focus-within > .nav__sub { display: none; }
   .nav__sub > .nav__item--deep { position: relative; display: flex; align-items: center; justify-content: space-between; }
   .nav__sub > .nav__item--deep > a { flex: 1; }
   .nav__sub > .nav__item--deep > .nav__subbtn { height: 40px; }

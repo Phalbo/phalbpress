@@ -20,9 +20,15 @@
   if (nav) nav.addEventListener('click', (e) => { if (e.target.closest('a')) setNav(false); });
 
   /* ---------- sottomenu ---------- */
+  const hoverNav = window.matchMedia('(hover: hover) and (min-width: 961px)');
   document.querySelectorAll('[data-sub]').forEach((b) => {
     const item = b.closest('.nav__item');
+    // al passaggio del mouse il sottomenu si apre col CSS: il pulsante dice lo stesso a chi usa lo screen reader
+    item.addEventListener('mouseenter', () => { if (hoverNav.matches && !root.classList.contains('sub-esc')) b.setAttribute('aria-expanded', 'true'); });
+    item.addEventListener('mouseleave', () => { root.classList.remove('sub-esc'); if (!item.classList.contains('is-open')) b.setAttribute('aria-expanded', 'false'); });
+    item.addEventListener('focusout', (e) => { if (!item.contains(e.relatedTarget)) root.classList.remove('sub-esc'); });
     b.addEventListener('click', () => {
+      root.classList.remove('sub-esc');
       const open = b.getAttribute('aria-expanded') !== 'true';
       // si chiudono gli altri sottomenu, non quelli che contengono questo (terzo livello)
       document.querySelectorAll('[data-sub][aria-expanded="true"]').forEach((o) => { const it = o.closest('.nav__item'); if (o !== b && !it.contains(b)) { o.setAttribute('aria-expanded', 'false'); it.classList.remove('is-open'); } });
@@ -41,7 +47,9 @@
     if (e.key !== 'Escape') return;
     if (langs && langs.open) { langs.open = false; langs.querySelector('summary').focus(); }
     if (toggle && toggle.getAttribute('aria-expanded') === 'true') { setNav(false); toggle.focus(); }
-    document.querySelectorAll('[data-sub][aria-expanded="true"]').forEach((o) => { o.setAttribute('aria-expanded', 'false'); o.closest('.nav__item').classList.remove('is-open'); o.focus(); });
+    const opened = document.querySelectorAll('[data-sub][aria-expanded="true"]');
+    if (opened.length) root.classList.add('sub-esc');
+    opened.forEach((o) => { o.setAttribute('aria-expanded', 'false'); o.closest('.nav__item').classList.remove('is-open'); o.focus(); });
   });
 
   /* ---------- testata: stato "scorso" ---------- */
