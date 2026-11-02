@@ -1,7 +1,7 @@
 <?php
 final class StaticSite
 {
-    private const RESERVED = ['core', 'site', 'uploads', 'data', 'pp-admin', 'pp-assets', 'pp-themes', 'download', 'form', 'install.php', 'index.php', 'cron.php'];
+    private const RESERVED = ['core', 'site', 'uploads', 'data', 'pp-admin', 'pp-assets', 'pp-themes', 'download', 'form', 'install.php', 'index.php', 'cron.php', 'provini'];
 
     public static function enabled(): bool
     {

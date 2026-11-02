@@ -13,7 +13,7 @@
   --radius: 0px;
   --radius-box: 0px;
   --head-h: 76px;
-  --section: clamp(4.5rem, 9vw, 9rem);
+  --section: clamp(3.5rem, 6.5vw, 6.5rem);
 }
 
 /* testata: bianca, con la striscia dei tre colori sotto */

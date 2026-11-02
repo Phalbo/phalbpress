@@ -11,14 +11,14 @@
   --radius-box: 0px;
   --head-bg: var(--black);
   --head-ink: var(--black-ink);
-  --section: clamp(3.5rem, 7vw, 7rem);
+  --section: clamp(3rem, 6vw, 6rem);
 }
 body { background: var(--black); }
 .site-main { padding: 0 var(--sheet) var(--sheet); display: grid; gap: var(--sheet); }
 .chapter { box-shadow: none; }
 .chapter--paper + .chapter--paper { padding-top: var(--section); }
 .site-head__in { max-width: none; }
-.brand__logo { background: var(--bg); color: var(--ink); border-radius: 50%; padding: 2px; }
+/* logo su testata scura: base.css (logo chiaro o fondino rettangolare) */
 .nav__link { text-transform: uppercase; letter-spacing: 0.04em; font-size: 0.875rem; font-family: var(--font-display); }
 .nav-toggle { background: var(--black-ink); color: var(--black); }
 h1, h2, .step__line, .collection__name, .figure__val { font-family: var(--font-display); }

@@ -34,7 +34,7 @@ core/modules/        identity, seo, ai, legal, static, menus, redirects, search,
                      (settings: contact_email, mail_from, social, funder, owner, translation modificabili in gestione, applicati sopra il config in PP::boot;
                      owner = organizzazione o persona per i dati strutturati, `Seo::owner()`: Person + ProfilePage per i siti personali)
 pp-themes/_base/     struttura comune a tutti i temi: templates/, partials/ (+ blocks/), assets/base.css, base.js, strings.php
-pp-themes/<tema>/    theme.json + assets/theme.css (+ theme.js, + template/partial che sostituisce) — 18 temi
+pp-themes/<tema>/    theme.json + assets/theme.css (+ theme.js, + template/partial che sostituisce) — 16 temi (Istituzionale e Minimalista tolti nella 1.16: un tema che non c'è più ripiega su tipografico in `PP::theme()`)
 site/config.php      scritto dall'installazione: `array_replace(require config.sample.php, [db, admin_slug, site_url, debug])`
 site/strings.php     testi del progetto; site/seed.php contenuti iniziali; site/seed-media/ immagini del seed
 site/theme/          SOLO personalizzazioni del sito valide con ogni tema (es. partials/footer-extra.php con emblema UE)
@@ -76,6 +76,18 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   Categorie: ordine con `menu_order`, `meta.nav_hidden` le toglie da filtri e menu (restano raggiungibili); con aree e divisioni (`Stories::nested()`) in alto ci sono solo le aree.
 - **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`); `logo_h` (altezza del logo in px), `photo_fx` (none|mono|tint: foto degli elenchi),
   `photo_hover` (color|zoom|none), `band_h` (compact|tall: altezza delle intestazioni). Scritte in `identity.css` da `Identity::extraCss()`.
+  1.16 (`Identity::layoutCss()`): `logo_head` (''|day|night), `space` (''|compact|wide → `--section`), `boxed`, `hero_shade`/`band_shade` (0-80, velo in `.pp-shade`
+  dentro la figura), `hero_text`/`band_text` (shadow|panel), `hero_fx` (color|mono), `band_fx` (color|mono|tint, `.pp-tint`).
+- **Logo in testata**: con il logo per fondi scuri si stampano `brand__logo--day` e `--night` (`.brand--duo`); base.js mette `body.head-dark` se la testata è scura
+  (fondo opaco, o colore del testo se la testata è trasparente sopra una foto). Senza logo chiaro: fondino rettangolare. Mai ovali nei temi.
+  Con la barra dei contatti, una testata `fixed`/`absolute` parte sotto la barra (base.js).
+- **Varianti di colore**: `palettes` nel theme.json (`[{name, note, palette, fonts, buttons}]`), applicate da Identità visiva (azione `variant`, ripristino `variant_undo`),
+  anteprima `/{admin}/preview?theme=x&variant=N`.
+- **Provini** (`core/modules/themes/Proofs.php`, pannello in Temi): `Proofs::build($palette, $only)` scrive `/provini/<tema>/…` (pagine di `PP::items()` tranne
+  i lavori oltre i 24 più recenti e le news oltre le 10 più recenti, più i lavori scelti nelle fasce), link interni riscritti, `noindex`, indice `/provini/index.html`;
+  manifesto in `data/provini.json`, `Proofs::clear()`. `provini` è riservato nel sito statico.
+- **Campi `entries`** (più contenuti in ordine, id separati da virgola): ricerca e riordino in pp-admin/admin.js; i `select` di tipo `entry` con più di 12 voci hanno la casella di ricerca (`data-search`).
+- **Contatti**: `[form:contact]` dentro `.contact-wrap` con i recapiti delle Impostazioni accanto (`Forms::contacts()`).
 - **Fasce nelle pagine**: un blocco col campo `page` (id) o `page_slug` (nel seed: la pagina può arrivare dopo, es. con l'importazione) va in fondo a quella pagina
   (`Blocks::forPage()`, in `templates/page.php`) e non in home. `Blocks::bindPages()` (hook `saved`) trasforma `page_slug` in `page` quando la pagina esiste.
 - **Mappa** (blocco `map`): OpenStreetMap in iframe solo dopo il consenso (`data-pp-embed`, servizio `openstreetmap` in `Legal::services`, `csp_frames`); senza consenso link "Apri su OpenStreetMap".
@@ -120,7 +132,9 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   `roster` (testo: "Nome: ruolo" per riga, `#` = titolo di gruppo, nomi separati da virgola = elenco continuo); `map`.
   Cambiare tipo non perde niente: `Blocks::ITEMS` (voci di icons, steps, faq, figures) e `Blocks::carry()` passano le voci al tipo nuovo; la gestione salva
   anche i valori dei campi che il modulo non mostra (extra e meta restano), e al cambio di tipo i campi del tipo nuovo non inviati tengono il loro valore.
-  Un tema aggiunge un segno all'apertura con `partials/hero-extra.php` (non ricopiare `blocks/hero.php`).
+  Un tema aggiunge un segno all'apertura con `partials/hero-extra.php` (riceve `$b` e `$mark`, campo `mark` dell'apertura: ''|dots|bars|rings|none; non ricopiare `blocks/hero.php`).
+  Elenco di contenuti: `picks` (campo `entries`, sostituisce pick1…8, migrati da `Blocks::migratePicks()`), `ratio` (''=quadrate|4:3|3:2|16:9|3:4|auto → `cards--r-*`),
+  `photo_fx`/`photo_hover` per fascia (`collection--fx-*`, `collection--hover-*`). Con più foto i comandi vanno nella figura se la figura non è `absolute` (`.has-ctl`).
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
 - **Aspetto delle fasce** (`Blocks::look()`: tone con `custom`, bg_color, bg_image, bg_focus, bg_overlay, parallax, spacing, width; in `meta`, non tradotti):
   si applicano in `Blocks::decorate()` al primo `<section>` del blocco, quindi valgono con ogni tema senza toccarne i partial. Un fondo scuro (colore libero scuro

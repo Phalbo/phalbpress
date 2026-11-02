@@ -53,6 +53,9 @@
     },
     "search": {
       "head": "left"
+    },
+    "page": {
+      "body": "wide"
     }
   }
 }

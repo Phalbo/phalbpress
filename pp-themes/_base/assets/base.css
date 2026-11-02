@@ -28,7 +28,7 @@
   --container: 1440px;
   --margin: clamp(1rem, 3vw, 2.75rem);
   --gutter: clamp(1rem, 2vw, 2rem);
-  --section: clamp(4rem, 9vw, 9rem);
+  --section: clamp(3rem, 6.5vw, 6.5rem);
   --head-h: 72px;
   --head-bg: var(--bg);
   --head-ink: var(--ink);
@@ -409,7 +409,8 @@ main :is(h1, h2, h3):not(.figure__val) { overflow-wrap: anywhere; hyphens: manua
 /* ---------- testo: colonna, larga, con barra laterale ---------- */
 .article.body--wide > * { max-width: min(100%, 96ch); }
 .article.body--wide .prose { max-width: 96ch; font-size: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem); }
-.article.body--wide .prose img, .article.body--wide .prose figure { width: 100%; }
+.article.body--wide .prose figure { width: 100%; }
+.article.body--wide .prose img { max-width: 100%; height: auto; }   /* le foto grandi riempiono la colonna, loghi e icone restano alla loro misura */
 @media (min-width: 1000px) {
   .article.body--aside { grid-template-columns: minmax(0, 1fr) 300px; column-gap: calc(var(--gutter) * 3); align-items: start; }
   .article.body--aside > :not(.article__side) { grid-column: 1; }
@@ -959,11 +960,10 @@ body:not(.photo-hero) .hero__pause { display: none; }
 
 /* ---------- 1.15: apertura — foto al vivo su ogni schermo, altezza e frase regolabili, comandi dello scorrimento ---------- */
 /* la foto copre sempre tutta l'apertura, anche sugli schermi più larghi del contenitore (i temi mettono larghezze sui figli delle fasce) */
-.photo-hero .chapter.hero--img > .hero__img { position: absolute; inset: 0; width: auto !important; max-width: none !important; margin: 0 !important; }
+.photo-hero .chapter.hero--img > .hero__img { width: auto !important; max-width: none !important; margin: 0 !important; }
 .hero.hero--h-short { min-height: min(52svh, 520px); }
 .hero.hero--h-medium { min-height: min(68svh, 680px); }
 .hero.hero--h-tall { min-height: min(92svh, 980px); }
-.hero.hero--h-short, .hero.hero--h-medium { padding-top: clamp(40px, 5vw, 72px); }
 .hero.hero--t-s .hero__title { font-size: clamp(2rem, 1.2rem + 2.6vw, 3.5rem); line-height: 1.02; max-width: 24ch; }
 .hero.hero--t-m .hero__title { font-size: clamp(2.5rem, 1.2rem + 4vw, 5.5rem); line-height: 0.98; max-width: 18ch; }
 .hero.hero--t-l .hero__title { font-size: clamp(3rem, 1rem + 8vw, 9rem); line-height: 0.92; }
@@ -1009,7 +1009,7 @@ body:not(.photo-hero) .slides-ctl, body:not(.photo-hero) .slides-ctl__arrow { di
 .statement.statement--center .statement__head { font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.6rem); line-height: 1.12; max-width: 30ch !important; text-wrap: balance; }
 .statement.statement--center .statement__body { display: grid; gap: 18px; justify-items: center; grid-template-columns: minmax(0, 1fr) !important; }
 .statement.statement--center .statement__body > * { grid-column: 1 / -1 !important; grid-row: auto !important; justify-self: center !important; text-align: center !important; max-width: 60ch; }
-.statement.statement--center .statement__fact { border: 0 !important; padding: 0 !important; font-weight: 600; white-space: pre-line; }
+.statement.statement--center .statement__fact { border-left-width: 0 !important; font-weight: 600; white-space: pre-line; }
 /* riquadri con icona */
 .icons { display: grid; gap: clamp(28px, 4vw, 48px); }
 .icons__top { display: grid; gap: 12px; justify-items: center; text-align: center; }
@@ -1155,3 +1155,57 @@ body:not(.photo-hero) .slides-ctl, body:not(.photo-hero) .slides-ctl__arrow { di
 /* news: la foto sta nella colonna del testo, a misura */
 .article > .article__img { max-width: min(100%, 72ch) !important; }
 .article > .article__img img { width: 100%; height: auto; max-height: 72vh; object-fit: contain; background: var(--surface); }
+
+/* ---------- 1.16: logo su testate scure ----------
+   Con il logo per fondi scuri (Identità visiva) si stampano tutti e due: base.js mette .head-dark sul body se la testata è scura.
+   Senza logo chiaro, sulla testata scura il logo sta su un fondino rettangolare, mai in un ovale. */
+.brand__logo--night { display: none; }
+.head-dark .brand--duo .brand__logo--day { display: none; }
+.head-dark .brand--duo .brand__logo--night { display: block; }
+.head-dark .brand:not(.brand--duo) .brand__logo { background: #fff; padding: 5px 9px; border-radius: 3px; box-sizing: content-box; height: calc(var(--logo-h, 40px) - 10px); }
+/* velo e viraggio delle foto di apertura e intestazioni: si accendono dall'Identità visiva (identity.css) */
+.pp-shade, .pp-tint { display: none; }
+/* due fasce di seguito sullo stesso fondo bianco: lo spazio tra loro non raddoppia */
+.site-main > .chapter--paper + .chapter--paper:not(.band) { padding-top: calc(var(--section) * 0.45); }
+
+/* ---------- 1.16: pagina dei contatti ----------
+   [form:contact]: modulo a sinistra, recapiti del sito a destra; la mappa occupa la sua colonna intera */
+.contact-wrap { display: grid; gap: clamp(28px, 4vw, 56px); align-items: start; margin-block: 1.5em; }
+@media (min-width: 900px) { .contact-wrap { grid-template-columns: minmax(0, 7fr) minmax(220px, 4fr); } }
+.contact-wrap form { max-width: none; margin: 0; }
+.contact-wrap :is(input:not([type=checkbox]):not([type=radio]), textarea) { width: 100%; max-width: none; }
+.contact-aside { display: grid; gap: 18px; align-content: start; padding: clamp(18px, 2vw, 26px); border: 1px solid var(--line, color-mix(in srgb, currentColor 18%, transparent)); border-radius: var(--radius-box, 0); font-size: 0.95em; }
+.contact-aside p { margin: 0; }
+.contact-aside__name { font-family: var(--font-display); font-weight: var(--weight-head, 700); font-size: 1.15em; }
+.contact-aside__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.contact-aside__k { display: block; font-size: 0.78em; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.72; margin-bottom: 2px; }
+.contact-aside__office { display: grid; gap: 2px; }
+.prose .contact-wrap ul { padding: 0; }
+.mapblock > .mapblock__map { width: 100%; justify-self: stretch; margin: 0; }
+.mapblock .pp-embed__box { min-height: clamp(280px, 34vw, 460px); aspect-ratio: auto; }
+
+/* ---------- 1.16: Elenco di contenuti — proporzione e colore delle foto per fascia ---------- */
+.collection .cards--r-1 .card__img { aspect-ratio: 1; }
+.collection .cards--r-43 .card__img { aspect-ratio: 4 / 3; }
+.collection .cards--r-32 .card__img { aspect-ratio: 3 / 2; }
+.collection .cards--r-169 .card__img { aspect-ratio: 16 / 9; }
+.collection .cards--r-34 .card__img { aspect-ratio: 3 / 4; }
+.collection .cards--r-auto .card__img { aspect-ratio: auto; }
+.collection .cards--r-auto .card__img img { height: auto; object-fit: contain; }
+.collection--fx-color .card__img img { filter: none !important; }
+.collection--fx-mono .card__img img { filter: grayscale(1) contrast(1.06) !important; }
+.collection:is(.collection--fx-color, .collection--fx-mono) .card__img::after { display: none !important; }
+.collection--fx-tint .card__img { position: relative; }
+.collection--fx-tint .card__img img { filter: grayscale(1) contrast(1.08) !important; }
+.collection--fx-tint .card__img::after { content: "" !important; display: block !important; position: absolute; inset: 0; pointer-events: none; background: color-mix(in srgb, var(--accent) 40%, #fff) !important; mix-blend-mode: multiply !important; opacity: 1 !important; transition: opacity .5s; }
+.collection--hover-color .card:is(:hover, :focus-within) .card__img img { filter: none !important; }
+.collection--hover-color .card:is(:hover, :focus-within) .card__img::after { opacity: 0 !important; }
+.collection--hover-zoom .card:is(:hover, :focus-within) .card__img img { transform: scale(1.05) !important; }
+.collection--hover-none .card:is(:hover, :focus-within) .card__img img { transform: none !important; }
+/* foto che scorrono: la foto attiva sale sopra le altre (z-index 1); il velo del tema deve restare sopra di lei */
+.photo-hero .hero--img .hero__img--slides::after, .photo-hero .hero--img .hero__img--slides::before { z-index: 2; }
+/* foto in un riquadro dentro l'apertura (es. Voci): i comandi stanno sul riquadro */
+.hero__img.has-ctl { position: relative; }
+.hero__img.has-ctl > .slides-ctl { position: absolute; bottom: 14px; z-index: 3; }
+.hero__img.has-ctl > .slides-ctl__arrow { z-index: 3; }
+.icons > .icons__top { justify-self: center !important; text-align: center; margin-left: auto; margin-right: auto; }

@@ -266,7 +266,7 @@ final class Admin
     /**
      * Campi personalizzati di un tipo, normalizzati. In config['types'][tipo]['fields'] si può scrivere
      * 'chiave' => 'Etichetta' (testo semplice) oppure
-     * 'chiave' => ['label' => …, 'type' => text|textarea|number|date|url|select|image|checkbox|entry, 'options' => [...], 'translatable' => true, 'hint' => …]
+     * 'chiave' => ['label' => …, 'type' => text|textarea|number|date|url|select|image|checkbox|entry|entries, 'options' => [...], 'translatable' => true, 'hint' => …]
      * I campi "translatable" si traducono come il resto del testo (pp_entry_tr.extra); gli altri valgono per tutte le lingue (meta).
      */
     public static function fields(string $type, ?array $row = null): array
@@ -291,6 +291,7 @@ final class Admin
             'date' => preg_match('~^\d{4}-\d{2}-\d{2}$~', (string)$v) ? (string)$v : '',
             'select' => array_key_exists((string)$v, $f['options']) || in_array((string)$v, $f['options'], true) ? (string)$v : '',
             'entry' => (string)(int)$v ?: '',
+            'entries' => implode(',', array_values(array_unique(array_filter(array_map('intval', preg_split('~[^0-9]+~', (string)$v)))))),
             'color' => preg_match('~^#[0-9a-f]{6}$~i', (string)$v) ? strtolower((string)$v) : '',
             'image' => preg_match('~^uploads/[A-Za-z0-9/_.-]+$~', (string)$v) && !str_contains((string)$v, '..') ? (string)$v : '',
             default => (string)$v,
@@ -469,11 +470,15 @@ final class Admin
         $edit = !empty($_GET['edit']) && Auth::can('publish') && class_exists('Blocks');
         if ($edit) Blocks::$edit = true;
         $page = PP::page($seg ?: [I18n::$master]);
-        header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
+        header("Content-Security-Policy: default-src 'self'; img-src 'self' data: https://i.ytimg.com; frame-src https://www.youtube-nocookie.com https://player.vimeo.com https://www.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
         $html = $page['html'];
         // "con i colori del tema": la palette e i font suggeriti sostituiscono per un momento quelli dell'identità
         if (PP::$theme && !empty($_GET['palette']) && class_exists('Identity')) {
             $html = str_replace('</head>', '<style>' . Identity::css(PP::themes()[PP::$theme]) . '</style></head>', $html);
+        }
+        // una variante di colore del tema (theme.json "palettes")
+        if (PP::$theme && isset($_GET['variant']) && class_exists('Identity') && ($v = PP::themes()[PP::$theme]['palettes'][(int)$_GET['variant']] ?? null)) {
+            $html = str_replace('</head>', '<style>' . Identity::css($v) . '</style></head>', $html);
         }
         if ($edit) {
             if (class_exists('Layouts') && Layouts::$type !== '') $html = preg_replace('~<html\b~', '<html data-pp-type="' . e(Layouts::$type) . '" data-pp-entry="' . (int)Layouts::$entry . '"', $html, 1);

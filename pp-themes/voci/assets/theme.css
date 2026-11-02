@@ -45,7 +45,7 @@
 .chapter--green .btn--dark { background: var(--field-1-ink); color: var(--field-1); border-color: var(--field-1-ink); }
 
 /* ---------- apertura divisa con la foto nella forma ---------- */
-.hero { min-height: min(86svh, 860px); align-content: center; gap: 24px; }
+.hero { min-height: min(70svh, 700px); align-content: center; gap: 24px; padding-top: clamp(20px, 3vw, 40px); padding-bottom: clamp(28px, 4vw, 56px); }
 .hero__title { font-size: var(--step-display); line-height: 1.04; max-width: 15ch; }
 .hero__sentence { font-size: var(--step-lead); line-height: 1.4; }
 @media (min-width: 961px) {
@@ -55,7 +55,7 @@
   .photo-hero .hero--img > .hero__aside { align-self: start; }
   .photo-hero .hero--img .hero__img { position: relative; inset: auto; grid-column: 1; grid-row: 1 / span 4; align-self: center; }
 }
-.photo-hero .hero--img .hero__img { aspect-ratio: 1 / 1; max-height: 72svh; width: 100%; isolation: isolate; }
+.photo-hero .hero--img .hero__img { aspect-ratio: 1 / 1; width: min(100%, 600px, 62svh) !important; max-width: 100% !important; justify-self: center; isolation: isolate; }
 /* la forma colorata dietro la foto, con un motivo a righe */
 .photo-hero .hero--img .hero__img::after { inset: 4% -4% -4% 4%; z-index: -1; background: repeating-linear-gradient(-45deg, var(--accent) 0 14px, color-mix(in srgb, var(--accent) 80%, var(--bg)) 14px 28px); border-radius: 58% 42% 46% 54% / 44% 56% 44% 56%; animation: vo-blob 14s ease-in-out infinite alternate-reverse; }
 .photo-hero .hero--img .hero__img img { position: absolute; inset: 0; border-radius: 42% 58% 60% 40% / 52% 40% 60% 48%; animation: vo-blob 12s ease-in-out infinite alternate; }
@@ -171,7 +171,7 @@
 .filter button { border-radius: 10px; }
 .filter button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .story__pic img { border-radius: var(--radius-box); }
-.story__pic { border-radius: 46% 54% 50% 50% / 50% 46% 54% 50%; }
+.story__pic { border-radius: var(--radius-box); }   /* 1.16: niente maschera nel portfolio, taglia copertine e locandine */
 .story__initial { background: var(--accent); color: var(--accent-ink); }
 .story__where { color: var(--accent); text-transform: uppercase; }
 .chapter:not(.chapter--paper) .story__where { color: inherit; }
@@ -186,7 +186,7 @@
 .site-foot { position: relative; overflow: hidden; isolation: isolate; }
 
 @media (max-width: 960px) {
-  .photo-hero .hero--img .hero__img { position: relative; inset: auto; order: -1; width: min(86%, 440px); justify-self: center; margin-top: 12px; }
+  .photo-hero .hero--img .hero__img { position: relative; inset: auto; order: -1; width: min(86%, 440px) !important; justify-self: center; margin-top: 12px; }
   .hero { min-height: 0; padding-top: clamp(24px, 6vw, 48px); }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -240,7 +240,7 @@
 .list--rows .card__body { padding: 0; }
 .list--mosaic .cards { gap: 10px; }
 .list--mosaic .card { border-radius: var(--radius-box); box-shadow: none; }
-.stories--grid .story__pic { border-radius: 46% 54% 50% 50% / 50% 46% 54% 50%; }
+.stories--grid .story__pic { border-radius: var(--radius-box); }
 .stories--mosaic .story { border-radius: var(--radius-box); }
 .stories--mosaic .story__pic { border-radius: 0; }
 
@@ -258,3 +258,6 @@
 .contact__mail a { color: inherit; }
 .contact__list { padding: 26px; border-radius: var(--radius-box); background: var(--field-2); }
 @media (prefers-reduced-motion: reduce) { .head--split .band__img img, .head--split .band__img::after, .band__deco i { animation: none !important; } }
+/* 1.16: la foto dell'apertura è un riquadro tondo, non copre l'apertura: larghezza propria (vince sulla regola comune del tutto-schermo) */
+.photo-hero .chapter.hero--img > .hero__img { width: min(100%, 600px, 62svh) !important; }
+@media (max-width: 960px) { .photo-hero .chapter.hero--img > .hero__img { width: min(86%, 440px) !important; } }

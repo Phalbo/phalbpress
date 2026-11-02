@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.15.3';
+    public const VERSION = '1.16.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -112,7 +112,10 @@ final class PP
     public static function theme(): string
     {
         $t = self::$theme ?? Settings::get('theme', self::$config['theme'] ?? 'tipografico');
-        return preg_replace('~[^a-z0-9_-]~', '', (string)$t) ?: 'tipografico';
+        $t = preg_replace('~[^a-z0-9_-]~', '', (string)$t) ?: 'tipografico';
+        // un tema tolto dal motore (es. con un aggiornamento): il sito passa da solo a quello di base
+        if (!is_file(PP_ROOT . '/pp-themes/' . $t . '/theme.json')) $t = 'tipografico';
+        return $t;
     }
 
     public static function themes(): array

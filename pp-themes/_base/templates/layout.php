@@ -59,8 +59,9 @@ $headerModel = class_exists('Layouts') ? Layouts::forType('site', 'header') : 'b
 
 <header class="site-head head-model--<?= e($headerModel) ?>" data-head data-pp-part="header">
   <div class="site-head__in">
-    <a class="brand" href="<?= e(link_to('')) ?>"<?= $r['name'] === 'home' ? ' aria-current="page"' : '' ?>>
-      <?= $hasId ? Identity::logo(false, 'brand__logo') : '' ?>
+    <?php $duo = $hasId && (Identity::get()['logo_dark'] || Identity::get()['logo_dark_svg']); // due loghi: base.js mostra quello chiaro se la testata è scura ?>
+    <a class="brand<?= $duo ? ' brand--duo' : '' ?>" href="<?= e(link_to('')) ?>"<?= $r['name'] === 'home' ? ' aria-current="page"' : '' ?>>
+      <?= $hasId ? Identity::logo(false, 'brand__logo brand__logo--day') : '' ?><?= $duo ? Identity::logo(true, 'brand__logo brand__logo--night') : '' ?>
       <span class="brand__text<?= $hasId && !empty(Identity::get()['logo_has_name']) && Identity::logo(false, 'x') !== '' ? ' sr-only' : '' ?>"><span class="brand__name"><?= e($siteName) ?></span><?php if ($claim !== ''): ?><span class="brand__claim"><?= e($claim) ?></span><?php endif; ?></span>
     </a>
     <nav class="nav" id="site-nav" aria-label="<?= e(t('nav_main')) ?>" data-nav>

@@ -34,3 +34,29 @@
   </li>
   <?php endforeach; ?>
 </ul>
+
+<?php if (Auth::isAdmin()): ?>
+<section class="panel stack" id="provini">
+  <h2>Provini per il cliente</h2>
+  <p>Una copia del sito per ogni tema, da navigare come un sito vero, in <code>/<?= e(Proofs::DIR) ?>/</code>: home, pagine, portfolio con le sue categorie, gli ultimi lavori e le ultime news. Il sito pubblico non cambia; i provini non compaiono nei motori di ricerca, ma chi ha il link li vede.</p>
+  <?php if (!empty($proofs['at'])): ?>
+    <p><span class="badge badge--ok">Pronti</span> <?= count($proofs['themes'] ?? []) ?> temi, <?= (int)($proofs['files'] ?? 0) ?> pagine, del <?= e(substr((string)$proofs['at'], 0, 16)) ?> · <?= !empty($proofs['palette']) ? 'con i colori di ogni tema' : 'con i colori del sito' ?>
+      · <a href="<?= e(PP::url(Proofs::DIR . '/')) ?>" target="_blank" rel="noopener">Apri l’indice dei provini ↗</a></p>
+    <p class="hint">Da mandare al cliente: <code><?= e(PP::origin() . PP::url(Proofs::DIR . '/')) ?></code>. Se cambi i contenuti, rigenerali.</p>
+  <?php endif; ?>
+  <form method="post" class="stack"><?= Admin::csrfField() ?>
+    <fieldset class="stack"><legend class="field">Colori e caratteri</legend>
+      <label class="check"><input type="radio" name="colors" value="theme" checked> Quelli di ogni tema: si vede il carattere di ciascuno</label>
+      <label class="check"><input type="radio" name="colors" value="site"> Quelli del sito (Identità visiva): stessi colori, temi diversi</label>
+    </fieldset>
+    <details><summary>Solo alcuni temi</summary>
+      <div class="row" style="flex-wrap:wrap"><?php foreach ($themes as $slug => $t): ?><label class="check small"><input type="checkbox" name="only[]" value="<?= e($slug) ?>"> <?= e($t['name'] ?? $slug) ?></label><?php endforeach; ?></div>
+      <p class="hint">Se non ne scegli nessuno si fanno tutti.</p>
+    </details>
+    <div class="row">
+      <button class="btn btn--primary" name="action" value="proofs" data-confirm="Generare i provini? Ci vuole circa un minuto; quelli di prima vengono rifatti.">Genera i provini</button>
+      <?php if (!empty($proofs['at'])): ?><button class="btn btn--danger" name="action" value="proofs_clear" data-confirm="Cancellare tutti i provini?">Cancella i provini</button><?php endif; ?>
+    </div>
+  </form>
+</section>
+<?php endif; ?>

@@ -11,13 +11,26 @@ switch ($f['type']):
     <label class="field"><?= e($f['label']) ?> <?= $hint ?><select name="<?= e($fname) ?>"><?php if (!array_key_exists('', $f['options'])): ?><option value="">—</option><?php endif; ?>
       <?php foreach ($f['options'] as $ok => $ol): $ov = is_int($ok) ? $ol : $ok; ?><option value="<?= e($ov) ?>" <?= (string)$fval === (string)$ov ? 'selected' : '' ?>><?= e($ol) ?></option><?php endforeach; ?>
     </select></label>
+  <?php break; case 'entries':
+    // più contenuti in ordine (id separati da virgola): con JavaScript ricerca per titolo, frecce per l'ordine, × per togliere
+    $et = $f['entry_type'] ?? '*';
+    $opts = $et === '*'
+        ? DB::all("SELECT e.id, e.type, e.status, t.title FROM pp_entries e LEFT JOIN pp_entry_tr t ON t.entry_id = e.id AND t.lang = ? WHERE e.type NOT IN ('block', 'category') ORDER BY e.type, e.pub_date DESC, t.title", [I18n::$master])
+        : DB::all("SELECT e.id, e.type, e.status, t.title FROM pp_entries e LEFT JOIN pp_entry_tr t ON t.entry_id = e.id AND t.lang = ? WHERE e.type = ? ORDER BY e.menu_order, t.title", [I18n::$master, $et]);
+    $data = array_map(fn($o) => ['id' => (int)$o['id'], 't' => (string)$o['title'], 'k' => (string)(PP::$config['types'][$o['type']]['one'] ?? $o['type']), 'd' => $o['status'] !== 'published'], $opts);
+    $fid = 'f-' . preg_replace('~[^a-z0-9]+~i', '-', $fname); ?>
+    <div class="field entries" data-entries>
+      <label for="<?= e($fid) ?>"><?= e($f['label']) ?> <?= $hint ?></label>
+      <input type="text" id="<?= e($fid) ?>" name="<?= e($fname) ?>" value="<?= e($fval) ?>" data-entries-value placeholder="numeri dei contenuti separati da virgola">
+      <script type="application/json" data-entries-data><?= json_encode($data, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?></script>
+    </div>
   <?php break; case 'entry':
     // entry_type '*' = qualunque contenuto con una pagina (storie, news, pagine, eventi…), raggruppato per tipo
     $et = $f['entry_type'] ?? 'category';
     $opts = $et === '*'
         ? DB::all("SELECT e.id, e.type, t.title FROM pp_entries e LEFT JOIN pp_entry_tr t ON t.entry_id = e.id AND t.lang = ? WHERE e.type NOT IN ('block', 'category') ORDER BY e.type, e.pub_date DESC, t.title", [I18n::$master])
         : DB::all("SELECT e.id, e.type, t.title FROM pp_entries e LEFT JOIN pp_entry_tr t ON t.entry_id = e.id AND t.lang = ? WHERE e.type = ? ORDER BY e.menu_order, t.title", [I18n::$master, $et]); ?>
-    <label class="field"><?= e($f['label']) ?> <?= $hint ?><select name="<?= e($fname) ?>"><option value="">—</option>
+    <label class="field"><?= e($f['label']) ?> <?= $hint ?><select name="<?= e($fname) ?>"<?= count($opts) > 12 ? ' data-search' : '' ?>><option value="">—</option>
       <?php $grp = null; foreach ($opts as $o): if ($et === '*' && $grp !== $o['type']): if ($grp !== null): ?></optgroup><?php endif; $grp = $o['type']; ?><optgroup label="<?= e(PP::$config['types'][$grp]['label'] ?? $grp) ?>"><?php endif; ?>
         <option value="<?= (int)$o['id'] ?>" <?= (string)$fval === (string)$o['id'] ? 'selected' : '' ?>><?= e($o['title']) ?></option><?php endforeach; ?>
       <?php if ($et === '*' && $grp !== null): ?></optgroup><?php endif; ?>

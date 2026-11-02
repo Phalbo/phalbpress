@@ -65,5 +65,79 @@
     "news": {
       "head": "cover"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I due blu del marchio e l'azzurro.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#0d2236",
+        "accent": "#0a6c9e",
+        "field1": "#0b3a5b",
+        "field2": "#d3edf8",
+        "dark": "#0f1c2b",
+        "hero1": "#ffffff",
+        "hero2": "#bfe9fa"
+      },
+      "fonts": {
+        "display": "Instrument Sans",
+        "text": "Instrument Sans"
+      }
+    },
+    {
+      "name": "Vela e corallo",
+      "note": "Blu profondo del marchio, un corallo caldo per pulsanti e dettagli, fondi ghiaccio. Titoli più decisi.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#10233a",
+        "accent": "#c4402a",
+        "field1": "#0b4a72",
+        "field2": "#e7f1f6",
+        "dark": "#0c1a2a",
+        "hero1": "#ffffff",
+        "hero2": "#ffb9a3"
+      },
+      "fonts": {
+        "display": "Bricolage Grotesque",
+        "text": "Instrument Sans"
+      }
+    },
+    {
+      "name": "Laguna",
+      "note": "Blu Ares con un blu-verde petrolio e la sabbia; titoli con grazie morbide, fondo carta.",
+      "palette": {
+        "ground": "#fbfaf7",
+        "ink": "#14212e",
+        "accent": "#0a6c9e",
+        "field1": "#0f5257",
+        "field2": "#f2e4c6",
+        "dark": "#10202a",
+        "hero1": "#ffffff",
+        "hero2": "#f6c453"
+      },
+      "fonts": {
+        "display": "Fraunces",
+        "text": "Instrument Sans"
+      }
+    },
+    {
+      "name": "Notte e segnale",
+      "note": "Blu notte, il blu Ares come accento e un giallo segnale per la seconda riga e i numeri.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#0d2236",
+        "accent": "#0b5e8a",
+        "field1": "#10294a",
+        "field2": "#fff1c9",
+        "dark": "#0a1424",
+        "hero1": "#ffffff",
+        "hero2": "#ffd166"
+      },
+      "fonts": {
+        "display": "League Spartan",
+        "text": "Figtree"
+      }
+    }
+  ]
 }

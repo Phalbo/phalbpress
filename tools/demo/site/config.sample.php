@@ -26,7 +26,7 @@ return [
         'search' => ['en' => 'search', 'it' => 'cerca', 'de' => 'suche'],
     ],
     'section_menu' => ['news' => 3, 'stories' => 4, 'results' => 5, 'partners' => 6],
-    'theme' => 'istituzionale',
+    'theme' => 'tipografico',
 
     'types' => [
         'page' => ['label' => 'Pagine', 'one' => 'pagina'],

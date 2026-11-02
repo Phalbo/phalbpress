@@ -17,6 +17,14 @@ final class Themes
                 Auth::log('activate theme', $slug);
                 Admin::changed('theme');
                 Admin::flash('Tema “' . ($t['name'] ?? $slug) . '” attivo. I contenuti non cambiano.');
+            } elseif ($act === 'proofs' && Auth::isAdmin()) {
+                $only = array_values(array_intersect(array_keys($themes), (array)($_POST['only'] ?? [])));
+                $r = Proofs::build(Admin::post('colors') !== 'site', $only);
+                Auth::log('proofs', count($r['themes']) . ' temi');
+                Admin::flash('Provini pronti: ' . count($r['themes']) . ' temi, ' . $r['files'] . ' pagine in ' . $r['seconds'] . ' secondi.');
+            } elseif ($act === 'proofs_clear' && Auth::isAdmin()) {
+                Proofs::clear();
+                Admin::flash('Provini cancellati.');
             } elseif ($act === 'restore_identity' && ($prev = Settings::get('identity_previous'))) {
                 Identity::apply($prev['colors'] ?? [], $prev['font_display'] ?? null, $prev['font_text'] ?? null, $prev['buttons'] ?? null);
                 Settings::set('identity_previous', null);
@@ -26,6 +34,6 @@ final class Themes
             PP::redirect(Admin::u('themes'));
         }
         Admin::view(__DIR__ . '/admin.php', ['title' => 'Temi', 'themes' => $themes, 'active' => PP::theme(), 'fonts' => class_exists('Identity') ? Identity::fonts() : [],
-            'prev' => Settings::get('identity_previous'), 'blocks' => (int)DB::val("SELECT COUNT(*) FROM pp_entries WHERE type = 'block'")]);
+            'prev' => Settings::get('identity_previous'), 'blocks' => (int)DB::val("SELECT COUNT(*) FROM pp_entries WHERE type = 'block'"), 'proofs' => Proofs::info()]);
     }
 }

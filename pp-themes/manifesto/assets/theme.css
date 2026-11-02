@@ -9,7 +9,7 @@
   --step-display: clamp(4.5rem, 1rem + 14vw, 15rem);
   --margin: clamp(20px, 2vw, 28px);
   --radius: 0px;
-  --section: clamp(4rem, 8vw, 8rem);
+  --section: clamp(3rem, 6vw, 6rem);
 }
 h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, .btn, .langs__btn, .nav-toggle, .filter button, .card__title, .latest__sub, .foot__name { font-family: var(--font-display); text-transform: uppercase; }
 .chapter > * { max-width: none; margin-left: 0; margin-right: 0; }
@@ -20,7 +20,7 @@ h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, 
 .site-head__in { max-width: none; }
 .brand__name { font-size: 1.5rem; font-weight: 800; white-space: nowrap; }
 @media (max-width: 760px) { .brand__name { white-space: normal; font-size: 1.05rem; line-height: 1; } }
-.brand__logo { background: var(--bg); color: var(--ink); padding: 2px; border-radius: 50%; }
+/* logo su testata scura: base.css (logo chiaro o fondino rettangolare) */
 .nav__link { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.02em; padding: 0 6px; }
 .nav__link:hover, .nav__link[aria-current] { background: var(--accent); color: var(--accent-ink); text-decoration: none; }
 .nav-toggle { background: var(--accent); color: var(--accent-ink); font-size: 1.1rem; }
@@ -74,8 +74,8 @@ h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, 
 /* un numero si prende lo schermo */
 .figures__list { grid-template-columns: 1fr; gap: 24px; }
 .figure { flex-direction: row; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
-.figure__val { font-size: clamp(7rem, 2rem + 22vw, 24rem); line-height: 0.78; letter-spacing: -0.03em; }
-.figure--2 .figure__val { font-size: clamp(4rem, 2rem + 9vw, 10rem); }
+.figure__val { font-size: clamp(4.5rem, 2rem + 8vw, 10rem); line-height: 0.82; letter-spacing: -0.03em; }
+.figure--2 .figure__val { font-size: clamp(3.5rem, 2rem + 5vw, 7rem); }
 .figure__cap { font-size: var(--step-lead); font-weight: 700; max-width: 16ch; padding-bottom: 0.4em; }
 
 .latest__head { font-size: var(--step-head); }

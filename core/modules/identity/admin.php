@@ -1,5 +1,26 @@
 <?php $hintLogo = 'SVG (consigliato: viene ripulito e resta nitido a ogni misura) oppure PNG trasparente, almeno 600 px di larghezza.'; ?>
 <header class="head"><h1>Identità visiva</h1></header>
+<?php $tv = PP::themes()[PP::theme()] ?? []; $variants = $tv['palettes'] ?? []; ?>
+<?php if ($variants): ?>
+<section class="panel stack">
+  <h2>Varianti di colore del tema <?= e($tv['name'] ?? PP::theme()) ?></h2>
+  <p class="hint">Colori e caratteri pensati per questo tema. Una variante sostituisce colori, font e pulsanti qui sotto; poi puoi ritoccarli. Prima guardala in anteprima.</p>
+  <ul class="variants">
+    <?php foreach ($variants as $i => $v): ?>
+    <li class="variant">
+      <span class="variant__sw"><?php foreach (['ground', 'ink', 'accent', 'field1', 'field2', 'dark', 'hero2'] as $k): if (!empty($v['palette'][$k])): ?><i style="background:<?= e($v['palette'][$k]) ?>" title="<?= e(Identity::COLORS[$k][0] ?? $k) ?>"></i><?php endif; endforeach; ?></span>
+      <strong><?= e($v['name'] ?? ('Variante ' . ($i + 1))) ?></strong>
+      <?php if (!empty($v['note'])): ?><span class="small muted"><?= e($v['note']) ?></span><?php endif; ?>
+      <?php if (!empty($v['fonts'])): ?><span class="small">Font: <?= e(implode(' + ', array_unique(array_filter([$v['fonts']['display'] ?? '', $v['fonts']['text'] ?? ''])))) ?></span><?php endif; ?>
+      <form method="post" class="row"><?= Admin::csrfField() ?><input type="hidden" name="variant" value="<?= (int)$i ?>">
+        <a class="btn btn--small" href="<?= e(Admin::u('preview') . '?theme=' . rawurlencode(PP::theme()) . '&variant=' . (int)$i) ?>" target="_blank" rel="noopener">Anteprima ↗</a>
+        <button class="btn btn--small btn--primary" name="action" value="variant">Applica</button></form>
+    </li>
+    <?php endforeach; ?>
+  </ul>
+  <?php if (Settings::get('identity_previous')): ?><form method="post"><?= Admin::csrfField() ?><button class="btn btn--small" name="action" value="variant_undo">Torna ai colori di prima</button></form><?php endif; ?>
+</section>
+<?php endif; ?>
 <form method="post" enctype="multipart/form-data" data-form class="stack">
   <?= Admin::csrfField() ?>
   <div class="cols">
@@ -83,6 +104,36 @@
       <select name="band_h">
         <?php foreach (['' => 'Come il tema', 'compact' => 'Basse: titolo di misura, si arriva subito al contenuto', 'tall' => 'Alte'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_h'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
       </select></label>
+    <?php $opt = fn(string $name, array $list) => implode('', array_map(fn($k, $l) => '<option value="' . e((string)$k) . '"' . ((string)($s[$name] ?? '') === (string)$k ? ' selected' : '') . '>' . e($l) . '</option>', array_keys($list), $list)); ?>
+    <?php $shades = ['' => 'Come il tema'] + array_combine(array_map('strval', range(0, 80, 10)), array_map(fn($n) => $n === 0 ? 'Nessun velo' : "Velo scuro al $n%", range(0, 80, 10))); ?>
+    <div class="row">
+      <label class="field">Foto delle intestazioni <span class="muted">(in alto nelle pagine)</span>
+        <select name="band_fx"><?= $opt('band_fx', ['' => 'Come il tema', 'color' => 'A colori', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale']) ?></select></label>
+      <label class="field">Logo in testata
+        <select name="logo_head"><?= $opt('logo_head', ['' => 'Da solo: quello chiaro se la testata è scura', 'day' => 'Sempre quello normale', 'night' => 'Sempre quello per fondi scuri']) ?></select></label>
+    </div>
+    <h3 class="small-head">Testo sulle foto</h3>
+    <label class="field">Foto dell’apertura della home
+      <select name="hero_fx"><?= $opt('hero_fx', ['' => 'Come il tema', 'color' => 'A colori', 'mono' => 'In bianco e nero']) ?></select></label>
+    <div class="row">
+      <label class="field">Apertura della home: velo sulla foto
+        <select name="hero_shade"><?= $opt('hero_shade', $shades) ?></select></label>
+      <label class="field">Apertura della home: testo
+        <select name="hero_text"><?= $opt('hero_text', ['' => 'Come il tema', 'shadow' => 'Con un’ombra leggera', 'panel' => 'Su un fondino scuro']) ?></select></label>
+    </div>
+    <div class="row">
+      <label class="field">Intestazioni con la foto dietro: velo
+        <select name="band_shade"><?= $opt('band_shade', $shades) ?></select></label>
+      <label class="field">Intestazioni con la foto dietro: testo
+        <select name="band_text"><?= $opt('band_text', ['' => 'Come il tema', 'shadow' => 'Con un’ombra leggera', 'panel' => 'Su un fondino scuro']) ?></select></label>
+    </div>
+    <p class="hint">Se il testo bianco non si legge su una foto chiara: un velo dal 30-40% o l’ombra leggera di solito bastano.</p>
+    <h3 class="small-head">Impaginazione</h3>
+    <div class="row">
+      <label class="field">Spazio tra le fasce
+        <select name="space"><?= $opt('space', ['' => 'Come il tema', 'compact' => 'Compatto', 'wide' => 'Ampio']) ?></select></label>
+      <label class="check"><input type="checkbox" name="boxed" value="1" <?= !empty($s['boxed']) ? 'checked' : '' ?>> <span>Pagina in un riquadro centrale (su schermi larghi; le foto di apertura restano a tutta larghezza)</span></label>
+    </div>
     <fieldset class="row">
       <legend class="field">Pulsanti</legend>
       <label class="check"><input type="radio" name="buttons" value="pill" <?= $s['buttons'] === 'pill' ? 'checked' : '' ?>> Arrotondati</label>

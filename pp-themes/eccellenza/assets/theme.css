@@ -49,7 +49,7 @@
 .chapter--ink .btn--dark { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
 /* ---------- apertura ---------- */
-.hero { min-height: min(100svh, 980px); align-content: center; justify-items: center; text-align: center; gap: 28px; padding-top: calc(var(--head-h) + 48px); padding-bottom: clamp(140px, 16vw, 220px); }
+.hero { min-height: min(100svh, 980px); align-content: center; justify-items: center; text-align: center; gap: 28px; padding-top: calc(var(--head-h) + 40px); padding-bottom: clamp(72px, 9vw, 130px); }
 .hero__title { font-size: var(--step-display); line-height: 1.12; align-items: center; max-width: 22ch; text-wrap: balance; }
 .hero__l2 { font-weight: 500; }
 .hero__aside { align-items: center; max-width: 52ch; }

@@ -39,7 +39,7 @@ DirectoryIndex index.html index.php
   # HSTS: togli il commento solo quando https funziona su tutto il dominio
   # Header always set Strict-Transport-Security "max-age=31536000"
   <FilesMatch "\.html$">
-    Header set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
+    Header set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; frame-src https://www.youtube-nocookie.com https://player.vimeo.com https://www.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'"
     Header set Cache-Control "public, max-age=300"
   </FilesMatch>
   <FilesMatch "\.(woff2|css|js|svg|png|jpe?g|webp|gif)$">

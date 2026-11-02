@@ -132,6 +132,41 @@
     hero.querySelectorAll('[data-say]').forEach((b) => b.addEventListener('click', () => show(b.dataset.say)));
   });
 
+  /* ---------- testata scura: il logo per fondi scuri (se c'è), o un fondino chiaro dietro al logo ---------- */
+  const siteHead = document.querySelector('.site-head');
+  if (siteHead) {
+    const tone = () => {
+      let el = siteHead, c = '';
+      while (el && el !== document.documentElement) {
+        const s = getComputedStyle(el);
+        if (s.backgroundImage !== 'none' && el !== siteHead) break;
+        if (s.backgroundColor && !/rgba\(.*,\s*0\)$/.test(s.backgroundColor) && s.backgroundColor !== 'transparent') { c = s.backgroundColor; break; }
+        el = el.parentElement;
+      }
+      const L = (v) => { const m = (v || '').match(/\d+(\.\d+)?/g); return m ? (0.2126 * m[0] + 0.7152 * m[1] + 0.0722 * m[2]) / 255 : null; };
+      // testata trasparente sopra una foto: decide il colore del testo della testata (chiaro = fondo scuro)
+      const own = getComputedStyle(siteHead).backgroundColor;
+      const clear = !own || /rgba\(.*,\s*0\)$/.test(own) || own === 'transparent';
+      const lum = clear && /fixed|absolute/.test(getComputedStyle(siteHead).position) ? 1 - (L(getComputedStyle(siteHead).color) ?? 0) : L(c || getComputedStyle(document.body).backgroundColor);
+      if (lum === null) return;
+      document.body.classList.toggle('head-dark', lum < 0.5);
+    };
+    tone();
+    window.addEventListener('scroll', () => { if (!tone.t) tone.t = requestAnimationFrame(() => { tone.t = 0; tone(); }); }, { passive: true });
+  }
+
+  /* ---------- barra dei contatti sopra una testata fissa: la testata parte sotto la barra e sale scorrendo ---------- */
+  const toolbar = document.querySelector('.toolbar');
+  if (toolbar && siteHead) {
+    const pos = getComputedStyle(siteHead).position;
+    if (pos === 'fixed' || pos === 'absolute') {
+      const place = () => { const h = toolbar.offsetHeight; siteHead.style.top = (pos === 'fixed' ? Math.max(0, h - window.scrollY) : h) + 'px'; };
+      place();
+      window.addEventListener('scroll', place, { passive: true });
+      window.addEventListener('resize', place);
+    }
+  }
+
   /* ---------- anno del footer: le pagine statiche possono essere state generate l'anno prima ---------- */
   document.querySelectorAll('[data-year]').forEach((y) => { y.textContent = String(new Date().getFullYear()); });
 
@@ -284,6 +319,9 @@
     const nav = fig.dataset.nav || 'dots';
     const ms = (parseInt(fig.dataset.time, 10) || 6) * 1000;
     let i = 0, timer = null, held = false, paused = reduce;
+    // comandi sulla foto: se la foto è un riquadro dentro l'apertura (non la copre tutta) stanno nel riquadro
+    const host = getComputedStyle(fig).position === 'absolute' ? hero : fig;
+    if (host === fig) fig.classList.add('has-ctl');
     const ctl = document.createElement('div');
     ctl.className = 'slides-ctl slides-ctl--' + nav;
     const dots = [];
@@ -315,7 +353,7 @@
         a.type = 'button'; a.className = 'slides-ctl__arrow slides-ctl__arrow--' + dir;
         a.setAttribute('aria-label', ui[dir] || dir);
         a.addEventListener('click', () => { go(i + (dir === 'next' ? 1 : -1)); tick(); });
-        hero.appendChild(a);
+        host.appendChild(a);
       });
     }
     const pause = document.createElement('button');
@@ -324,7 +362,7 @@
     pause.addEventListener('click', () => { paused = !paused; label(); tick(); });
     label();
     ctl.appendChild(pause);
-    hero.appendChild(ctl);
+    host.appendChild(ctl);
     hero.classList.add('has-slides');
     // ferma passandoci sopra o col fuoco dentro l'apertura, riparte uscendo
     hero.addEventListener('mouseenter', () => { held = true; tick(); });

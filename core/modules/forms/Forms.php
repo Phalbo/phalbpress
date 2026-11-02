@@ -52,7 +52,30 @@ final class Forms
         $key = substr(hash_hmac('sha256', 'form:' . $form, self::secret()), 0, 16);
         ob_start();
         require $file;
-        return (string)ob_get_clean();
+        $html = (string)ob_get_clean();
+        // modulo di contatto: accanto, i recapiti del sito (Impostazioni), così la pagina non resta un modulo a metà
+        if ($form === 'contact' && ($aside = self::contacts()) !== '') $html = '<div class="contact-wrap">' . $html . $aside . '</div>';
+        return $html;
+    }
+
+    /** Recapiti del sito per la colonna accanto al modulo: email, telefoni, PEC, sedi. '' se non ce ne sono. */
+    private static function contacts(): string
+    {
+        $c = PP::$config;
+        $tel = fn($n) => preg_replace('~[^0-9+]~', '', (string)$n);
+        $rows = [];
+        if (!empty($c['contact_email'])) $rows[] = '<li><span class="contact-aside__k">' . e(t('contact_email')) . '</span> <a href="mailto:' . e($c['contact_email']) . '">' . e($c['contact_email']) . '</a></li>';
+        foreach (['phone', 'phone2'] as $k) if (!empty($c[$k])) $rows[] = '<li><span class="contact-aside__k">' . e(t('contact_phone')) . '</span> <a href="tel:' . e($tel($c[$k])) . '">' . e($c[$k]) . '</a></li>';
+        if (!empty($c['pec'])) $rows[] = '<li><span class="contact-aside__k">' . e(t('contact_pec')) . '</span> ' . e($c['pec']) . '</li>';
+        $offices = class_exists('SiteSettings') ? SiteSettings::offices() : [];
+        if (!$rows && !$offices) return '';
+        $out = '<aside class="contact-aside">';
+        if (!empty($c['company'])) $out .= '<p class="contact-aside__name">' . e($c['company']) . '</p>';
+        if ($rows) $out .= '<ul class="contact-aside__list">' . implode('', $rows) . '</ul>';
+        foreach ($offices as $o) {
+            $out .= '<div class="contact-aside__office"><p class="contact-aside__k">' . e($o['label'] ?? '') . '</p><p>' . nl2br(e(implode("\n", (array)($o['lines'] ?? [])))) . '</p></div>';
+        }
+        return $out . '</aside>';
     }
 
     /** Torna alla pagina di partenza con l'esito nell'ancora (#pp-form-ok / #pp-form-err): funziona anche con le pagine statiche. */

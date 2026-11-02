@@ -243,4 +243,79 @@
     };
     el.addEventListener('input', upd); upd();
   });
+  /* ---------- scelta di più contenuti (campo "entries"): cerca, aggiungi, riordina, togli ---------- */
+  document.querySelectorAll('[data-entries]').forEach((box) => {
+    const input = box.querySelector('[data-entries-value]');
+    let all = [];
+    try { all = JSON.parse(box.querySelector('[data-entries-data]').textContent || '[]'); } catch (e) { return; }
+    const byId = new Map(all.map((o) => [o.id, o]));
+    let ids = input.value.split(/[^0-9]+/).map(Number).filter((n) => n && byId.has(n));
+    input.type = 'hidden';
+    const uid = input.id || ('e' + Math.random().toString(36).slice(2));
+    const list = document.createElement('ol'); list.className = 'entries__list';
+    const empty = document.createElement('p'); empty.className = 'entries__empty muted'; empty.textContent = 'Nessuno: si mostrano gli ultimi.';
+    const search = document.createElement('input'); search.type = 'search'; search.className = 'entries__search';
+    search.placeholder = 'Cerca un contenuto da aggiungere…'; search.setAttribute('aria-label', 'Cerca un contenuto da aggiungere');
+    search.setAttribute('aria-controls', uid + '-res'); search.setAttribute('autocomplete', 'off');
+    const res = document.createElement('ul'); res.className = 'entries__results'; res.id = uid + '-res'; res.hidden = true;
+    const live = document.createElement('p'); live.className = 'sr-only'; live.setAttribute('aria-live', 'polite');
+    box.append(list, empty, search, res, live);
+    const btn = (label, txt, fn) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn--small'; b.textContent = txt; b.setAttribute('aria-label', label); b.addEventListener('click', fn); return b; };
+    const render = () => {
+      input.value = ids.join(',');
+      list.replaceChildren(...ids.map((id, i) => {
+        const o = byId.get(id); const li = document.createElement('li');
+        const name = document.createElement('span'); name.className = 'entries__name'; name.textContent = o.t || ('#' + id);
+        const kind = document.createElement('span'); kind.className = 'muted small'; kind.textContent = ' ' + o.k + (o.d ? ' · bozza' : '');
+        name.append(kind);
+        const tools = document.createElement('span'); tools.className = 'row';
+        if (i > 0) tools.append(btn('Sposta su: ' + o.t, '↑', () => { ids.splice(i - 1, 0, ids.splice(i, 1)[0]); render(); list.children[i - 1]?.querySelector('button')?.focus(); }));
+        if (i < ids.length - 1) tools.append(btn('Sposta giù: ' + o.t, '↓', () => { ids.splice(i + 1, 0, ids.splice(i, 1)[0]); render(); }));
+        tools.append(btn('Togli: ' + o.t, '×', () => { ids.splice(i, 1); render(); live.textContent = 'Tolto ' + o.t; search.focus(); }));
+        li.append(name, tools); return li;
+      }));
+      empty.hidden = ids.length > 0;
+    };
+    const norm = (t) => (t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const find = () => {
+      const q = norm(search.value.trim());
+      if (q.length < 2) { res.hidden = true; return; }
+      const hits = all.filter((o) => !ids.includes(o.id) && (norm(o.t).includes(q) || norm(o.k).includes(q))).slice(0, 12);
+      res.replaceChildren(...(hits.length ? hits.map((o) => {
+        const li = document.createElement('li');
+        const b = document.createElement('button'); b.type = 'button'; b.className = 'entries__hit';
+        b.textContent = o.t; const k = document.createElement('span'); k.className = 'muted small'; k.textContent = ' ' + o.k + (o.d ? ' · bozza' : ''); b.append(k);
+        b.addEventListener('click', () => { ids.push(o.id); render(); live.textContent = 'Aggiunto ' + o.t; search.value = ''; res.hidden = true; search.focus(); });
+        li.append(b); return li;
+      }) : [Object.assign(document.createElement('li'), { className: 'muted small', textContent: 'Nessun contenuto con queste parole.' })]));
+      res.hidden = false;
+    };
+    search.addEventListener('input', find);
+    search.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter') { ev.preventDefault(); res.querySelector('.entries__hit')?.click(); }
+      if (ev.key === 'ArrowDown') { ev.preventDefault(); res.querySelector('.entries__hit')?.focus(); }
+      if (ev.key === 'Escape') { res.hidden = true; }
+    });
+    res.addEventListener('keydown', (ev) => {
+      const hits = [...res.querySelectorAll('.entries__hit')]; const i = hits.indexOf(document.activeElement);
+      if (ev.key === 'ArrowDown' && i < hits.length - 1) { ev.preventDefault(); hits[i + 1].focus(); }
+      if (ev.key === 'ArrowUp') { ev.preventDefault(); (i > 0 ? hits[i - 1] : search).focus(); }
+      if (ev.key === 'Escape') { res.hidden = true; search.focus(); }
+    });
+    render();
+  });
+
+  /* ---------- tendine lunghe (un contenuto tra tanti): una casella sopra per cercare ---------- */
+  document.querySelectorAll('select[data-search]').forEach((sel) => {
+    const opts = [...sel.querySelectorAll('option')].map((o) => ({ el: o, t: (o.textContent || '').toLowerCase(), g: o.parentElement.tagName === 'OPTGROUP' ? o.parentElement : null }));
+    const q = document.createElement('input'); q.type = 'search'; q.className = 'select-search'; q.placeholder = 'Cerca…';
+    q.setAttribute('aria-label', 'Cerca nella tendina ' + (sel.closest('label')?.firstChild?.textContent || '').trim());
+    sel.before(q);
+    q.addEventListener('input', () => {
+      const v = q.value.trim().toLowerCase();
+      opts.forEach((o) => { const show = !v || !o.el.value || o.t.includes(v) || o.el.selected; o.el.hidden = !show; o.el.disabled = !show && !o.el.selected; });
+      sel.querySelectorAll('optgroup').forEach((g) => { g.hidden = ![...g.children].some((c) => !c.hidden); });
+      if (v) { const first = opts.find((o) => o.el.value && !o.el.hidden); if (first && !sel.value) sel.size = Math.min(8, opts.filter((o) => !o.el.hidden).length + 1); } else sel.size = 0;
+    });
+  });
 })();

@@ -45,8 +45,8 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 .chapter--ink { --surface: color-mix(in srgb, var(--black-ink) 10%, var(--black)); }
 
 /* apertura: paesaggio a tutta pagina, titolo pieno e leggibile */
-.hero { min-height: min(92svh, 960px); padding-bottom: clamp(2.5rem, 5vw, 4.5rem); gap: 26px; }
-.hero__title { font-size: var(--step-display); line-height: 0.95; max-width: 16ch; }
+.hero { min-height: min(78svh, 820px); padding-bottom: clamp(2.5rem, 5vw, 4.5rem); gap: 22px; }
+.hero__title { font-size: clamp(2.4rem, 1.4rem + 3.2vw, 4.6rem); line-height: 1; max-width: 18ch; }
 .photo-hero .hero--img .hero__img::after { background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.25) 50%, rgba(0,0,0,0) 80%), linear-gradient(to right, rgba(0,0,0,.35), rgba(0,0,0,0) 60%); }
 .photo-hero .hero--img .hero__title { text-shadow: 0 1px 2px rgba(0,0,0,.25); }
 .hero__aside { max-width: 52ch; gap: 24px; }

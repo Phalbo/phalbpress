@@ -27,6 +27,15 @@ final class Identity
             'photo_fx' => (string)($d['photo_fx'] ?? ''),        // foto negli elenchi: '' come il tema, none, mono (bianco e nero), tint (virate nel colore principale)
             'photo_hover' => (string)($d['photo_hover'] ?? ''),  // passandoci sopra: '' come il tema, color (tornano a colori), zoom, none
             'band_h' => (string)($d['band_h'] ?? ''),            // altezza delle intestazioni delle pagine interne: '' come il tema, compact, tall
+            'logo_head' => (string)($d['logo_head'] ?? ''),      // logo in testata: '' da solo (chiaro se la testata è scura), day (sempre quello normale), night (sempre quello per fondi scuri)
+            'space' => (string)($d['space'] ?? ''),              // spazi tra le fasce: '' come il tema, compact, wide
+            'boxed' => !empty($d['boxed']),                      // contenuto in un riquadro centrale (le foto di apertura restano a tutta larghezza)
+            'hero_shade' => (string)($d['hero_shade'] ?? ''),    // apertura con foto: velo scuro 0-80 (%), '' come il tema
+            'hero_text' => (string)($d['hero_text'] ?? ''),      // apertura con foto: '' come il tema, shadow (ombra leggera), panel (fondino)
+            'band_shade' => (string)($d['band_shade'] ?? ''),    // intestazioni con foto: velo scuro 0-80 (%)
+            'band_text' => (string)($d['band_text'] ?? ''),      // intestazioni con foto: shadow, panel
+            'band_fx' => (string)($d['band_fx'] ?? ''),          // foto delle intestazioni: '' come il tema, color (a colori), mono, tint
+            'hero_fx' => (string)($d['hero_fx'] ?? ''),          // foto dell'apertura della home: '' come il tema, color, mono
             'fonts_custom' => [],
         ];
         $s = Settings::group('identity', $def);
@@ -185,6 +194,49 @@ final class Identity
         // intestazioni delle pagine interne più basse o più alte
         if (($s['band_h'] ?? '') === 'compact') $css .= ".site-main .band{padding-top:clamp(2rem,4vw,3.25rem)!important;padding-bottom:clamp(1.75rem,3vw,2.75rem)!important;min-height:0!important}\n.site-main .band.head--cover.band--img{min-height:min(40svh,380px)!important}\n.site-main .band .band__title{font-size:clamp(2rem,1.2rem + 2.6vw,3.6rem)}\n.site-main .band.band--long .band__title{font-size:clamp(1.7rem,1.1rem + 1.8vw,2.8rem)}\n.site-main .head--split .band__img img{max-height:340px;min-height:220px}\n";
         if (($s['band_h'] ?? '') === 'tall') $css .= ".site-main .band.head--cover.band--img{min-height:min(80svh,760px)!important}\n";
+        return $css . self::layoutCss($s);
+    }
+
+    /** Logo in testata, spazi, riquadro, velo e testo sulle foto di apertura e delle intestazioni. */
+    private static function layoutCss(array $s): string
+    {
+        $css = '';
+        $h = max(0, min(160, (int)($s['logo_h'] ?? 0)));
+        if ($h >= 16) $css .= ":root{--logo-h:{$h}px}\n";
+        if (($s['logo_head'] ?? '') === 'day') $css .= ".site-head .brand--duo .brand__logo--night{display:none!important}.site-head .brand--duo .brand__logo--day{display:block!important}\n";
+        if (($s['logo_head'] ?? '') === 'night') $css .= ".site-head .brand--duo .brand__logo--day{display:none!important}.site-head .brand--duo .brand__logo--night{display:block!important}\n";
+        // spazi tra le fasce: --section è la misura che tutti i temi usano
+        if (($s['space'] ?? '') === 'compact') $css .= ":root{--section:clamp(2.5rem,4.5vw,4.5rem)}\n";
+        if (($s['space'] ?? '') === 'wide') $css .= ":root{--section:clamp(5rem,10vw,10rem)}\n";
+        // riquadro: le fasce e il footer in una colonna centrale su un fondo appena più scuro; l'apertura con la foto resta a tutta larghezza
+        if (!empty($s['boxed'])) $css .= "body{background:color-mix(in srgb,var(--ink) 7%,var(--bg))}\n"
+            . ".site-main>:not(.hero--img),.site-foot{max-width:var(--boxed-w,1340px);margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}\n"
+            . ":where(.site-main>*),:where(.site-foot){background-color:var(--bg)}\n"
+            . "@media (max-width:1380px){.site-main>:not(.hero--img),.site-foot{max-width:none}}\n";
+        // velo e testo sulle foto
+        foreach (['hero' => ['.photo-hero .hero--img', '.hero__img', '.photo-hero .hero--img > :not(.hero__img)', '.photo-hero .hero--img :is(.hero__l1,.hero__l2,.hero__sentence)'],
+                  'band' => ['.band.head--cover.band--img', '.band__img', '.band.head--cover.band--img > :not(.band__img):not(.band__deco)', '.band.head--cover.band--img :is(.band__title,.band__lead,.band__label)']] as $k => [$box, $fig, $txt, $lines]) {
+            $sh = (string)($s[$k . '_shade'] ?? '');
+            if ($sh !== '' && ctype_digit($sh)) {
+                $a = max(0, min(80, (int)$sh)) / 100;
+                $css .= "{$box} > {$fig}::after{background:none!important;mix-blend-mode:normal!important;opacity:0!important}\n"
+                    . "{$box} > {$fig} .pp-shade{display:block;position:absolute;inset:0;z-index:2;pointer-events:none;background:rgb(0 0 0/{$a})}\n";
+            }
+            $tx = (string)($s[$k . '_text'] ?? '');
+            if ($tx === 'shadow') $css .= "{$txt}{text-shadow:0 1px 2px rgb(0 0 0/.5),0 2px 22px rgb(0 0 0/.45)}\n";
+            if ($tx === 'panel') $css .= "{$lines}{background:rgb(0 0 0/.55);color:#fff;width:fit-content;max-width:100%;padding:.06em .3em;-webkit-box-decoration-break:clone;box-decoration-break:clone}\n";
+        }
+        // foto dell'apertura: a colori (senza il viraggio del tema) o in bianco e nero
+        $hf = (string)($s['hero_fx'] ?? '');
+        if ($hf !== '') $css .= ".photo-hero .hero--img .hero__img img{filter:" . ($hf === 'color' ? 'none' : 'grayscale(1) contrast(1.06)') . "!important}\n"
+            . ($hf === 'color' && (string)($s['hero_shade'] ?? '') === '' ? ".photo-hero .hero--img .hero__img::after{mix-blend-mode:normal!important;background:linear-gradient(to top,rgb(0 0 0/.55),rgb(0 0 0/.05) 60%)!important;opacity:1!important}\n" : '');
+        // foto delle intestazioni: a colori, in bianco e nero o virate, indipendenti da quelle degli elenchi
+        $bf = (string)($s['band_fx'] ?? '');
+        if ($bf !== '') {
+            $css .= ".band__img img{filter:" . ($bf === 'color' ? 'none' : 'grayscale(1) contrast(1.06)') . "!important}\n.band:not(.head--cover) .band__img::after{display:none!important}\n";
+            if ($bf === 'color' && (string)($s['band_shade'] ?? '') === '') $css .= ".band.head--cover.band--img > .band__img::after{mix-blend-mode:normal!important;background:linear-gradient(to top,rgb(0 0 0/.62),rgb(0 0 0/.1) 65%)!important;opacity:1!important}\n";
+            if ($bf === 'tint') $css .= ".band__img{position:relative}.band__img .pp-tint{display:block;position:absolute;inset:0;z-index:0;pointer-events:none;background:color-mix(in srgb,var(--accent) 45%,#fff);mix-blend-mode:multiply}\n";
+        }
         return $css;
     }
 
@@ -237,6 +289,24 @@ final class Identity
         $s = self::get();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $act = (string)Admin::post('action');
+            // varianti di colore del tema attivo (theme.json "palettes"): si applicano come i colori suggeriti, la versione di prima si ripristina
+            if ($act === 'variant') {
+                $vars = PP::themes()[PP::theme()]['palettes'] ?? [];
+                $v = $vars[(int)Admin::post('variant')] ?? null;
+                if ($v) {
+                    self::apply($v['palette'] ?? [], $v['fonts']['display'] ?? null, $v['fonts']['text'] ?? null, $v['buttons'] ?? null);
+                    Admin::changed('identity');
+                    Admin::flash('Variante “' . ($v['name'] ?? '') . '” applicata. Quella di prima si ripristina qui sotto.');
+                }
+                PP::redirect(Admin::u('identity'));
+            }
+            if ($act === 'variant_undo' && ($prev = Settings::get('identity_previous'))) {
+                self::apply($prev['colors'] ?? [], $prev['font_display'] ?? null, $prev['font_text'] ?? null, $prev['buttons'] ?? null);
+                Settings::set('identity_previous', null);
+                Admin::changed('identity');
+                Admin::flash('Colori e font di prima ripristinati.');
+                PP::redirect(Admin::u('identity'));
+            }
             if ($act === 'font_upload') {
                 $fam = trim(preg_replace('~[^\pL\pN \-]~u', '', (string)Admin::post('family')));
                 if ($fam === '' || empty($_FILES['font']['name'])) { Admin::flash('Indica il nome della famiglia e scegli un file .woff2', 'error'); }
@@ -272,6 +342,16 @@ final class Identity
             $s['photo_fx'] = in_array(Admin::post('photo_fx'), ['none', 'mono', 'tint'], true) ? Admin::post('photo_fx') : '';
             $s['photo_hover'] = in_array(Admin::post('photo_hover'), ['color', 'zoom', 'none'], true) ? Admin::post('photo_hover') : '';
             $s['band_h'] = in_array(Admin::post('band_h'), ['compact', 'tall'], true) ? Admin::post('band_h') : '';
+            $s['logo_head'] = in_array(Admin::post('logo_head'), ['day', 'night'], true) ? Admin::post('logo_head') : '';
+            $s['space'] = in_array(Admin::post('space'), ['compact', 'wide'], true) ? Admin::post('space') : '';
+            $s['boxed'] = (bool)Admin::post('boxed');
+            foreach (['hero', 'band'] as $k) {
+                $v = (string)Admin::post($k . '_shade');
+                $s[$k . '_shade'] = ctype_digit($v) ? (string)max(0, min(80, (int)$v)) : '';
+                $s[$k . '_text'] = in_array(Admin::post($k . '_text'), ['shadow', 'panel'], true) ? Admin::post($k . '_text') : '';
+            }
+            $s['band_fx'] = in_array(Admin::post('band_fx'), ['color', 'mono', 'tint'], true) ? Admin::post('band_fx') : '';
+            $s['hero_fx'] = in_array(Admin::post('hero_fx'), ['color', 'mono'], true) ? Admin::post('hero_fx') : '';
             foreach (['logo' => ['svg', 'png', 'webp'], 'logo_dark' => ['svg', 'png', 'webp'], 'favicon' => ['svg', 'png'], 'share_image' => ['jpg', 'jpeg', 'png', 'webp']] as $k => $allow) {
                 if (Admin::post('remove_' . $k)) { $s[$k] = ''; if (isset($s[$k . '_svg'])) $s[$k . '_svg'] = ''; }
                 if (empty($_FILES[$k]['name'])) continue;

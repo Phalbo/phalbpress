@@ -22,7 +22,8 @@ final class Blocks
                     'slides_time' => ['label' => 'Foto che scorrono: secondi per foto', 'type' => 'number', 'hint' => 'da 3 a 20 (di base 6)'],
                     'slides_fx' => ['label' => 'Foto che scorrono: passaggio', 'type' => 'select', 'options' => ['fade' => 'Dissolvenza', 'slide' => 'Scorrimento di lato']],
                     'height' => ['label' => 'Altezza dell’apertura', 'type' => 'select', 'options' => ['' => 'Come il tema', 'short' => 'Bassa', 'medium' => 'Media', 'tall' => 'Alta, quasi tutto lo schermo']],
-                    'title_size' => ['label' => 'Grandezza della frase', 'type' => 'select', 'options' => ['' => 'Come il tema', 's' => 'Piccola', 'm' => 'Media', 'l' => 'Grande']]]],
+                    'title_size' => ['label' => 'Grandezza della frase', 'type' => 'select', 'options' => ['' => 'Come il tema', 's' => 'Piccola', 'm' => 'Media', 'l' => 'Grande']],
+                    'mark' => ['label' => 'Segno grafico (solo nei temi che ne hanno uno, es. Tech)', 'type' => 'select', 'options' => ['' => 'Come il tema', 'dots' => 'Puntini', 'bars' => 'Barre', 'rings' => 'Cerchi', 'none' => 'Nessuno']]]],
             'statement' => ['label' => 'Dichiarazione', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Testo'],
                 'fields' => ['fact' => $tr('Dato o frase a lato', 'textarea'),
                     'align' => ['label' => 'Impaginazione', 'type' => 'select', 'options' => ['' => 'Come il tema (titolo a sinistra, testo a destra)', 'center' => 'Centrata in un riquadro, titolo di misura']]]],
@@ -36,11 +37,10 @@ final class Blocks
                     'limit' => ['label' => 'Quanti (0 = tutti)', 'type' => 'number'],
                     'style' => ['label' => 'Aspetto', 'type' => 'select', 'options' => ['list' => 'Elenco', 'cards' => 'Schede con immagine']],
                     'cols' => ['label' => 'Schede per riga', 'type' => 'select', 'options' => ['' => 'Automatico', '3' => '3', '4' => '4']],
-                    'pick1' => ['label' => 'Scelti a mano: 1', 'type' => 'entry', 'entry_type' => '*', 'hint' => 'facoltativo: se scegli dei contenuti, si mostrano questi e in quest’ordine, al posto degli ultimi'],
-                    'pick2' => ['label' => 'Scelti a mano: 2', 'type' => 'entry', 'entry_type' => '*'], 'pick3' => ['label' => 'Scelti a mano: 3', 'type' => 'entry', 'entry_type' => '*'],
-                    'pick4' => ['label' => 'Scelti a mano: 4', 'type' => 'entry', 'entry_type' => '*'], 'pick5' => ['label' => 'Scelti a mano: 5', 'type' => 'entry', 'entry_type' => '*'],
-                    'pick6' => ['label' => 'Scelti a mano: 6', 'type' => 'entry', 'entry_type' => '*'], 'pick7' => ['label' => 'Scelti a mano: 7', 'type' => 'entry', 'entry_type' => '*'],
-                    'pick8' => ['label' => 'Scelti a mano: 8', 'type' => 'entry', 'entry_type' => '*'],
+                    'picks' => ['label' => 'Scelti a mano', 'type' => 'entries', 'entry_type' => '*', 'hint' => 'facoltativo: se scegli dei contenuti, si mostrano questi e in quest’ordine, al posto degli ultimi'],
+                    'ratio' => ['label' => 'Foto delle schede', 'type' => 'select', 'options' => ['' => 'Quadrate', '4:3' => '4:3', '3:2' => '3:2 (orizzontali)', '16:9' => '16:9 (video)', '3:4' => '3:4 (verticali)', 'auto' => 'Intere, come sono']],
+                    'photo_fx' => ['label' => 'Foto: colore', 'type' => 'select', 'options' => ['' => 'Come il sito (Identità visiva)', 'color' => 'A colori', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale']],
+                    'photo_hover' => ['label' => 'Foto: passandoci sopra', 'type' => 'select', 'options' => ['' => 'Come il sito (Identità visiva)', 'color' => 'Tornano a colori', 'zoom' => 'Si ingrandiscono appena', 'none' => 'Niente']],
                     'more_label' => $tr('Link “vedi tutti”: testo', 'text', 'facoltativo')]],
             'figures' => ['label' => 'Numeri', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Testo'],
                 'fields' => ['n1_v' => ['label' => 'Numero 1'], 'n1_l' => $tr('Numero 1: cosa conta'), 'n2_v' => ['label' => 'Numero 2'], 'n2_l' => $tr('Numero 2: cosa conta'),
@@ -165,6 +165,23 @@ final class Blocks
             $fixed++;
         }
         return $fixed;
+    }
+
+    /** 1.16: i "scelti a mano" da 8 campi (pick1…pick8) a uno solo (picks, id separati da virgola), senza limite. */
+    public static function migratePicks(): int
+    {
+        $n = 0;
+        foreach (DB::all("SELECT id, meta FROM pp_entries WHERE type = 'block' AND meta LIKE '%pick1%'") as $r) {
+            $m = json_decode((string)$r['meta'], true) ?: [];
+            if (!empty($m['picks'])) continue;
+            $ids = [];
+            for ($i = 1; $i <= 8; $i++) if (!empty($m['pick' . $i]) && (int)$m['pick' . $i]) $ids[] = (int)$m['pick' . $i];
+            if (!$ids) continue;
+            $m['picks'] = implode(',', array_unique($ids));
+            DB::run('UPDATE pp_entries SET meta = ? WHERE id = ?', [json_encode($m, JSON_UNESCAPED_UNICODE), (int)$r['id']]);
+            $n++;
+        }
+        return $n;
     }
 
     /** Campi dei riquadri con icona: fino a 6 riquadri. */

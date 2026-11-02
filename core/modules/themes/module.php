@@ -10,13 +10,15 @@ require_once __DIR__ . '/Visual.php';
 require_once __DIR__ . '/Layouts.php';
 require_once __DIR__ . '/Stories.php';
 require_once __DIR__ . '/Demo.php';
+require_once __DIR__ . '/Proofs.php';
 
 return [
     'name' => 'themes',
     'label' => 'Temi e blocchi',
-    'version' => '1.2.0',
+    'version' => '1.3.0',
     // 1.2.0: le fasce che avevano perso i testi cambiando tipo li ritrovano dalle versioni precedenti
-    'migrate' => fn() => Blocks::recover(),
+    // 1.3.0: "scelti a mano" in un campo solo, senza limite
+    'migrate' => function () { Blocks::recover(); Blocks::migratePicks(); },
     'boot' => function () {
         // testi comuni a tutti i temi (pulsanti, etichette): il sito può riscriverli in site/strings.php
         Hooks::on('strings', fn($d) => $d + (require PP_ROOT . '/pp-themes/_base/strings.php'), 5);

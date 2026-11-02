@@ -44,9 +44,9 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 
 /* apertura: foto a tutta pagina, titolo enorme in basso, seconda riga evidenziata */
 .hero { min-height: min(94svh, 1000px); padding-bottom: clamp(2.5rem, 5vw, 4.5rem); gap: 28px; }
-.hero__title { font-size: var(--step-display); line-height: 0.92; max-width: 14ch; }
+.hero__title { font-size: var(--step-display); line-height: 1.04; max-width: 14ch; }
 .hero__l2 { align-self: flex-start; }
-.hero__l2:not(:empty) { background: var(--accent); color: var(--accent-ink) !important; padding: 0.02em 0.12em 0; margin-top: 0.06em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.hero__l2:not(:empty) { background: var(--accent); color: var(--accent-ink) !important; padding: 0.02em 0.12em 0.04em; margin-top: 0.16em; line-height: 1.14; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
 .chapter--accent:not(.hero--img) .hero__l2:not(:empty) { background: var(--accent-ink); color: var(--accent) !important; }
 .photo-hero .hero--img .hero__img::after { background: linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,.3) 50%, rgba(0,0,0,.1)); }
 .hero__aside { flex-direction: row; flex-wrap: wrap; align-items: flex-end; gap: 20px 40px; max-width: 70ch; }

@@ -2,6 +2,43 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.16.0
+Tutti i temi rivisti con i contenuti veri di un sito (Ares 2.0), con le correzioni chieste tema per tema.
+
+- **Temi**: tolti Istituzionale e Minimalista. Un sito che ne usava uno passa da solo a Tipografico; i contenuti non cambiano.
+- **Provini per il cliente** (Temi, solo amministratori): "Genera i provini" crea una copia navigabile del sito per ogni tema in `/provini/`, con un indice da mandare al cliente.
+  - Ogni copia ha i colori del tema, oppure quelli del sito.
+  - Ci sono home, pagine, portfolio con le categorie, gli ultimi lavori e le ultime news.
+  - Il sito pubblico non cambia e i provini non vanno nei motori di ricerca; si cancellano con un clic.
+- **Varianti di colore di un tema**: un tema può proporre più combinazioni di colori e caratteri. Si guardano in anteprima e si applicano da Identità visiva, con "Torna ai colori di prima". Il tema Ares 2.0 ne ha quattro.
+- **Identità visiva**, nuove opzioni valide per ogni tema:
+  - **logo in testata**: su una testata scura si usa da solo il logo per fondi scuri; senza quel logo, il logo sta su un fondino rettangolare e mai più in un ovale;
+  - **spazio tra le fasce**: compatto, come il tema, ampio;
+  - **pagina in un riquadro centrale** sugli schermi larghi; le foto di apertura restano a tutta larghezza;
+  - **testo sulle foto** dell'apertura e delle intestazioni: velo scuro dallo 0 all'80%, ombra leggera o fondino;
+  - **foto dell'apertura e delle intestazioni** a colori, in bianco e nero o virate, separate da quelle degli elenchi.
+- **Spazi**: meno spazio tra le fasce in tutti i temi. Due fasce bianche di seguito non sommano più i loro margini.
+- **Apertura con più foto**: il velo del tema resta sopra la foto che scorre, così il testo bianco si legge. Nei temi dove la foto è un riquadro (es. Voci) i comandi stanno sul riquadro.
+- **Barra dei contatti**: con le testate fisse non copre più il logo e il menu.
+- **Elenco di contenuti**:
+  - le foto delle schede sono quadrate di base, oppure 4:3, 3:2, 16:9, 3:4 o intere, così copertine e locandine non vengono tagliate;
+  - colore delle foto e passaggio del mouse si scelgono per singola fascia;
+  - "Scelti a mano" non ha più limite: si cerca il contenuto per titolo, si aggiunge con un clic e si riordina con le frecce. Gli 8 scelti di prima passano da soli nel campo nuovo.
+- **Tendine lunghe** nella gestione (scegliere un contenuto tra tanti): una casella sopra per cercare.
+- **Pagina dei contatti**: accanto al modulo i recapiti del sito (email, telefoni, PEC, sedi); la mappa occupa la sua colonna intera.
+- **Numeri**: misure più contenute (Manifesto).
+- Correzioni tema per tema:
+  - **Tipografico**: apertura più bassa;
+  - **Tech**: segno grafico dell'apertura a scelta (mosaico, puntini, barre, cerchi o nessuno), sparisce su telefono; niente riquadri decorativi nelle intestazioni;
+  - **Documentario**: intestazioni senza il riquadro decorativo, con una linea che si disegna;
+  - **Voci**: apertura più bassa e foto intera; nel portfolio niente maschera che tagliava le immagini;
+  - **Rebus**: il fondino della seconda riga non copre più la prima;
+  - **Sic2Sic**: apertura e titolo più misurati;
+  - **Eccellenza**: testo dell'apertura più centrato;
+  - **FINE**: pagine col testo a tutta larghezza;
+  - **Adrestia**: il riquadro della dichiarazione ritrova il suo spazio interno.
+- Mappa OpenStreetMap: ammessa anche nel sito statico e nell'anteprima. Nel sito statico va aggiunta a mano nel tuo `.htaccess`, che l'aggiornamento non tocca: confrontalo con quello nuovo.
+
 ## 1.15.3
 - **Fasce: cambiare tipo non cancella più i contenuti.**
   - Riquadri con icona, Passi, Domande frequenti e Numeri si passano le voci: titolo, testo, pulsante e link vanno al tipo nuovo, anche nelle altre lingue.
