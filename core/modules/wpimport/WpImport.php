@@ -354,7 +354,7 @@ final class WpImport
                     'meta' => json_encode(['wp_term' => $mt['id']]), 'created_at' => Content::now(), 'updated_at' => Content::now()]);
                 self::$counts['terms'] = (self::$counts['terms'] ?? 0) + 1;
             }
-            $texts = $byLang + [I18n::$master => $mt];
+            $texts = [I18n::$master => $byLang[I18n::$master] ?? $mt] + $byLang;   // prima l'originale, poi le traduzioni
             foreach ($texts as $l => $t) Content::saveText('entry', $id, $l, ['title' => $t['name'], 'slug' => $t['slug']]);
             self::setMap('termgroup', $key, (string)$id);
             foreach ($byLang as $t) self::setMap('term', (string)$t['id'], (string)$id);
@@ -431,6 +431,8 @@ final class WpImport
         }
         if (!$texts) return;
         if (!isset($texts[I18n::$master])) { $texts[I18n::$master] = reset($texts); $hasMaster = false; }
+        // l'originale si salva per primo: l'impronta delle traduzioni si calcola da quello (altrimenti nascono "Da aggiornare")
+        $texts = [I18n::$master => $texts[I18n::$master]] + $texts;
         $status = $hasMaster && $mi['status'] === 'publish' ? 'published' : 'draft';
         $meta = $base['meta'] + ['wp_id' => $mi['id']];
         foreach ($meta as $k => $v) if (is_array($v)) $meta[$k] = array_values(array_unique($v));
