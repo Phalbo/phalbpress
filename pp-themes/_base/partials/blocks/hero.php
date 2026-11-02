@@ -16,7 +16,7 @@ $slides = [];
 if ($b['image']) {
     $alts = array_map('trim', preg_split('~\R~', (string)($x['slides_alts'] ?? '')));
     foreach (array_values(array_filter(array_map('trim', preg_split('~\R~', (string)($m['slides'] ?? ''))))) as $n => $p)
-        if (preg_match('~^uploads/[A-Za-z0-9/_.-]+$~', $p) && is_file(PP_ROOT . '/' . $p)) $slides[] = [$p, $alts[$n] ?? ''];
+        if (preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif|avif)$~i', $p) && is_file(PP_ROOT . '/' . $p)) $slides[] = [$p, $alts[$n] ?? ''];
 }
 $tag = $i === 0 ? 'h1' : 'h2';
 $hcls = (in_array($m['height'] ?? '', ['short', 'medium', 'tall'], true) ? ' hero--h-' . $m['height'] : '') . (in_array($m['title_size'] ?? '', ['s', 'm', 'l'], true) ? ' hero--t-' . $m['title_size'] : '');
