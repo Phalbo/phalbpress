@@ -19,7 +19,7 @@ Rispondi ad Andrea in italiano, diretto, con codice completo e pronto.
 index.php            ingresso unico; in sviluppo: php -S localhost:8000 index.php
 install.php          senza site/config.php → core/Setup.php (controllo server, zip del sito o sito nuovo, database → scrive config.php);
                      poi tabelle, contenuti (progetto / esempio / modello / vuoto), segnaposto, primo admin, cose da fare dopo; si blocca se esiste un utente
-cron.php             solo CLI: contenuti programmati → rigenera lo statico (Scheduler::tick), poi hook `cron` (es. controllo aggiornamenti)
+cron.php             solo CLI: contenuti programmati → rigenera lo statico (Scheduler::tick), rigenerazioni rimaste indietro (StaticSite::pending), poi hook `cron`
 core/PP.php          config, URL, sezioni per lingua (PP::section), router (run → page → resolve), temi (themeFile/asset), render, shortcode, helper
 core/DB.php          PDO MySQL/SQLite, migrate(), addColumn(), t() tipi portabili
 core/Content.php     entry e doc traducibili, slug per lingua, revisioni, duplica, programmazione (live()), classe Redirects
@@ -66,7 +66,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Social**: `partials/social.php` (icone SVG dal nome o dal dominio); `social_place` = footer|header|both|toolbar|toolbar_footer|none nelle Impostazioni.
 - **Barra in testata e footer** (Impostazioni, chiavi del config): `toolbar` (barra sottile con telefoni, email, social), `company`, `phone`, `phone2`, `pec`, `vat`,
   `offices` (blocchi separati da una riga vuota, `SiteSettings::offices()`), `footer_badge` (immagine, es. certificazioni). Footer: logo per fondi scuri, frase, `footer_note`,
-  contatti, menu `footer`, sedi, riga finale `© <span data-year>` + `footer_legal`. L'anno si aggiorna da solo (firma del Scheduler con `date('Y')` + base.js).
+  contatti, menu `footer`, sedi, riga finale `© <span data-year>` + `footer_legal`. L'anno si aggiorna da solo (firma del Scheduler con `date('Y')` + base.js; con eventi pubblicati la firma ha il giorno, così prossimi/passati cambiano a mezzanotte).
   Footer di base scuro: si stampano tutti e due i loghi (`foot__logo-img--night|--day`); i temi col footer chiaro hanno `foot-light` in `body_class`.
 - **Sottomenu**: si aprono passandoci sopra (e col clic/tastiera); un terzo livello si apre di lato (`nav__sub--deep`).
   Voce di menu `section` con ref `stories:cats` = Portfolio con le sue categorie (`Stories::menu()`); con `parent=1` una voce va sotto la precedente.
@@ -89,6 +89,9 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   manifesto in `data/provini.json`, `Proofs::clear()`. `provini` è riservato nel sito statico.
 - **Campi `entries`** (più contenuti in ordine, id separati da virgola): ricerca e riordino in pp-admin/admin.js; i `select` di tipo `entry` con più di 12 voci hanno la casella di ricerca (`data-search`).
 - **Contatti**: `[form:contact]` dentro `.contact-wrap` con i recapiti delle Impostazioni accanto (`Forms::contacts()`).
+  Antispam (1.17): il browser chiede un gettone a `GET /form/{nome}/key` all'apertura della pagina (`Forms::key()`, HMAC di nome e ora con la chiave `secret`; vale anche col sito statico),
+  il server accetta l'invio da 3 secondi a 4 ore dopo il rilascio; campo trappola `website`; 5 invii l'ora per impronta dell'indirizzo (colonna `pp_form_entries.ip`, indicizzata).
+  Id per modulo: `Forms::anchor($form)` = `pp-form` per il contatto, `pp-form-<nome>` per gli altri; l'esito torna in `#<ancora>-ok|err`.
 - **Fasce nelle pagine**: un blocco col campo `page` (id) o `page_slug` (nel seed: la pagina può arrivare dopo, es. con l'importazione) va in fondo a quella pagina
   (`Blocks::forPage()`, in `templates/page.php`) e non in home. `Blocks::bindPages()` (hook `saved`) trasforma `page_slug` in `page` quando la pagina esiste.
 - **Mappa** (blocco `map`): OpenStreetMap in iframe solo dopo il consenso (`data-pp-embed`, servizio `openstreetmap` in `Legal::services`, `csp_frames`); senza consenso link "Apri su OpenStreetMap".
@@ -98,6 +101,12 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Contenuti di partenza**: `core/Starter.php` (`seed()`, `strings()`, `start('seed'|'demo'|'empty')`), usato da install.php e da **Azzera il sito**
   (`Backup::wipe()`: svuota le tabelle tranne l'utente che azzera e le impostazioni `secret`/`module_versions`, poi `Starter::start()`; opzioni backup, keep_uploads, keep_import, keep_backups, keep_users).
   Le foto importate da WordPress sono anche in `data/wp-media-map.json` (`WpImport::saveMediaMap()`): un'importazione col database nuovo le ritrova.
+  `Backup::wipe()` tiene anche l'impostazione `site_url`; un modello (`export('template')`) non porta `site_url`, `static_dirty` né la chiave API della traduzione.
+- **Sito statico** (`core/modules/static/StaticSite.php`): l'hook `saved` chiama `StaticSite::later()`, che segna `static_dirty` e rigenera a fine richiesta dopo `fastcgi_finish_request()`;
+  `pending()` usa il lucchetto `data/static.lock` (chi lo trova occupato lascia il segno, la rigenerazione in corso ripassa una volta); `catchUp()` (gestione) e `cron.php` riprendono quelle interrotte.
+  `build()` chiama prima `Content::flush()` (slug e storie letti prima del salvataggio). Per una rigenerazione subito: `StaticSite::build()`.
+- **Indirizzo del sito**: `PP::origin()` = `site_url` del config → impostazione `site_url` (salvata da Sistema con "Usa questo indirizzo") → l'Host della richiesta. L'installazione scrive l'indirizzo da cui si installa.
+- **Cache per richiesta**: `PP::themes()`, `Content::slugFor()` e `Stories::all()/categories()`; `Content::flush()` le svuota (lo fanno `saveText()`, `StaticSite::build()`, `Demo::use()`).
 - **Gestione**: `Admin::pager($items, $per)` (`?p`, `?all`) per elenchi lunghi: Immagini e file, SEO, Redirect, Accessibilità hanno filtri e pagine.
   `search_hidden` (SEO, attivo a ogni installazione): `noindex` in tutte le pagine, robots.txt `Disallow: /`, avviso in cima alla gestione finché non si toglie.
 
@@ -109,6 +118,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Config del sito `wp_import`: `types` (wp → pp), `taxonomies` (`['tax' => ['type','field']]`), `drafts`, `skip` (lista o `'slug' => 'home'|chiave sezione|'/percorso/'|'category:slug'` per il redirect), `download`, `menu`.
 - Filtri: `wp_import_entry` ($data con type, title, excerpt, body, slug, image, image_alt, meta, extra, skip), `wp_import_term` (termine prima del salvataggio), `wp_import_term_url` (→ `['from','to']`), `wp_import_menu_item`.
 - CLI: `php cron.php wpimport plan|run|reset|undo` (hook `cli` dei moduli: `Hooks::first('cli', $args)`).
+- Ripresa (1.17, `WpImport::prepare()`): se cambia la sorgente delle foto (`sourceSig()`: zip nome/data/peso + `download`) i file mappati a `''` (mancanti) si riprovano e il passo torna a `media`, anche a importazione finita;
+  `data/wp-import/media-in-corso.txt` è il segnalibro del file in lavorazione: se PHP muore lì, alla ripresa quel file è segnato non importabile e saltato. `newUrl()` non punta a contenuti in bozza.
 
 ## Rotte pubbliche
 `/{lang}/` home a blocchi · `/{lang}/{section news}/[slug]` · stories · results · partners · `/{lang}/{slug pagina}/` · legali · ricerca (`/{lang}/cerca/`…)
@@ -125,6 +136,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Il tema usa solo le variabili dell'identità** per colori e font: `--bg --ink --surface --muted --accent(-ink) --field-1(-ink) --field-2(-ink) --black(-ink) --hero-1 --hero-2 --font --font-display --radius`.
 - `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`),
   `hero_on` (`accent` | `ground`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
+- Home: se la prima fascia non è un'apertura, `templates/home.php` stampa un `h1` `sr-only` col nome del sito. Fascia loghi con pulsante di pausa (`[data-logos-pause]`, `.logos.is-paused`).
+  Sottomenu: sul computer il passaggio del mouse mette anche `aria-expanded`; Esc aggiunge `html.sub-esc` che chiude anche quelli aperti da `:hover`/`:focus-within` finché non si esce dalla voce.
 - Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, icons, steps, collection, figures, latest, text, gallery, cta, video, logos, team, roster, map, quote, faq, newsletter, events), ordine = menu_order.
   L'apertura può essere uno slideshow (campo `slides`: percorsi uno per riga, `slides_alts` tradotto; `[data-slides]` in base.js: `data-nav` dots|arrows|both|none, `data-time` secondi,
   `slides_fx` fade|slide, pausa al passaggio e al fuoco, pulsantino pausa, niente giro con meno movimento); `height` short|medium|tall, `title_size` s|m|l.
@@ -190,13 +203,10 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Gli zip non devono mai avere una data fissa nei file: OPcache rilegge un file solo se la data cambia (`BUILT` in `tools/build.php`, `Updater::fresh()`).
 - Le migrazioni del database devono restare additive (colonne e tabelle nuove), così il ritorno alla versione precedente non rompe nulla.
 
-## Stato al 3 novembre 2026 (ramo `audit-1.17`)
-- Sulla `main` c'è la 1.16.0 (tag `v1.16.0` da creare da Andrea se non l'ha già fatto). Sul ramo `audit-1.17`, creato da `main`, ci sono le correzioni dell'audit notturno: un commit per correzione, `VERSION` non alzata, nessun tag.
-- **`AUDIT.md`** nella radice: riassunto, tabella dei problemi con gravità, file:riga, riproduzione, correzione e stato (corretto nel commit / da decidere), cosa è stato provato e cosa no. È il punto di partenza della prossima sessione.
-- Corretti sul ramo (tutti ricontrollati: `php -l`, rotte 200 su Ares e demo, gestione senza avvisi, `StaticSite::build()`, provini, 16 temi a 1440/390 senza scroll, `tools/build.php`): permessi del traduttore su documenti e testi; JSON-LD con `</script>`; `innerHTML` nella gestione; chiave API nel modello di backup; robots.txt con l'indirizzo della gestione; `.htaccess` da zip di backup; PHP sotto `pp-assets/`, `site/`, `uploads/`; slug delle pagine uguali alle sezioni; ordine originale/traduzioni nell'import WordPress; categorie "3,5" del portfolio; slideshow nell'anteprima demo; galleria senza validazione; testi dei moduli con lingua originale non en/it; contrasto arrotondato; `llms.txt` per lingua; fascia Eventi con eventi spenti; `PP::themes()` senza cache; stampa, lightbox, puntini delle traduzioni, campo immagine, coda di traduzione (accessibilità); redirect `//` e CSV dei moduli; `fieldValue` con array.
-- **Da decidere con Andrea, in ordine** (dettagli in AUDIT.md): P1 rigenerazione completa del sito statico a ogni salvataggio (4,9 s su Ares); C3/C4 WordPress (file mancanti per sempre, loop su un file che fa morire PHP); S12 antispam dei moduli; S19/S15 `site_upload` acceso di default e `site_url` vuoto su Ares; A5/A6/A7 accessibilità (h1 in home, pausa dei loghi, sottomenu col mouse); C9 eventi col sito statico; C10 anteprima demo (cache e identità); C12 id dei moduli duplicati.
-- Sui siti già installati l'`.htaccess` non si aggiorna da solo: le nuove righe (`site|pp-assets` e `uploads/*.php`) vanno copiate a mano, come la `frame-src` di OpenStreetMap della 1.16.
-- Le correzioni "da decidere" che entrano nella 1.17 vanno fatte sul ramo e poi unite in `main` con `## 1.17.0` in CHANGELOG.md.
+## Stato al 3 novembre 2026
+- `main` = **1.17.0** (tag `v1.17.0` lo crea Andrea): l'audit della 1.16.0 fatto da Fable (24 commit) più le correzioni decise dopo (sito statico differito, antispam, indirizzo del sito, WordPress, accessibilità, eventi, anteprima demo). Storia completa nel ramo `audit-1.17`, unito senza squash.
+- **`AUDIT.md`** nella radice: solo quello che resta aperto, in ordine di importanza. Si parte da lì per la 1.18.
+- Sui siti già installati l'`.htaccess` non si aggiorna da solo: vanno copiate a mano le righe `RewriteRule ^(site|pp-assets)/.+\.php$ - [F,L]` e `RewriteRule ^uploads/.+\.(php\d?|phtml|phar|shtml)$ - [F,L]` (dopo quella di `pp-themes`) e `https://www.openstreetmap.org` nella `frame-src`.
 
 ## Test locale
 Sito dimostrativo (progetto inventato "Common Ground", 3 lingue, foto con le misure stampate sopra): `php tools/demo.php` (o `--force` per rifarlo) copia `tools/demo/site` in `site/`,

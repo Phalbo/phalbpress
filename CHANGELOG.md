@@ -2,6 +2,45 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.17.0
+Revisione completa del motore (sicurezza, correttezza, accessibilità, velocità), provata sul sito Ares e sul sito dimostrativo.
+
+- **Salvare non fa più aspettare**: col sito statico attivo le pagine si rigenerano dopo aver risposto, non mentre aspetti. Più salvataggi vicini (per esempio nella Modifica visuale) diventano una rigenerazione sola. Se una rigenerazione si interrompe, la riprende il primo accesso alla gestione o il cron. In Sistema compare "In corso" finché non ha finito.
+- **Moduli di contatto e newsletter**: l'antispam ora è controllato dal server e funziona anche col sito statico; i programmi che inviano moduli in automatico non passano più. Contatto e newsletter nella stessa pagina non si confondono più: l'esito compare sul modulo giusto.
+- **Indirizzo del sito**: l'installazione lo salva da sola e Sistema avvisa se manca, con un pulsante per salvarlo. Senza, l'indirizzo nelle pagine, nella sitemap, nei feed e nelle email veniva preso da chi visitava il sito.
+- **Importa da WordPress**:
+  - i file non trovati si riprovano quando carichi lo zip delle foto o attivi lo scaricamento, anche a importazione finita;
+  - un file che fa fermare il server (foto enorme) viene saltato invece di bloccare l'importazione;
+  - le traduzioni non nascono più "Da aggiornare";
+  - niente redirect e link verso contenuti importati come bozza.
+- **Indirizzi delle pagine**: una pagina non può più prendere l'indirizzo di una sezione (news, portfolio, eventi, privacy, ricerca…), dove sarebbe sparita.
+- **Sicurezza**:
+  - un traduttore non può più modificare l'originale di documenti e testi né eliminare documenti;
+  - `robots.txt` non mostra più l'indirizzo della gestione;
+  - un modello per un altro sito non porta con sé la chiave della traduzione automatica né l'indirizzo del sito;
+  - un backup ripristinato non può più cambiare le protezioni della cartella delle immagini;
+  - i file PHP sotto `site/`, `pp-assets/` e `uploads/` non si possono aprire dal web (righe nuove in `.htaccess`: vanno copiate a mano sui siti già installati);
+  - un titolo con caratteri speciali non può più rompere i dati per Google; link e messaggi della gestione sono sempre trattati come testo;
+  - Sistema ricorda di spegnere "Sito del progetto" (`'site_upload' => false`) sui siti consegnati al cliente.
+- **Accessibilità**:
+  - la home ha sempre un titolo principale, anche quando non comincia con un'apertura;
+  - il nastro dei loghi ha un pulsante per fermarlo;
+  - i sottomenu aperti col mouse si chiudono con Esc e lo dicono allo screen reader;
+  - stampando una pagina si vede tutto il contenuto;
+  - la galleria ingrandita ha un nome;
+  - nella gestione lo stato delle traduzioni è scritto anche a parole, il campo immagine ha l'etichetta e l'avanzamento della coda di traduzione viene annunciato.
+- **Temi e fasce**:
+  - nell'anteprima con i contenuti di esempio si vedono le foto a scorrimento dell'apertura e il logo e i colori del sito;
+  - la galleria accetta solo immagini del sito;
+  - la fascia Eventi non mostra niente se gli eventi sono spenti;
+  - col sito statico gli eventi passati escono dai "prossimi" a mezzanotte;
+  - dopo aver cambiato l'indirizzo di una pagina il sito statico la scrive subito al posto giusto;
+  - le categorie di un lavoro scritte come "3,5" non si perdono più;
+  - la news in evidenza si carica subito.
+- **Varianti di colore**: provandone più di una, "Torna ai colori di prima" riporta a quelli di partenza. Il controllo dei contrasti non arrotonda più (4,49 non passa come 4,5).
+- **Siti con lingua originale diversa da inglese e italiano**: i testi di interfaccia partono dall'inglese, segnati da rivedere, invece di restare vuoti.
+- Più veloce: l'elenco dei temi si legge una volta sola per pagina invece di decine.
+
 ## 1.16.0
 Tutti i temi rivisti con i contenuti veri di un sito (Ares 2.0), con le correzioni chieste tema per tema.
 
