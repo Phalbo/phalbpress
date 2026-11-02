@@ -48,6 +48,42 @@ final class WpImport
 
     private static function save(array $s): void { file_put_contents(self::stateFile(), json_encode($s, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)); }
 
+    /** File su cui si sta lavorando adesso (segnalibro contro i file che fanno morire PHP). */
+    private static function busyFile(): string { return WpSource::dir() . '/media-in-corso.txt'; }
+
+    /** Impronta della sorgente delle foto: zip (nome, data, peso) e scaricamento dal vecchio sito. Se cambia, i file mancanti si riprovano. */
+    private static function sourceSig(): string
+    {
+        $f = WpSource::files();
+        $zip = !empty($f['zip']) && is_file($f['zip']) ? basename($f['zip']) . ':' . filemtime($f['zip']) . ':' . filesize($f['zip']) : '';
+        return md5($zip . '|' . (self::cfg()['download'] ? '1' : '0'));
+    }
+
+    /**
+     * Prima di lavorare: un file su cui PHP è morto la volta scorsa viene segnato come non importabile;
+     * se è cambiata la sorgente delle foto (zip caricato dopo, download acceso), i file mancanti si riprovano,
+     * anche a importazione finita, e i contenuti vengono ripassati per ricevere le foto ritrovate.
+     */
+    private static function prepare(array &$s): void
+    {
+        $sig = self::sourceSig();
+        if (($s['src_sig'] ?? '') !== $sig && in_array($s['step'], array_slice(self::STEPS, 2), true)) {
+            $missing = (int)DB::val("SELECT COUNT(*) FROM pp_wp_map WHERE kind = 'media' AND ref = ''");
+            if ($missing) {
+                DB::run("DELETE FROM pp_wp_map WHERE kind = 'media' AND ref = ''");
+                unset(self::$notes['missing']);
+                $s['step'] = 'media'; $s['cursor'] = 0; $s['finished'] = '';
+                self::note('retry', $missing . ' file mancanti riprovati: la sorgente delle foto è cambiata');
+            }
+        }
+        $s['src_sig'] = $sig;
+        if (is_file(self::busyFile())) {
+            $orig = trim((string)file_get_contents(self::busyFile()));
+            @unlink(self::busyFile());
+            if ($orig !== '') { self::setMap('media', $orig, ''); self::note('media_error', $orig . ': il server si è fermato su questo file (troppo grande o danneggiato), saltato'); }
+        }
+    }
+
     public static function reset(): void { @unlink(self::stateFile()); @unlink(WpSource::modelFile()); WpSource::cleanTmp(); }
 
     private static function model(): array
@@ -188,6 +224,8 @@ final class WpImport
             if ($tmp !== '') break;
         }
         if ($tmp === '') { self::note('missing', $orig); self::setMap('media', $orig, ''); return ['', '']; }
+        // segnalibro: se PHP muore su questo file (memoria, tempo), la ripresa lo salta invece di ricadere qui all'infinito
+        @file_put_contents(self::busyFile(), $orig);
         try {
             $ext = strtolower(pathinfo($orig, PATHINFO_EXTENSION));
             $path = Media::upload(['name' => basename($orig), 'tmp_name' => $tmp, 'size' => (int)filesize($tmp), 'error' => UPLOAD_ERR_OK],
@@ -198,6 +236,7 @@ final class WpImport
             $path = '';
         } finally {
             if (is_file($tmp)) @unlink($tmp);
+            @unlink(self::busyFile());
         }
         self::setMap('media', $orig, $path);
         self::$counts['media'] = (self::$counts['media'] ?? 0) + ($path !== '' ? 1 : 0);
@@ -283,6 +322,7 @@ final class WpImport
         if ($s['started'] === '') $s['started'] = Content::now();
         self::$counts = $s['counts'] ?? [];
         self::$notes = $s['notes'] ?? [];
+        if ($s['step'] !== 'scan') { self::prepare($s); $s['notes'] = self::$notes; self::save($s); }
         $end = microtime(true) + $seconds;
         while ($s['step'] !== 'done' && microtime(true) < $end) {
             $more = match ($s['step']) {
