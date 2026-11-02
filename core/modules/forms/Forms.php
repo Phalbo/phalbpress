@@ -97,15 +97,18 @@ final class Forms
         return $out . '</aside>';
     }
 
-    /** Torna alla pagina di partenza con l'esito nell'ancora (#pp-form-ok / #pp-form-err): funziona anche con le pagine statiche. */
-    private static function back(bool $ok): never
+    /** Ancora del modulo: "pp-form" per il contatto, "pp-form-<nome>" per gli altri (più moduli nella stessa pagina non hanno id uguali). */
+    public static function anchor(string $form): string { return 'pp-form' . ($form === 'contact' ? '' : '-' . $form); }
+
+    /** Torna alla pagina di partenza con l'esito nell'ancora (#pp-form-ok, #pp-form-newsletter-err…): funziona anche con le pagine statiche. */
+    private static function back(bool $ok, string $form = 'contact'): never
     {
         $ref = (string)($_SERVER['HTTP_REFERER'] ?? '');
         $path = parse_url($ref, PHP_URL_PATH) ?: PP::link('');
         $host = parse_url($ref, PHP_URL_HOST);
         if (($host && $host !== ($_SERVER['HTTP_HOST'] ?? '') && $host !== parse_url(PP::origin(), PHP_URL_HOST)) || str_starts_with($path, '//')) $path = PP::link('');
         header('Cache-Control: no-store');
-        PP::redirect($path . '#pp-form-' . ($ok ? 'ok' : 'err'), 303);
+        PP::redirect($path . '#' . self::anchor($form) . '-' . ($ok ? 'ok' : 'err'), 303);
     }
 
     public static function submit(string $form): void
@@ -117,26 +120,26 @@ final class Forms
         // trappole: campo nascosto compilato, gettone assente o falso, modulo inviato troppo in fretta o con un gettone vecchio
         $ts = (int)($p['pp_t'] ?? 0);
         $age = time() - $ts;
-        if (!empty($p['website']) || !hash_equals(self::token($form, $ts), (string)($p['pp_k'] ?? '')) || $age < self::MIN_SECONDS || $age > self::MAX_AGE) self::back(false);
+        if (!empty($p['website']) || !hash_equals(self::token($form, $ts), (string)($p['pp_k'] ?? '')) || $age < self::MIN_SECONDS || $age > self::MAX_AGE) self::back(false, $form);
         $recent = (int)DB::val('SELECT COUNT(*) FROM pp_form_entries WHERE ip = ? AND at > ?', [$ipHash, date('Y-m-d H:i:s', time() - 3600)]);
-        if ($recent >= self::MAX_PER_HOUR) self::back(false);
+        if ($recent >= self::MAX_PER_HOUR) self::back(false, $form);
 
         if ($form === 'newsletter') {
             $email = trim((string)($p['email'] ?? ''));
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($p['privacy'])) self::back(false);
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($p['privacy'])) self::back(false, $form);
             // un indirizzo una volta sola: se c'è già, si risponde comunque "iscritto"
             if (!DB::val("SELECT id FROM pp_form_entries WHERE form = 'newsletter' AND data LIKE ?", ['%"email":' . json_encode(strtolower($email)) . '%'])) {
                 $data = Hooks::filter('form_data', ['name' => '', 'email' => strtolower($email), 'org' => '', 'message' => 'newsletter', 'consent' => Content::now(),
                     'page' => parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_PATH) ?: '', '_ip' => $ipHash], $form, $p);
                 DB::insert('pp_form_entries', ['form' => 'newsletter', 'lang' => $lang, 'data' => json_encode($data, JSON_UNESCAPED_UNICODE), 'at' => Content::now(), 'is_read' => 0, 'ip' => $ipHash]);
             }
-            self::back(true);
+            self::back(true, $form);
         }
         $name = mb_substr(trim(strip_tags((string)($p['name'] ?? ''))), 0, 120);
         $email = trim((string)($p['email'] ?? ''));
         $org = mb_substr(trim(strip_tags((string)($p['org'] ?? ''))), 0, 160);
         $msg = mb_substr(trim(strip_tags((string)($p['message'] ?? ''))), 0, 5000);
-        if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($msg) < 5 || empty($p['privacy'])) self::back(false);
+        if ($name === '' || !filter_var($email, FILTER_VALIDATE_EMAIL) || mb_strlen($msg) < 5 || empty($p['privacy'])) self::back(false, $form);
 
 
         $page = parse_url((string)($_SERVER['HTTP_REFERER'] ?? ''), PHP_URL_PATH) ?: '';
@@ -155,7 +158,7 @@ final class Forms
             $headers = 'From: ' . $clean($site) . ' <' . $clean($from) . ">\r\nReply-To: " . $clean($email) . "\r\nContent-Type: text/plain; charset=UTF-8";
             @mail($to, '=?UTF-8?B?' . base64_encode('[' . $site . '] ' . $clean($name)) . '?=', $body, $headers);
         }
-        self::back(true);
+        self::back(true, $form);
     }
 
     public static function admin(string $id): void

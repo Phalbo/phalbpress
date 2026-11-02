@@ -245,7 +245,7 @@
     });
   });
   const hash = location.hash;
-  if (hash === '#pp-form-ok' || hash === '#pp-form-err') { const m = document.querySelector(hash); if (m) m.focus(); }
+  if (/^#pp-form(-[a-z0-9_-]+)?-(ok|err)$/.test(hash)) { const m = document.querySelector(hash); if (m) m.focus(); }
 
   /* ---------- copia link ---------- */
   document.querySelectorAll('[data-share-copy]').forEach((b) => {
