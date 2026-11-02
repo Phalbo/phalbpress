@@ -2,6 +2,13 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.15.2
+- **Sito del progetto da zip** (Aggiornamenti, solo amministratori): si carica una versione nuova della cartella `site/` senza FTP.
+  - `config.php` non si tocca; i file che nella versione nuova non ci sono più vengono tolti; prima viene fatta una copia della versione di adesso (in Backup e modelli).
+  - Se `config.php` è una copia completa (fatta a mano), una casella lo riscrive come lo scrive l'installazione: tiene database e indirizzi, tutto il resto viene dal `config.sample.php` dello zip. Il vecchio resta in `data/backups/`.
+  - Serve la password; si spegne con `'site_upload' => false` nel config.
+- Aggiornamenti del motore: prima di aggiornare si copia solo il database. Immagini e file caricati l'aggiornamento non li tocca, quindi non si copiano più ogni volta.
+
 ## 1.15.1
 - **Azzera il sito** (Backup e modelli, solo amministratori): riporta il sito come appena installato senza toccare `site/` e `config.php`. Si sceglie:
   - se fare prima un backup completo (spento di base);

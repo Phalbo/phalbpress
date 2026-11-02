@@ -144,8 +144,8 @@ final class Updater
             }
             if (!in_array('core/PP.php', $names, true)) throw new RuntimeException('Lo zip non contiene il motore');
 
-            // 3. backup completo (database + immagini e file caricati)
-            $backup = Backup::export('full');
+            // 3. copia del database (l'aggiornamento non tocca immagini e file caricati: non serve copiarli ogni volta)
+            $backup = Backup::export('full', false);
 
             // 4. estrae in una cartella di appoggio
             $stage = self::dir() . "/stage-$to";
@@ -326,6 +326,46 @@ final class Updater
         Settings::set('update_notified', $i['version']);
     }
 
+    /* ---------- sito del progetto (cartella site/) ---------- */
+
+    public static function siteUploadAllowed(): bool
+    {
+        return (PP::$config['site_upload'] ?? true) !== false;
+    }
+
+    /** Carica una versione nuova della cartella site/ da uno zip: prima ne fa una copia, config.php resta. */
+    private static function siteUpload(): string
+    {
+        if (!Auth::isAdmin() || !self::siteUploadAllowed()) throw new RuntimeException('Il caricamento del sito è spento (site_upload nel config).');
+        $hash = (string)DB::val('SELECT pass_hash FROM pp_users WHERE id = ?', [(int)(Auth::user()['id'] ?? 0)]);
+        if ($hash === '' || !password_verify((string)Admin::post('password'), $hash)) throw new RuntimeException('Password errata: il sito non è stato toccato.');
+        $f = $_FILES['site'] ?? [];
+        if (in_array($f['error'] ?? 0, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true)) throw new RuntimeException('Lo zip è più grande di quanto il server accetta (' . ini_get('upload_max_filesize') . ').');
+        if (empty($f['tmp_name']) || !is_uploaded_file($f['tmp_name'])) throw new RuntimeException('Scegli il file .zip del sito.');
+        require_once PP_ROOT . '/core/SitePackage.php';
+        @set_time_limit(300);
+        // la versione di adesso, per tornare indietro (si trova in Backup e modelli)
+        $copy = SitePackage::snapshot(PP_SITE, Backup::dir(), 'sito-' . Media::slug(PP::$config['site_name'] ?? 'sito') . '-' . date('Ymd-His') . '.zip');
+        $n = SitePackage::extract($f['tmp_name'], PP_SITE, true);
+        $msg = "Sito del progetto aggiornato ($n file). Copia della versione di prima: " . basename($copy) . '.';
+        if (Admin::post('follow') && !SitePackage::configFollowsSample(PP_SITE)) {
+            $old = SitePackage::followSample(PP_SITE, Backup::dir());
+            $msg .= " config.php ora prende tutto da config.sample.php (il vecchio è in data/backups/$old).";
+        }
+        Auth::log('site upload', basename($copy));
+        return $msg . ' Al prossimo caricamento della pagina il sito usa la versione nuova; per i contenuti iniziali nuovi: Backup e modelli → Azzera il sito.';
+    }
+
+    /** Dopo un caricamento del sito: moduli del sito aggiornati, identità e pagine statiche rifatte (alla richiesta dopo, col codice nuovo). */
+    public static function afterSite(): void
+    {
+        if (empty($_SESSION['pp_site_uploaded'])) return;
+        unset($_SESSION['pp_site_uploaded']);
+        Modules::migrate();
+        try { Hooks::fire('saved', 'site'); } catch (Throwable $e) {}
+        if (class_exists('Identity')) Identity::write();
+    }
+
     /* ---------- gestione ---------- */
 
     public static function admin(): void
@@ -335,6 +375,7 @@ final class Updater
             try {
                 if ($act === 'check') { $i = self::check(true); Admin::flash(self::available() ? "Disponibile PhalbPress {$i['version']}." : 'Il motore è già aggiornato.'); }
                 if ($act === 'update') { $r = self::apply(); Auth::log("update {$r['from']} → {$r['to']}"); Admin::flash("Aggiornato da {$r['from']} a {$r['to']}. Copia di sicurezza: {$r['backup']}."); }
+                if ($act === 'site') { $m = self::siteUpload(); $_SESSION['pp_site_uploaded'] = 1; Admin::flash($m); }
                 if ($act === 'rollback') { $r = self::rollback(); Auth::log("update rollback {$r['from']} → {$r['to']}"); Admin::flash("Rimessa la versione {$r['to']}. Se l'aggiornamento aveva cambiato il database, puoi ripristinare la copia di sicurezza da Backup e modelli."); }
             } catch (Throwable $e) {
                 Admin::flash($e->getMessage(), 'error');
@@ -342,11 +383,14 @@ final class Updater
             }
             PP::redirect(Admin::u('update'));
         }
+        self::afterSite();
         $after = self::after();
         if ($after) Admin::flash('Aggiornamento completato: ' . $after . '.');
         $error = '';
         try { self::check(); } catch (Throwable $e) { $error = $e->getMessage(); }
+        require_once PP_ROOT . '/core/SitePackage.php';
         Admin::view(__DIR__ . '/admin.php', ['title' => 'Aggiornamenti', 'info' => self::info(), 'available' => self::available(), 'error' => $error, 'stale' => self::stale(),
-            'last' => (array)Settings::get('update_last', []), 'reqs' => self::requirements(), 'flash_after' => $after]);
+            'last' => (array)Settings::get('update_last', []), 'reqs' => self::requirements(), 'flash_after' => $after,
+            'siteUpload' => self::siteUploadAllowed(), 'follows' => SitePackage::configFollowsSample(PP_SITE)]);
     }
 }

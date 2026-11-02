@@ -12,7 +12,7 @@
       <?php if (trim((string)$info['notes']) !== ''): ?><div class="panel"><h3>Cosa cambia</h3><pre class="small" style="white-space:pre-wrap"><?= e($info['notes']) ?></pre></div><?php endif; ?>
       <form method="post" class="row">
         <?= Admin::csrfField() ?>
-        <button class="btn btn--primary" name="action" value="update" data-confirm="Aggiornare il motore a <?= e($info['version']) ?>? Prima viene fatta una copia di sicurezza completa.">Aggiorna a <?= e($info['version']) ?></button>
+        <button class="btn btn--primary" name="action" value="update" data-confirm="Aggiornare il motore a <?= e($info['version']) ?>? Prima viene fatta una copia del database.">Aggiorna a <?= e($info['version']) ?></button>
         <?php if (!empty($info['url'])): ?><a class="btn" href="<?= e($info['url']) ?>" target="_blank" rel="noopener">Vedi la release</a><?php endif; ?>
       </form>
     <?php elseif (!$error): ?>
@@ -22,7 +22,7 @@
       <?php if (!empty($info['checked'])): ?><span class="small muted">Ultimo controllo: <?= e(date('d.m.Y H:i', (int)$info['checked'])) ?></span><?php endif; ?></form>
     <p class="hint">Gli aggiornamenti arrivano dalle release di <code><?= e(Updater::repo()) ?></code> su GitHub e si installano solo se la firma corrisponde alla chiave del motore.
       Vengono sostituite solo le cartelle <code>core/</code>, <code>pp-admin/</code>, <code>pp-assets/</code>, <code>pp-themes/</code> e i file <code>index.php</code> e <code>cron.php</code>:
-      <code>site/</code>, <code>uploads/</code> e <code>data/</code> non si toccano. Prima di ogni aggiornamento viene fatta una copia di sicurezza completa (Backup e modelli).</p>
+      <code>site/</code>, <code>uploads/</code> e <code>data/</code> non si toccano. Prima di ogni aggiornamento viene fatta una copia del database (Backup e modelli): immagini e file caricati non si toccano, quindi non si copiano.</p>
   </section>
   <section class="panel stack">
     <h2>Ultimo aggiornamento</h2>
@@ -43,3 +43,23 @@
     </ul>
   </section>
 </div>
+<?php if ($siteUpload): ?>
+<section class="panel stack">
+  <h2>Sito del progetto</h2>
+  <p>Carica una versione nuova della cartella <code>site/</code> (lo zip del sito: configurazione, contenuti iniziali, testi, moduli e tema del progetto), senza FTP.
+    <strong><code>config.php</code> non si tocca</strong>; i file che nella versione nuova non ci sono più vengono tolti. Prima viene fatta una copia della versione di adesso (in Backup e modelli).</p>
+  <form method="post" enctype="multipart/form-data" class="stack"><?= Admin::csrfField() ?>
+    <label class="field">Lo zip del sito<input type="file" name="site" accept=".zip" required></label>
+    <?php if (!$follows): ?>
+      <label class="check"><input type="checkbox" name="follow" value="1" checked> <span>Prendi le impostazioni dal <code>config.sample.php</code> nuovo. Il tuo <code>config.php</code> adesso è una copia completa, quindi le novità dello zip non arriverebbero:
+        così tiene solo database e indirizzi, come lo scrive l'installazione (il vecchio resta in <code>data/backups/</code>).</span></label>
+    <?php else: ?>
+      <p class="hint">Il tuo <code>config.php</code> prende già tutto da <code>config.sample.php</code>: le impostazioni nuove dello zip valgono subito.</p>
+    <?php endif; ?>
+    <label class="field">La tua password<input type="password" name="password" autocomplete="current-password" required></label>
+    <button class="btn btn--primary" name="action" value="site" data-confirm="Sostituire la cartella site/ con lo zip? config.php resta, della versione di adesso viene fatta una copia.">Carica il sito</button>
+  </form>
+  <p class="hint">Lo zip porta codice PHP sul server: carica solo zip preparati per il tuo progetto. Pagine e fasce già nel sito restano come sono; per ripartire dai contenuti iniziali nuovi: Backup e modelli → Azzera il sito.
+    Per spegnere questa funzione: <code>'site_upload' => false</code> nel config.</p>
+</section>
+<?php endif; ?>

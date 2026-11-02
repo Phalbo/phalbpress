@@ -81,29 +81,9 @@ final class Setup
         if (in_array($f['error'] ?? 0, [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true) || (empty($_FILES) && (int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 0))
             throw new RuntimeException('Lo zip è più grande di quanto il server accetta (' . ini_get('upload_max_filesize') . '). Su SiteGround: Site Tools → Devs → PHP Manager → upload_max_filesize e post_max_size, almeno 64M.');
         if (empty($f['tmp_name']) || !is_uploaded_file($f['tmp_name'])) throw new RuntimeException('Scegli il file .zip del sito.');
-        $z = new ZipArchive();
-        if ($z->open($f['tmp_name']) !== true) throw new RuntimeException('Il file non è uno zip valido.');
-        $prefix = null;
-        for ($i = 0; $i < $z->numFiles; $i++) {
-            $n = str_replace('\\', '/', (string)$z->getNameIndex($i));
-            if (preg_match('~^((?:[^/]+/)?)site/config\.sample\.php$~', $n, $m)) { $prefix = $m[1] . 'site/'; break; }
-            if ($n === 'config.sample.php') { $prefix = ''; break; }
-        }
-        if ($prefix === null) { $z->close(); throw new RuntimeException('Nello zip non c’è il sito: manca site/config.sample.php.'); }
+        require_once __DIR__ . '/SitePackage.php';
         $dest = self::$root . '/site';
-        $count = 0;
-        for ($i = 0; $i < $z->numFiles; $i++) {
-            $n = str_replace('\\', '/', (string)$z->getNameIndex($i));
-            if ($prefix !== '' && !str_starts_with($n, $prefix)) continue;
-            $rel = substr($n, strlen($prefix));
-            if ($rel === '' || str_ends_with($rel, '/')) continue;
-            // niente percorsi che escono dalla cartella, niente file nascosti, niente config.php già compilato
-            if (str_contains($rel, '..') || str_starts_with($rel, '/') || preg_match('~(^|/)\.~', $rel) || $rel === 'config.php') continue;
-            if (!is_dir(dirname($dest . '/' . $rel))) mkdir(dirname($dest . '/' . $rel), 0775, true);
-            file_put_contents($dest . '/' . $rel, (string)$z->getFromIndex($i));
-            $count++;
-        }
-        $z->close();
+        $count = SitePackage::extract($f['tmp_name'], $dest);
         if (!is_file($dest . '/config.sample.php')) throw new RuntimeException('Lo zip non si è scompattato: controlla i permessi della cartella site/.');
         $_SESSION['flash'] = "Sito del progetto caricato ($count file).";
     }
