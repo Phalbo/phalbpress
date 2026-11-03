@@ -10,7 +10,7 @@
  *   'types'      => ['post' => 'news', 'page' => 'page', 'portfolio' => 'story']   tipo di WordPress → tipo di PhalbPress
  *   'taxonomies' => ['category' => ['type' => 'category', 'field' => 'category']]   termini → contenuti, collegati con un campo
  *   'drafts'     => true      importa anche le bozze (restano bozze)
- *   'skip'       => [id o slug di WordPress da non importare]; con 'slug' => 'home' | chiave di sezione (es. 'stories') | '/percorso/' | 'category:slug'
+ *   'skip'       => [id o slug di WordPress da non importare, con le sue traduzioni]; con 'slug' => 'home' | chiave di sezione (es. 'stories') | '/percorso/' | 'category:slug' | 'page:slug'
  *                   il vecchio indirizzo porta lì (pagine che erano solo griglie automatiche, la vecchia home…)
  *   'download'   => true      i file che non sono nello zip si scaricano dal vecchio sito, piano
  *   'menu'       => 'slug'    menu di WordPress da usare come menu principale (di base: il più lungo nella lingua principale)
@@ -166,7 +166,7 @@ final class WpImport
             if ($type === null) continue;
             $why = '';
             if (!in_array($it['status'], $ok, true)) $why = 'stato ' . $it['status'];
-            elseif (in_array((string)$it['id'], $skip, true) || in_array($it['slug'], $skip, true)) $why = 'escluso nel config';
+            elseif (in_array((string)$it['id'], $skip, true) || in_array($it['slug'], $skip, true) || isset(self::skipped()[(int)$it['id']])) $why = 'escluso nel config';
             $lang = self::langOf($it['id']);
             if (!$why && !I18n::valid($lang)) $why = 'lingua ' . $lang . ' non presente nel sito';
             if ($why) { $out[] = ['id' => $it['id'], 'type' => $it['type'], 'title' => $it['title'], 'why' => $why]; continue; }
@@ -177,6 +177,31 @@ final class WpImport
             if (!$prev || ($prev['status'] !== 'publish' && $it['status'] === 'publish')) $groups[$key]['items'][$lang] = $it;
         }
         return ['groups' => $groups, 'skipped' => $out];
+    }
+
+    /**
+     * Contenuti esclusi nel config: [id WordPress => destinazione del redirect ('' = nessuna)].
+     * Escludere un contenuto esclude anche le sue traduzioni WPML (stesso trid), con la stessa destinazione.
+     */
+    private static function skipped(): array
+    {
+        static $out = null;
+        if ($out !== null) return $out;
+        $m = self::model();
+        $rules = [];
+        foreach ((array)self::cfg()['skip'] as $k => $v) is_int($k) ? $rules[(string)$v] = '' : $rules[(string)$k] = (string)$v;
+        $out = []; $trids = [];
+        foreach ($m['items'] as $it) {
+            $hit = $rules[(string)$it['id']] ?? $rules[$it['slug']] ?? null;
+            if ($hit === null) continue;
+            $out[(int)$it['id']] = $hit;
+            if (isset($m['icl']['posts'][$it['id']])) $trids[$m['icl']['posts'][$it['id']][0]] = $hit;
+        }
+        foreach ($m['items'] as $it) {
+            $t = $m['icl']['posts'][$it['id']][0] ?? null;
+            if ($t !== null && isset($trids[$t]) && !isset($out[(int)$it['id']])) $out[(int)$it['id']] = $trids[$t];
+        }
+        return $out;
     }
 
     /** id o slug da saltare (le chiavi testuali di 'skip' hanno anche una destinazione per il redirect). */
@@ -564,7 +589,7 @@ final class WpImport
             // contenuti saltati con una destinazione (es. la vecchia pagina "news" → l'archivio delle news): anche i link nei testi portano lì
             foreach ((array)self::cfg()['skip'] as $k => $target) if (!is_int($k)) $skipTo[(string)$k] = (string)$target;
             foreach ($m['items'] as $it) {
-                if (!self::map('post', (string)$it['id']) && !isset($skipTo[$it['slug']]) && !isset($skipTo[(string)$it['id']])) continue;
+                if (!self::map('post', (string)$it['id']) && !isset($skipTo[$it['slug']]) && !isset($skipTo[(string)$it['id']]) && (self::skipped()[(int)$it['id']] ?? '') === '') continue;
                 [$p, $q] = self::oldPath($it);
                 $byPath[rtrim($p, '/') . '/' . ($q !== '' ? '?' . $q : '')] = $it['id'];
             }
@@ -585,7 +610,7 @@ final class WpImport
         $entry = (int)(self::map('post', (string)$wpId) ?? 0);
         $l = I18n::valid((string)($qa['lang'] ?? '')) ? (string)$qa['lang'] : ($lang ?: self::langOf($wpId));
         if (!$entry && isset($m['items'][$wpId])) {
-            $t = $skipTo[$m['items'][$wpId]['slug']] ?? $skipTo[(string)$wpId] ?? '';
+            $t = $skipTo[$m['items'][$wpId]['slug']] ?? $skipTo[(string)$wpId] ?? (self::skipped()[$wpId] ?? '');
             return $t !== '' ? self::target($t, $l) : '';
         }
         $e = $entry ? DB::one('SELECT * FROM pp_entries WHERE id = ?', [$entry]) : null;
@@ -689,11 +714,12 @@ final class WpImport
             Redirects::add('/?' . ($it['type'] === 'page' ? 'page_id' : 'p') . '=' . $it['id'], $to);
             $n++;
         }
-        // contenuti saltati con una destinazione: il vecchio indirizzo porta lì, in ogni lingua
-        foreach ((array)self::cfg()['skip'] as $k => $target) {
-            if (is_int($k)) continue;
+        // contenuti saltati con una destinazione (anche le loro traduzioni): il vecchio indirizzo porta lì, in ogni lingua
+        $skipped = self::skipped();
+        {
             foreach ($m['items'] as $it) {
-                if (($it['slug'] !== (string)$k && (string)$it['id'] !== (string)$k) || $it['status'] !== 'publish') continue;
+                $target = $skipped[(int)$it['id']] ?? '';
+                if ($target === '' || $it['status'] !== 'publish') continue;
                 $l = self::langOf($it['id']);
                 if (!I18n::valid($l)) continue;
                 $to = self::target((string)$target, $l);
@@ -726,6 +752,12 @@ final class WpImport
     {
         if ($target === 'home') return PP::link('', $lang);
         if (str_starts_with($target, '/')) return $target;
+        // una pagina del sito nuovo (es. 'page:servizi'), nella lingua del vecchio indirizzo
+        if (str_starts_with($target, 'page:')) {
+            $id = (int)DB::val("SELECT id FROM pp_entries WHERE type = 'page' AND slug = ?", [substr($target, 5)]);
+            $e = $id ? Content::byId($id, $lang) : null;
+            return $e ? PP::entryUrl($e, $lang) : '';
+        }
         if (str_starts_with($target, 'category:')) {
             $slug = substr($target, 9);
             foreach (self::model()['terms'] as $t) {
