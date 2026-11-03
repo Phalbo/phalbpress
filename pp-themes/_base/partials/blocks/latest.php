@@ -1,7 +1,11 @@
 <?php
-/* Ultime news (e documenti). Aspetto (campo style): '' elenco con le date · grid riquadri quadrati con la foto e il titolo sopra
+/* Ultime news (e documenti). Aspetto (campo style; vuoto = quello del tema): list elenco con le date · mono riquadri con le foto in bianco e nero che si colorano e il titolo piccolo sotto · grid riquadri quadrati con la foto e il titolo sopra
    · cards schede con foto, data e titolo · feature la prima in grande, le altre in elenco accanto. */
-$style = in_array($m['style'] ?? '', ['grid', 'cards', 'feature'], true) ? $m['style'] : '';
+// '' = l'aspetto scelto dal tema (theme.json "blocks": {"latest": {"style": …}}), se no l'elenco
+$styles = ['list', 'grid', 'cards', 'feature', 'mono'];
+$style = (string)($m['style'] ?? '');
+if (!in_array($style, $styles, true)) $style = (string)((PP::themes()[PP::theme()]['blocks']['latest']['style'] ?? '') ?: 'list');
+if (!in_array($style, $styles, true) || $style === 'list') $style = '';
 $news = Content::entries('news', lang(), max(1, (int)($m['limit'] ?? ($style === '' ? 4 : 3))), 'pub_date DESC, id DESC');
 $docs = !empty($m['docs']) ? array_slice(Content::docs(lang()), 0, 5) : [];
 $lgOf = fn($n) => $n['_fallback'] ? ' lang="' . e(I18n::hreflang($n['_lang'])) . '"' : '';
@@ -23,6 +27,16 @@ $rows = function (array $list) use ($lgOf) { ob_start(); ?>
           <?php if ($n['image']): ?><span class="latest__pic<?= e(focus_class($n)) ?>" aria-hidden="true"><?= img($n['image'], '', '(min-width: 900px) 33vw, 100vw') ?></span><?php endif; ?>
           <span class="latest__info"><time datetime="<?= e($n['pub_date']) ?>"><?= e(fmt_date($n['pub_date'])) ?></time>
             <a class="latest__title" href="<?= e(entry_url($n)) ?>"<?= $lgOf($n) ?>><?= e($n['title']) ?></a></span>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <p class="latest__more"><a href="<?= e(section_link('news')) ?>"><?= e(t('all_news')) ?></a></p>
+  <?php elseif ($style === 'mono'): ?>
+    <ul class="latest__mono">
+      <?php foreach ($news as $n): ?>
+        <li class="latest__m reveal">
+          <a class="latest__mpic<?= e(focus_class($n)) ?><?= $n['image'] ? '' : ' latest__mpic--noimg' ?>" href="<?= e(entry_url($n)) ?>" tabindex="-1" aria-hidden="true"><?php if ($n['image']) echo img($n['image'], '', '(min-width: 900px) 25vw, 50vw'); ?></a>
+          <a class="latest__mtitle" href="<?= e(entry_url($n)) ?>"<?= $lgOf($n) ?>><?= e($n['title']) ?></a>
         </li>
       <?php endforeach; ?>
     </ul>

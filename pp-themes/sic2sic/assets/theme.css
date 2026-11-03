@@ -179,5 +179,8 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 .contact__main .contact__mail { padding: 22px 26px; background: var(--accent); color: var(--accent-ink); font-family: var(--font-display); }
 .contact__mail a { color: inherit; }
 .head--cover.band--noimg { background: var(--field-1); color: var(--field-1-ink); }
-.head--cover.band--noimg > .band__deco { width: 100%; left: 0; top: auto; bottom: 18px; height: 24px; background: repeating-linear-gradient(90deg, currentColor 0 18px, transparent 18px 34px) 0 50% / 100% 3px no-repeat; opacity: 0.6; }
+/* il sentiero tratteggiato corre sotto il testo: spazio riservato anche con "intestazioni basse" */
+.site-main .band.head--cover.band--noimg { padding-bottom: calc(clamp(1.75rem, 3vw, 2.75rem) + 48px) !important; }
+.band.head--cover.band--noimg > .band__deco { width: 100%; left: 0; top: auto !important; bottom: 18px; height: 24px; min-height: 0; background: repeating-linear-gradient(90deg, currentColor 0 18px, transparent 18px 34px) 0 50% / 100% 3px no-repeat; opacity: 0.6; }
 .head--cover.band--noimg > .band__deco i { background: currentColor; }
+.head--cover.band--noimg .band__crumb ol { justify-content: flex-start; }   /* il percorso sta allineato al titolo */

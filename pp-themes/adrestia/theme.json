@@ -119,5 +119,10 @@
         "hero2": "#bceafd"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "cards"
+    }
+  }
 }

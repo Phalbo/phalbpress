@@ -136,6 +136,8 @@
         <select name="band_deco">
           <?php foreach (['' => 'Il motivo del tema', 'plain' => 'Tinta unita', 'gradient' => 'Sfumato verso il colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_deco'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
         </select></label>
+      <label class="field">Nome grande nel footer <span class="muted">(i temi che lo mettono)</span>
+        <select name="foot_word"><?php foreach (['' => 'Come il tema', 'none' => 'Toglilo'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['foot_word'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select></label>
       <label class="field">Loghi di clienti e partner
         <select name="logos_size">
           <?php foreach (['s' => 'Piccoli', '' => 'Medi', 'l' => 'Grandi'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['logos_size'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
@@ -173,7 +175,9 @@
     <div class="row">
       <label class="field">Spazio tra le fasce
         <select name="space"><?= $opt('space', ['' => 'Come il tema', 'compact' => 'Compatto', 'wide' => 'Ampio']) ?></select></label>
-      <label class="check"><input type="checkbox" name="boxed" value="1" <?= !empty($s['boxed']) ? 'checked' : '' ?>> <span>Pagina in un riquadro centrale (su schermi larghi; le foto di apertura restano a tutta larghezza)</span></label>
+      <?php $bxv = ($s['boxed'] ?? '') === true ? '1' : (($s['boxed'] ?? '') === false ? '' : (string)($s['boxed'] ?? '')); ?>
+      <label class="field">Pagina in un riquadro centrale <span class="muted">(su schermi larghi; le foto di apertura restano a tutta larghezza)</span>
+        <select name="boxed"><?php foreach (['' => 'Come il tema', '1' => 'Sì', '0' => 'No'] as $k => $l): ?><option value="<?= $k ?>" <?= $bxv === (string)$k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?></select></label>
     </div>
     <fieldset class="row">
       <legend class="field">Pulsanti</legend>

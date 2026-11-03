@@ -121,3 +121,8 @@
 .band:not(.band--img) .band__title::after { content: ""; display: block; height: 1px; margin-top: 0.35em; background: currentColor; opacity: 0.35; transform-origin: left; animation: dc-line 1600ms cubic-bezier(.16, 1, .3, 1) both 200ms; }
 @keyframes dc-line { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .band:not(.band--img) .band__title::after { animation: none; } }
+
+/* testata trasparente sopra la foto: sempre il logo per fondi scuri; spazio sotto il testo per i pallini dello slideshow */
+.has-hero.photo-hero .site-head:not(.is-scrolled) .brand--duo .brand__logo--day { display: none !important; }
+.has-hero.photo-hero .site-head:not(.is-scrolled) .brand--duo .brand__logo--night { display: block !important; }
+.hero--img.has-slides { padding-bottom: 72px; }

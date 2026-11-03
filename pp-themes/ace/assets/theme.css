@@ -180,9 +180,11 @@
 .band__crumb a { font-family: var(--font-display); text-transform: uppercase; letter-spacing: 0.04em; }
 .band__deco { background: var(--field-1); border-radius: 0; }
 .band__deco i { border-radius: 0; background: var(--accent); opacity: 1; }
-.band__deco i:nth-child(1) { width: 40%; height: 100%; aspect-ratio: auto; right: 0; top: 0; background: var(--field-2); }
-.band__deco i:nth-child(2) { width: 30%; height: 55%; aspect-ratio: auto; left: 0; bottom: 0; top: auto; }
-.band__deco i:nth-child(3) { width: 22%; height: 30%; left: 34%; top: 14%; background: var(--black); opacity: 1; }
+/* i tre colori del tema come tre bande verticali sul bordo destro, lontane dal testo (prima erano rettangoli sparsi dietro il titolo) */
+.band__deco i:is(:nth-child(1), :nth-child(2), :nth-child(3)) { top: 0; bottom: 0; height: auto; aspect-ratio: auto; width: clamp(18px, 3vw, 44px); left: auto; opacity: 1; }
+.band__deco i:nth-child(1) { right: calc(clamp(18px, 3vw, 44px) * 2); background: var(--accent); }
+.band__deco i:nth-child(2) { right: clamp(18px, 3vw, 44px); background: var(--field-2); }
+.band__deco i:nth-child(3) { right: 0; background: var(--black); }
 .prose h2 { font-family: var(--font-display); color: var(--accent); text-transform: uppercase; font-size: clamp(1.3rem, 1rem + 1vw, 1.8rem); letter-spacing: 0.02em; }
 .chapter:not(.chapter--paper) .prose h2 { color: inherit; }
 .prose img { filter: grayscale(1); }
@@ -206,8 +208,3 @@
 .head--cover.band--noimg > .band__deco { opacity: 0.9; }
 .head--cover.band--noimg { background: var(--black); color: var(--black-ink); }
 
-/* ---------- pagina in un riquadro centrale (scelta del tema, come "Riquadro" in Identità visiva): l'apertura con la foto resta a tutta larghezza ---------- */
-body { background: color-mix(in srgb, var(--ink) 7%, var(--bg)); }
-.site-main > :not(.hero--img), .site-foot { max-width: var(--boxed-w, 1340px); margin-left: auto !important; margin-right: auto !important; box-sizing: border-box; }
-:where(.site-main > *), :where(.site-foot) { background-color: var(--bg); }
-@media (max-width: 1380px) { .site-main > :not(.hero--img), .site-foot { max-width: none; } }

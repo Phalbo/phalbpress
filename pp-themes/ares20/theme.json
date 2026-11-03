@@ -141,5 +141,10 @@
         "text": "Figtree"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "mono"
+    }
+  }
 }

@@ -166,5 +166,10 @@
         "hero2": "#1b6c6f"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "cards"
+    }
+  }
 }

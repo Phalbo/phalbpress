@@ -180,3 +180,6 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 .lead-item__tag { border-radius: 0; }
 .contact__main .contact__mail { padding: 22px 26px; background: var(--accent); color: var(--accent-ink); }
 .contact__mail a { color: inherit; }
+
+/* il condensato maiuscolo resta ai titoli grandi: nelle schede (titoli lunghi su più righe) testo normale, che si legge */
+:is(.card__title, .story__name, .worknav__name, .latest__mtitle, .latest__tile .latest__title) { text-transform: none; font-family: var(--font); font-weight: 700; letter-spacing: 0; line-height: 1.22; }

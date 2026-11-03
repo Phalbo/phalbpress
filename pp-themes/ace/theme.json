@@ -20,7 +20,7 @@
     "text": "Work Sans"
   },
   "buttons": "square",
-  "body_class": "photo-hero",
+  "body_class": "photo-hero theme-boxed",
   "motion": {
     "marks": {
       ".step": [
@@ -120,5 +120,10 @@
         "hero2": "#ffffff"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "mono"
+    }
+  }
 }

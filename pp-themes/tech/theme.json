@@ -6,21 +6,21 @@
   "direction": "The well-kept board (tasteskill, seed 350775227)",
   "hero_on": "ground",
   "palette": {
-    "ground": "#111111",
-    "ink": "#f2f2f2",
-    "accent": "#a08672",
-    "field1": "#a08672",
-    "field2": "#262626",
-    "dark": "#0a0a0a",
-    "hero1": "#f2f2f2",
-    "hero2": "#a08672"
+    "ground": "#0c1016",
+    "ink": "#eef3f7",
+    "accent": "#3ad6e8",
+    "field1": "#3ad6e8",
+    "field2": "#18212c",
+    "dark": "#070a0e",
+    "hero1": "#eef3f7",
+    "hero2": "#3ad6e8"
   },
   "fonts": {
     "display": "League Spartan",
     "text": "Figtree"
   },
   "buttons": "soft",
-  "body_class": "photo-hero foot-light",
+  "body_class": "photo-hero",
   "motion": {
     "marks": {
       ".step": [
@@ -71,7 +71,21 @@
   "palettes": [
     {
       "name": "Originale",
-      "note": "I colori con cui il tema è nato.",
+      "note": "Ciano elettrico su un nero freddo: da sala di controllo.",
+      "palette": {
+        "ground": "#0c1016",
+        "ink": "#eef3f7",
+        "accent": "#3ad6e8",
+        "field1": "#3ad6e8",
+        "field2": "#18212c",
+        "dark": "#070a0e",
+        "hero1": "#eef3f7",
+        "hero2": "#3ad6e8"
+      }
+    },
+    {
+      "name": "Sabbia",
+      "note": "I toni caldi della prima versione del tema: più morbido, per design e artigianato digitale.",
       "palette": {
         "ground": "#111111",
         "ink": "#f2f2f2",
@@ -98,20 +112,6 @@
       }
     },
     {
-      "name": "Ghiaccio",
-      "note": "Azzurro ghiaccio su nero: freddo e preciso.",
-      "palette": {
-        "accent": "#7fb7e6",
-        "field1": "#7fb7e6",
-        "field2": "#262626",
-        "ink": "#f2f2f2",
-        "ground": "#111111",
-        "dark": "#0a0a0a",
-        "hero1": "#f2f2f2",
-        "hero2": "#7fb7e6"
-      }
-    },
-    {
       "name": "Arancio",
       "note": "Arancio e blu: per startup e hardware.",
       "palette": {
@@ -125,5 +125,10 @@
         "hero2": "#ff8a3d"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "grid"
+    }
+  }
 }

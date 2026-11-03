@@ -163,5 +163,10 @@
         "hero2": "#0f5c6e"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "list"
+    }
+  }
 }

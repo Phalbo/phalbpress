@@ -162,5 +162,10 @@
         "hero2": "#191e16"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "mono"
+    }
+  }
 }

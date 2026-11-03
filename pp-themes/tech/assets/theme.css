@@ -54,6 +54,10 @@
 .hero__sentence { max-width: 40ch; }
 .tech-mark { grid-column: 2; grid-row: 1; width: clamp(96px, 14vw, 200px); height: auto; justify-self: end; }
 .hero__title { grid-row: 2; }
+/* ordine fisso anche quando la figura è nascosta (telefono): titolo, poi frase e pulsante; spazio sotto per i pallini dello slideshow */
+.hero__aside { grid-row: 3; }
+.hero__say { grid-row: 4; }
+.hero--img.has-slides { padding-bottom: 64px; }
 .tm { fill: color-mix(in srgb, currentColor 10%, transparent); transform-box: fill-box; transform-origin: center; animation: tm-in 700ms var(--ease-out) both; animation-delay: calc(var(--i) * 45ms + 150ms); }
 .tm--a { fill: var(--accent); } .tm--b { fill: var(--field-1); } .tm--c { fill: currentColor; }
 .tech-mark:hover .tm--a { animation: tm-spin 900ms var(--ease-out); }

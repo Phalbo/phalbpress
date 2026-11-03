@@ -159,8 +159,9 @@
 .band.chapter--paper { clip-path: none; }
 .band__deco { background: var(--field-1); border-radius: 0; clip-path: polygon(0 0, 100% 0, 100% 100%, 12% 100%); }
 .band__deco i { border-radius: 0; background: var(--accent); }
-.band__deco i:nth-child(1) { width: 60%; height: 18px; aspect-ratio: auto; right: 0; top: 30%; transform: skewY(-8deg); }
-.band__deco i:nth-child(2) { width: 46%; height: 18px; aspect-ratio: auto; right: 0; top: 52%; bottom: auto; left: auto; transform: skewY(-8deg); opacity: 0.6; }
+/* due barre intere dentro il riquadro, non tagliate dal bordo */
+.band__deco i:nth-child(1) { width: 44%; height: 14px; aspect-ratio: auto; right: 10%; top: 34%; left: auto; transform: skewY(-8deg); }
+.band__deco i:nth-child(2) { width: 30%; height: 14px; aspect-ratio: auto; right: 10%; top: 54%; bottom: auto; left: auto; transform: skewY(-8deg); opacity: 0.6; }
 .band__deco i:nth-child(3) { display: none; }
 .prose h2 { color: var(--field-1); }
 .article__side { padding: 26px; background: var(--field-1); color: var(--field-1-ink); --muted: color-mix(in srgb, var(--field-1-ink) 85%, var(--field-1)); }

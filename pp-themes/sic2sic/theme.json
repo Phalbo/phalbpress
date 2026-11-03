@@ -118,5 +118,10 @@
         "hero2": "#ffffff"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "feature"
+    }
+  }
 }

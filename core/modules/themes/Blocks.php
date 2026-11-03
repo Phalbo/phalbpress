@@ -47,7 +47,7 @@ final class Blocks
                     'n3_v' => ['label' => 'Numero 3'], 'n3_l' => $tr('Numero 3: cosa conta'), 'n4_v' => ['label' => 'Numero 4'], 'n4_l' => $tr('Numero 4: cosa conta')]],
             'latest' => ['label' => 'Ultime news e documenti', 'uses' => ['title' => 'Titolo'],
                 'fields' => ['limit' => ['label' => 'Quante news', 'type' => 'number'],
-                    'style' => ['label' => 'Aspetto', 'type' => 'select', 'options' => ['' => 'Elenco con le date', 'grid' => 'Riquadri con la foto e il titolo sopra', 'cards' => 'Schede: foto, data e titolo', 'feature' => 'La prima in grande, le altre accanto']],
+                    'style' => ['label' => 'Aspetto', 'type' => 'select', 'options' => ['' => 'Come il tema', 'list' => 'Elenco con le date', 'grid' => 'Riquadri con la foto e il titolo sopra', 'cards' => 'Schede: foto, data e titolo', 'feature' => 'La prima in grande, le altre accanto', 'mono' => 'Foto in bianco e nero che si colorano, titolo piccolo sotto']],
                     'docs' => ['label' => 'Mostra anche i documenti', 'type' => 'checkbox']]],
             'text' => ['label' => 'Testo', 'uses' => ['title' => 'Titolo', 'body' => 'Testo']],
             'gallery' => ['label' => 'Galleria', 'uses' => ['title' => 'Titolo', 'excerpt' => 'Introduzione'],

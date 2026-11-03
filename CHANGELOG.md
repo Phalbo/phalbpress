@@ -2,6 +2,29 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.18.2
+Seconda revisione dei temi su Ares, con una passata di design su tutti.
+
+- **News in home, cinque aspetti**: elenco con le date, riquadri con la foto e il titolo sopra, schede, la prima in grande con le altre accanto, e il nuovo riquadro con le foto in bianco e nero che si colorano passandoci sopra (titolo piccolo sotto, senza data). Di base ogni tema usa il suo; nella fascia si può scegliere.
+- **Identità visiva**:
+  - "Pagina in un riquadro centrale" ora si può lasciare come vuole il tema, accendere o spegnere: ACE lo ha acceso di base;
+  - si può togliere il nome grande in fondo al footer;
+  - il velo tenue sulle foto sale dal basso e sfuma: le foto chiare (loghi, copertine) non si tingono più di rosa o d'azzurro.
+- **Contenuti senza foto**: negli elenchi un riquadro neutro con il logo del sito in grigio, invece della lettera iniziale; in home le schede restano in fila.
+- **Home sul telefono**: i lavori recenti stanno due per riga.
+- **Nastro dei loghi**: sfuma ai lati, nessun logo tagliato di netto.
+- **Temi**:
+  - Tipografico: apertura alta quanto il contenuto, titolo e frase allineati in alto; quattro numeri in fila, con la didascalia sotto;
+  - Tech / Futurista: colori nuovi di base (ciano su nero freddo; quelli di prima restano come variante "Sabbia"), loghi del footer chiari, sul telefono il titolo dell'apertura torna sopra e non finisce sotto i pallini;
+  - SME Star: meno spazio tra le fasce, numeri in fila separati da un filetto invece che nei cerchi;
+  - People's Choice: la forma animata non è più tagliata; la foto delle intestazioni resta rotonda;
+  - Documentario: logo chiaro sulla foto dell'apertura, spazio per i pallini;
+  - ACE: le decorazioni delle intestazioni diventano tre bande di colore sul bordo destro, lontane dal titolo;
+  - FINE: le barre delle intestazioni stanno intere nel riquadro;
+  - Sic2Sic: il sentiero tratteggiato delle intestazioni corre sotto il testo;
+  - Rebus: i titoli delle schede in maiuscolo e minuscolo, più leggibili;
+  - European Excellence, SME Star: riquadri senza la riga colorata di lato.
+
 ## 1.18.1
 Le correzioni dopo la revisione dei 16 temi su Ares.
 

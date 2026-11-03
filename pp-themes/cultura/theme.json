@@ -162,5 +162,10 @@
         "hero2": "#9c4416"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "grid"
+    }
+  }
 }

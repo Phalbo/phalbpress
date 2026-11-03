@@ -74,7 +74,7 @@ $countries = $isWork ? [] : array_values(array_unique(array_filter(array_map(fn(
       <article class="story reveal<?= $i % 2 && $list === 'zigzag' ? ' story--flip' : '' ?><?= $s['image'] && !$anon ? '' : ' story--noimg' ?>" data-country="<?= e($m['country'] ?? '') ?>">
         <a class="story__pic<?= e(focus_class($s)) ?>" href="<?= e($href) ?>" tabindex="-1" aria-hidden="true">
           <?php if ($s['image'] && !$anon): ?><?= img($s['image'], '', $sizes) ?>
-          <?php else: ?><span class="story__initial"><?= e(mb_substr($s['title'], 0, 1)) ?></span><?php endif; ?>
+          <?php else: $mark = class_exists('Identity') ? Identity::logo(false, 'story__mark') : ''; ?><span class="story__initial<?= $mark ? ' story__initial--logo' : '' ?>"><?= $mark ? preg_replace('~\s(role="img"|aria-label="[^"]*")~', '', str_replace(' alt="' . e(Identity::name()) . '"', ' alt=""', $mark)) : e(mb_substr($s['title'], 0, 1)) ?></span><?php endif; ?>
           <?php if (!empty($m['video']) && $list === 'screens'): ?><span class="story__play" aria-hidden="true"></span><?php endif; ?>
         </a>
         <div class="story__text">

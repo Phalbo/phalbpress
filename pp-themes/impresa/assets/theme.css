@@ -3,6 +3,7 @@
    Titoli di peso medio con una piccola etichetta sopra (presa dal titolo della fascia), molta aria, griglie a tre colonne,
    numeri dentro cerchi bianchi che sporgono da un riquadro grigio. Entrate da destra per le foto, dal basso per il resto. */
 :root {
+  --section: clamp(2.5rem, 4.8vw, 4.75rem);   /* fasce più vicine in home */
   --weight-head: 500;
   --tracking-head: -0.025em;
   --leading-head: 1.1;
@@ -102,14 +103,14 @@
 .figures { position: relative; }
 .figures.chapter--paper:not(.chapter--custom):not(.chapter--has-bg)::before { content: ""; position: absolute; left: var(--margin); right: var(--margin); top: calc(var(--section) * 0.5); bottom: calc(var(--section) * 0.5); background: var(--field-2); border-radius: var(--radius-box); z-index: -1; }
 .figures.chapter--paper { isolation: isolate; }
-.figures__list { gap: clamp(20px, 3vw, 40px); justify-items: center; }
-.figure { width: min(100%, 230px); aspect-ratio: 1; justify-content: center; align-items: center; text-align: center; gap: 6px; padding: 24px; border-radius: 50%; background: var(--bg); color: var(--ink); box-shadow: 0 20px 50px rgba(20, 35, 28, 0.12); transition: transform 500ms var(--fx-e); }
-.chapter:not(.chapter--paper) .figure, .chapter--custom .figure, .chapter--has-bg .figure { background: var(--surface); color: inherit; box-shadow: none; }
-.figure:nth-child(2n) { margin-top: clamp(0px, 4vw, 56px); }
-.figure:hover { transform: translateY(-6px); }
-.figure__val { font-size: clamp(2.2rem, 1.6rem + 2vw, 3.4rem); font-weight: 500; font-style: italic; color: var(--accent); }
+.figures__list { gap: 0; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+/* numeri in fila, separati da un filetto: niente cerchi né ombre */
+.figure { padding: 8px clamp(16px, 2vw, 28px); gap: 8px; align-items: flex-start; text-align: left; border-left: 1px solid color-mix(in srgb, currentColor 22%, transparent); }
+.figure:first-child { border-left: 0; padding-left: 0; }
+.figure__val { font-size: clamp(2.6rem, 1.8rem + 2.4vw, 4.2rem); font-weight: 400; line-height: 1; letter-spacing: -0.03em; color: var(--accent); }
 .chapter:not(.chapter--paper) .figure__val, .chapter--custom .figure__val, .chapter--has-bg .figure__val { color: inherit; }
-.figure__cap { font-size: var(--step-small); font-weight: 400; font-style: italic; color: var(--muted); max-width: 16ch; }
+.figure__cap { font-size: var(--step-small); font-weight: 500; color: var(--muted); max-width: 18ch; }
+@media (max-width: 760px) { .figures__list { grid-template-columns: repeat(2, minmax(0, 1fr)); row-gap: 28px; } .figure:nth-child(odd) { border-left: 0; padding-left: 0; } }
 
 /* elenco */
 .collection__item { border-top: 1px solid var(--line); padding: 26px 0; transition: padding-left 350ms var(--fx-e); }
@@ -217,7 +218,7 @@
 .article__side { padding: 26px 0 0; border-top: 3px solid var(--accent); }
 .article__side-head { text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.75rem; font-weight: 600; color: var(--accent); }
 .article__side-meta { text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.75rem; }
-.toc--inline { background: var(--field-2); border-left: 3px solid var(--accent); border-radius: 0 var(--radius-box) var(--radius-box) 0; }
+.toc--inline { background: var(--field-2); border-radius: var(--radius-box); }
 .morenews { background: var(--field-2); }
 .morenews__head { text-align: center; }
 .morenews__head::before { content: ""; display: block; width: 44px; height: 3px; margin: 0 auto 22px; background: var(--accent); }

@@ -124,5 +124,10 @@
         "hero2": "#fcdbbf"
       }
     }
-  ]
+  ],
+  "blocks": {
+    "latest": {
+      "style": "cards"
+    }
+  }
 }

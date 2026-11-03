@@ -30,9 +30,10 @@ final class Identity
             'band_h' => (string)($d['band_h'] ?? ''),            // altezza delle intestazioni delle pagine interne: '' come il tema, compact, tall
             'band_deco' => (string)($d['band_deco'] ?? ''),      // fondo delle intestazioni senza foto: '' motivo del tema, plain (tinta unita), gradient (sfumato)
             'logos_size' => (string)($d['logos_size'] ?? ''),    // loghi di clienti e partner: '' medi, s piccoli, l grandi
+            'foot_word' => (string)($d['foot_word'] ?? ''),      // nome grande in fondo al footer (i temi che lo hanno): '' come il tema, none tolto
             'logo_head' => (string)($d['logo_head'] ?? ''),      // logo in testata: '' da solo (chiaro se la testata è scura), day (sempre quello normale), night (sempre quello per fondi scuri)
             'space' => (string)($d['space'] ?? ''),              // spazi tra le fasce: '' come il tema, compact, wide
-            'boxed' => !empty($d['boxed']),                      // contenuto in un riquadro centrale (le foto di apertura restano a tutta larghezza)
+            'boxed' => isset($d['boxed']) && $d['boxed'] !== '' ? (in_array($d['boxed'], ['0', 0], true) ? '0' : ($d['boxed'] ? '1' : '')) : '',   // riquadro centrale: '' come il tema (theme-boxed in body_class), '1' sì, '0' no
             'hero_shade' => (string)($d['hero_shade'] ?? ''),    // apertura con foto: velo scuro 0-80 (%), '' come il tema
             'hero_text' => (string)($d['hero_text'] ?? ''),      // apertura con foto: '' come il tema, shadow (ombra leggera), panel (fondino)
             'band_shade' => (string)($d['band_shade'] ?? ''),    // intestazioni con foto: velo scuro 0-80 (%)
@@ -195,7 +196,8 @@ final class Identity
             $css .= "{$box} img{transition:filter .5s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);filter:" . (in_array($fx, ['color', 'soft'], true) ? 'none' : 'grayscale(1) contrast(1.08)') . "!important}\n";
             if ($fx === 'tint') $css .= "{$veil}::after{background:color-mix(in srgb,var(--accent) 40%,#fff);mix-blend-mode:multiply;opacity:1}\n";
             // un velo appena percettibile del colore principale: le foto restano a colori
-            if ($fx === 'soft') $css .= "{$veil}::after{background:var(--accent);opacity:.14}\n";
+            // velo tenue: sale dal basso e sparisce verso l'alto, così le foto chiare (loghi, copertine su fondo bianco) non diventano rosa o azzurre
+            if ($fx === 'soft') $css .= "{$veil}::after{background:linear-gradient(to top,color-mix(in srgb,var(--accent) 26%,transparent),transparent 58%);opacity:1}\n";
             // a colori anche le foto aperte (del lavoro, della notizia, nel testo): alcuni temi le sbiancano
             if (in_array($fx, ['color', 'soft'], true)) $css .= ":is(.storypage__pic,.article__img) img,.prose img{filter:none!important}\n:is(.storypage__pic,.article__img)::after{opacity:0!important}\n";
         }
@@ -224,6 +226,7 @@ final class Identity
         $bd = (string)($s['band_deco'] ?? '');
         if ($bd !== '') $css .= ".band__deco i{display:none!important}\n";
         if ($bd === 'gradient') $css .= ".band__deco{background-image:linear-gradient(115deg,transparent 35%,color-mix(in srgb,var(--accent) 55%,transparent))!important}\n";
+        if (($s['foot_word'] ?? '') === 'none') $css .= ".foot__word{display:none!important}\n";
         // loghi di clienti e partner (pagina Clienti e partner e nastro dei loghi): di base un po' più grandi di quelli del tema
         $lz = ['s' => [150, 64, 'clamp(36px,3.4vw,52px)', 160], '' => [230, 104, 'clamp(48px,4.8vw,80px)', 220], 'l' => [300, 136, 'clamp(60px,6.4vw,104px)', 280]][(string)($s['logos_size'] ?? '')] ?? null;
         if ($lz) $css .= ".partner__logo{max-width:{$lz[0]}px!important;max-height:{$lz[1]}px!important}\n.partners--logos .partner__logo{max-height:" . ($lz[1] + 12) . "px!important}\n"
@@ -244,10 +247,16 @@ final class Identity
         if (($s['space'] ?? '') === 'compact') $css .= ":root{--section:clamp(2.5rem,4.5vw,4.5rem)}\n";
         if (($s['space'] ?? '') === 'wide') $css .= ":root{--section:clamp(5rem,10vw,10rem)}\n";
         // riquadro: le fasce e il footer in una colonna centrale su un fondo appena più scuro; l'apertura con la foto resta a tutta larghezza
-        if (!empty($s['boxed'])) $css .= "body{background:color-mix(in srgb,var(--ink) 7%,var(--bg))}\n"
-            . ".site-main>:not(.hero--img),.site-foot{max-width:var(--boxed-w,1340px);margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}\n"
-            . ":where(.site-main>*),:where(.site-foot){background-color:var(--bg)}\n"
-            . "@media (max-width:1380px){.site-main>:not(.hero--img),.site-foot{max-width:none}}\n";
+        // '' = come il tema: vale solo dove il tema ha theme-boxed nel body_class (es. ACE). Prima era una casella: acceso = '1', spento = come il tema
+        $bx = $s['boxed'] ?? '';
+        $bx = $bx === true ? '1' : ($bx === false ? '' : (string)$bx);
+        if ($bx !== '0') {
+            $b = $bx === '1' ? '' : 'body.theme-boxed ';
+            $css .= ($bx === '1' ? 'body' : 'body.theme-boxed') . "{background:color-mix(in srgb,var(--ink) 7%,var(--bg))}\n"
+                . "{$b}.site-main>:not(.hero--img),{$b}.site-foot{max-width:var(--boxed-w,1340px);margin-left:auto!important;margin-right:auto!important;box-sizing:border-box}\n"
+                . ":where({$b}.site-main>*),:where({$b}.site-foot){background-color:var(--bg)}\n"
+                . "@media (max-width:1380px){{$b}.site-main>:not(.hero--img),{$b}.site-foot{max-width:none}}\n";
+        }
         // velo e testo sulle foto
         // i temi con il testo accanto alla foto (o in una fascia sotto) lo dicono con `hero-notext` e `hero-noshade` in body_class:
         // l'ombra sul testo e il velo valgono solo dove il testo sta sopra la foto
@@ -399,9 +408,10 @@ final class Identity
             $s['band_h'] = in_array(Admin::post('band_h'), ['compact', 'tall'], true) ? Admin::post('band_h') : '';
             $s['band_deco'] = in_array(Admin::post('band_deco'), ['plain', 'gradient'], true) ? Admin::post('band_deco') : '';
             $s['logos_size'] = in_array(Admin::post('logos_size'), ['s', 'l'], true) ? Admin::post('logos_size') : '';
+            $s['foot_word'] = Admin::post('foot_word') === 'none' ? 'none' : '';
             $s['logo_head'] = in_array(Admin::post('logo_head'), ['day', 'night'], true) ? Admin::post('logo_head') : '';
             $s['space'] = in_array(Admin::post('space'), ['compact', 'wide'], true) ? Admin::post('space') : '';
-            $s['boxed'] = (bool)Admin::post('boxed');
+            $s['boxed'] = in_array(Admin::post('boxed'), ['1', '0'], true) ? Admin::post('boxed') : '';
             foreach (['hero', 'band'] as $k) {
                 $v = (string)Admin::post($k . '_shade');
                 $s[$k . '_shade'] = ctype_digit($v) ? (string)max(0, min(80, (int)$v)) : '';

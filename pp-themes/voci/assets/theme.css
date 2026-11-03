@@ -58,7 +58,9 @@
 .photo-hero .hero--img .hero__img { aspect-ratio: 1 / 1; width: min(100%, 600px, 62svh) !important; max-width: 100% !important; justify-self: center; isolation: isolate; }
 /* la forma colorata dietro la foto, con un motivo a righe */
 .photo-hero .hero--img .hero__img::after { inset: 4% -4% -4% 4%; z-index: -1; background: repeating-linear-gradient(-45deg, var(--accent) 0 14px, color-mix(in srgb, var(--accent) 80%, var(--bg)) 14px 28px); border-radius: 58% 42% 46% 54% / 44% 56% 44% 56%; animation: vo-blob 14s ease-in-out infinite alternate-reverse; }
-.photo-hero .hero--img .hero__img img { position: absolute; inset: 0; border-radius: 42% 58% 60% 40% / 52% 40% 60% 48%; animation: vo-blob 12s ease-in-out infinite alternate; }
+/* la forma respira dentro il riquadro: niente bordi che la tagliano */
+.photo-hero .hero--img .hero__img { overflow: visible !important; }
+.photo-hero .hero--img .hero__img img { position: absolute; inset: 5%; width: 90% !important; height: 90% !important; border-radius: 42% 58% 60% 40% / 52% 40% 60% 48%; animation: vo-blob 12s ease-in-out infinite alternate; }
 @keyframes vo-blob {
   0% { border-radius: 42% 58% 60% 40% / 52% 40% 60% 48%; }
   50% { border-radius: 58% 42% 38% 62% / 40% 58% 42% 60%; }
@@ -209,8 +211,8 @@
 .band__crumb a { font-weight: 700; }
 .band__cat { display: inline-block; padding: 3px 12px; border-radius: 999px; background: var(--accent); color: var(--accent-ink); font-weight: 700; }
 .head--center .band__title, .head--center .band__lead { margin-left: auto; margin-right: auto; }
-.head--split .band__img { position: relative; isolation: isolate; aspect-ratio: 1; max-height: 520px; }
-.head--split .band__img img { position: absolute; inset: 0; min-height: 0; max-height: none; height: 100%; border-radius: 42% 58% 60% 40% / 52% 40% 60% 48%; animation: vo-blob 12s ease-in-out infinite alternate; }
+.head--split .band__img { position: relative; isolation: isolate; aspect-ratio: 1; max-height: 520px; width: min(100%, 520px); justify-self: center; }
+.site-main .head--split .band__img img { position: absolute; inset: 0; width: 100%; min-height: 0 !important; max-height: none !important; height: 100% !important; border-radius: 42% 58% 60% 40% / 52% 40% 60% 48%; animation: vo-blob 12s ease-in-out infinite alternate; }
 .head--split .band__img::after { content: ""; position: absolute; inset: 5% -4% -4% 5%; z-index: -1; background: repeating-linear-gradient(-45deg, var(--accent) 0 12px, color-mix(in srgb, var(--accent) 78%, var(--bg)) 12px 24px); border-radius: 58% 42% 46% 54% / 44% 56% 44% 56%; animation: vo-blob 15s ease-in-out infinite alternate-reverse; }
 .band__deco { background: none; min-height: 300px; overflow: visible; }
 .band__deco i:nth-child(1) { width: 70%; aspect-ratio: 1; right: 4%; top: 0; background: var(--accent); opacity: 0.9; border-radius: 58% 42% 46% 54% / 44% 56% 44% 56%; animation: vo-blob 12s ease-in-out infinite alternate; }
