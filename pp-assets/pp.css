@@ -102,3 +102,11 @@
 .figure__num { display: inline-block; max-width: 100%; font-size: min(1em, 26cqi); white-space: nowrap; }
 /* indirizzi email e link lunghi nel footer vanno a capo invece di uscire dallo schermo */
 .site-foot a { overflow-wrap: anywhere; }
+
+/* griglie di foto: al massimo quattro per riga, anche sugli schermi larghi (più colonne fanno foto troppo piccole).
+   Ogni griglia tiene la sua larghezza minima; righe, mosaici e le griglie a numero fisso di colonne restano come sono. */
+@media (min-width: 761px) {
+  .cards:not(.cards--3, .list--rows .cards, .list--mosaic .cards) { grid-template-columns: repeat(auto-fill, minmax(max(240px, calc(25% - 2.5rem)), 1fr)) !important; }
+  :is(.stories--grid, .stories--covers) .storylist { grid-template-columns: repeat(auto-fill, minmax(max(190px, calc(25% - 2.5rem)), 1fr)) !important; }
+  .collection__list, .worknav__list, .team__list { grid-template-columns: repeat(auto-fill, minmax(max(190px, calc(25% - 2.5rem)), 1fr)) !important; }
+}
