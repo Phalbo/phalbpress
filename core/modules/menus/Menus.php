@@ -41,12 +41,15 @@ final class Menus
         $here = PP::current();
         $out = [];
         foreach (self::raw($name) as $it) {
-            $label = trim((string)($it['label'][$lang] ?? '')) ?: trim((string)($it['label'][I18n::$master] ?? ''));
+            // etichetta nella lingua; se manca, per una pagina tradotta vale il suo titolo (non l'etichetta della lingua originale)
+            $own = trim((string)($it['label'][$lang] ?? ''));
+            $label = $own ?: trim((string)($it['label'][I18n::$master] ?? ''));
             $href = ''; $ext = false;
             if ($it['kind'] === 'page') {
                 $e = Content::byId((int)$it['ref'], $lang);
                 if (!$e) continue;
                 $href = PP::entryUrl($e, $lang);
+                if ($own === '' && empty($e['_fallback']) && trim((string)$e['title']) !== '') $label = $e['title'];
                 $label = $label ?: $e['title'];
             } elseif ($it['kind'] === 'section' && $it['ref'] === 'stories:cats') {
                 // categorie del portfolio: le voci nascono da sole dalle categorie visibili (con le divisioni come terzo livello)
