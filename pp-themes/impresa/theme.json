@@ -95,6 +95,15 @@
     },
     "site": {
       "header": "bar"
+    },
+    "stories": {
+      "stories": "thumbs"
+    },
+    "story": {
+      "work": "sheet"
+    },
+    "news": {
+      "list": "rows"
     }
   }
 }

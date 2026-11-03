@@ -94,6 +94,15 @@
     },
     "site": {
       "header": "tabs"
+    },
+    "stories": {
+      "stories": "covers"
+    },
+    "story": {
+      "work": "showcase"
+    },
+    "news": {
+      "list": "feature"
     }
   }
 }

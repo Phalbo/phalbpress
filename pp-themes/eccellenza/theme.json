@@ -101,6 +101,12 @@
     },
     "site": {
       "header": "bar"
+    },
+    "stories": {
+      "stories": "mosaic"
+    },
+    "story": {
+      "work": "showcase"
     }
   }
 }

@@ -56,6 +56,15 @@
     },
     "page": {
       "body": "wide"
+    },
+    "stories": {
+      "stories": "thumbs"
+    },
+    "story": {
+      "work": "journal"
+    },
+    "news": {
+      "list": "feature"
     }
   }
 }

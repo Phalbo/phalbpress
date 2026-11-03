@@ -52,6 +52,15 @@
     },
     "404": {
       "head": "left"
+    },
+    "stories": {
+      "stories": "mosaic"
+    },
+    "story": {
+      "work": "showcase"
+    },
+    "news": {
+      "list": "mosaic"
     }
   }
 }

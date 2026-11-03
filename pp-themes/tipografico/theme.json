@@ -48,6 +48,15 @@
       "stories": "zigzag",
       "docs": "table",
       "partners": "rows"
+    },
+    "stories": {
+      "stories": "index"
+    },
+    "story": {
+      "work": "journal"
+    },
+    "news": {
+      "list": "rows"
     }
   }
 }

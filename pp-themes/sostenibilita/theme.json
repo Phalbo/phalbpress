@@ -91,6 +91,15 @@
     },
     "site": {
       "header": "center"
+    },
+    "stories": {
+      "stories": "cards"
+    },
+    "story": {
+      "work": "portrait"
+    },
+    "news": {
+      "list": "grid"
     }
   }
 }

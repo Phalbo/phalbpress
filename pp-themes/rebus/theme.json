@@ -53,6 +53,15 @@
     },
     "search": {
       "head": "left"
+    },
+    "stories": {
+      "stories": "screens"
+    },
+    "story": {
+      "work": "showcase"
+    },
+    "news": {
+      "list": "mosaic"
     }
   }
 }

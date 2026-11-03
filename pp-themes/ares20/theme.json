@@ -57,13 +57,15 @@
       "work": "sheet"
     },
     "stories": {
-      "head": "cover"
+      "head": "cover",
+      "stories": "tiles"
     },
     "news-item": {
       "head": "left"
     },
     "news": {
-      "head": "cover"
+      "head": "cover",
+      "list": "mosaic"
     }
   },
   "palettes": [

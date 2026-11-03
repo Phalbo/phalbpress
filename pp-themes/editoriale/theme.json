@@ -52,6 +52,15 @@
     },
     "site": {
       "header": "center"
+    },
+    "stories": {
+      "stories": "covers"
+    },
+    "story": {
+      "work": "journal"
+    },
+    "news": {
+      "list": "feature"
     }
   }
 }

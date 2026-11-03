@@ -50,6 +50,15 @@
     "news-item": {
       "head": "left",
       "body": "aside"
+    },
+    "stories": {
+      "stories": "zigzag"
+    },
+    "story": {
+      "work": "journal"
+    },
+    "news": {
+      "list": "rows"
     }
   }
 }

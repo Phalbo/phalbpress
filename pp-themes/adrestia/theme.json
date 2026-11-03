@@ -51,6 +51,15 @@
     },
     "contact": {
       "head": "left"
+    },
+    "stories": {
+      "stories": "zigzag"
+    },
+    "story": {
+      "work": "sheet"
+    },
+    "news": {
+      "list": "grid"
     }
   }
 }
