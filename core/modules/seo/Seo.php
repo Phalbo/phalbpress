@@ -67,7 +67,12 @@ final class Seo
             'og:site_name' => $site, 'og:title' => $title, 'og:description' => $desc, 'og:url' => $url,
             'og:locale' => I18n::$langs[$L]['locale'] ?? $L,
         ];
-        if ($img) $og['og:image'] = PP::abs(PP::url($img));
+        if ($img) {
+            [$share, $sw, $sh] = preg_match('~^https?://~', $img) ? [$img, 0, 0] : Media::share($img);
+            $og['og:image'] = preg_match('~^https?://~', $share) ? $share : PP::abs(PP::url($share));
+            if ($sw && $sh) { $og['og:image:width'] = (string)$sw; $og['og:image:height'] = (string)$sh; }
+            $og['og:image:alt'] = trim((string)($ctx['image_alt'] ?? '')) ?: (string)($ctx['title'] ?? $site);
+        }
         foreach ($og as $k => $v) $h .= '<meta property="' . $k . '" content="' . e($v) . "\">\n";
         $h .= '<meta name="twitter:card" content="' . ($img ? 'summary_large_image' : 'summary') . "\">\n";
         $h .= '<script type="application/ld+json">' . json_encode(self::jsonld($ctx, $title, $desc, $img, $url), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) . "</script>\n";

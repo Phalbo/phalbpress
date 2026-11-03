@@ -358,4 +358,63 @@ final class Media
         }
         return implode('|', array_values(array_unique($parts)));
     }
+
+    /**
+     * Immagine per le anteprime dei social (Facebook, LinkedIn, WhatsApp…): JPG 1200×630, quello che si aspettano.
+     * Le foto quasi orizzontali riempiono il riquadro; le verticali, le quadrate e i panorami si vedono intere su un fondo
+     * del colore principale appena accennato. Si fa una volta sola (uploads/share/) e si rifà se la foto o il colore cambiano.
+     * Torna [percorso, larghezza, altezza]; senza GD (o con un file che non si legge) la foto com'è.
+     */
+    private static int $shareMade = 0;
+
+    public static function share(string $rel): array
+    {
+        $rel = ltrim($rel, '/');
+        $abs = PP_ROOT . '/' . $rel;
+        if ($rel === '' || str_contains($rel, '..') || !is_file($abs)) return [$rel, 0, 0];
+        $dim = @getimagesize($abs);
+        $orig = [$rel, (int)($dim[0] ?? 0), (int)($dim[1] ?? 0)];
+        if (!$dim || !function_exists('imagecreatetruecolor') || !in_array($dim[2], [IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_WEBP], true)) return $orig;
+        $accent = class_exists('Identity') ? (string)(Identity::get()['colors']['accent'] ?? '') : '';
+        if (!preg_match('~^#[0-9a-f]{6}$~i', $accent)) $accent = '#777777';
+        $out = 'uploads/share/' . substr(md5($rel . '|' . filemtime($abs) . '|' . strtolower($accent)), 0, 16) . '.jpg';
+        if (is_file(PP_ROOT . '/' . $out)) return [$out, 1200, 630];
+        // al massimo qualche immagine nuova per richiesta: la prima pubblicazione di tutto il sito non deve superare il tempo
+        // del server. Le altre si fanno alle pubblicazioni dopo; intanto si usa la foto com'è
+        if (++self::$shareMade > 25) return $orig;
+        $src = match ($dim[2]) {
+            IMAGETYPE_JPEG => @imagecreatefromjpeg($abs),
+            IMAGETYPE_PNG => @imagecreatefrompng($abs),
+            default => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($abs) : false,
+        };
+        if (!$src) return $orig;
+        [$W, $H] = [1200, 630];
+        $w = imagesx($src); $h = imagesy($src); $r = $w / max(1, $h);
+        $dst = imagecreatetruecolor($W, $H);
+        // fondo: 12% del colore principale sul bianco
+        [$ar, $ag, $ab] = sscanf($accent, '#%02x%02x%02x');
+        $mix = fn($c) => (int)round(255 + ($c - 255) * 0.12);
+        imagefill($dst, 0, 0, imagecolorallocate($dst, $mix($ar), $mix($ag), $mix($ab)));
+        imagealphablending($dst, true);
+        if ($r >= 1.45 && $r <= 2.6) {
+            // riempie: si taglia il minimo, al centro
+            $sw = $r > $W / $H ? (int)round($h * $W / $H) : $w;
+            $sh = $r > $W / $H ? $h : (int)round($w * $H / $W);
+            imagecopyresampled($dst, $src, 0, 0, (int)(($w - $sw) / 2), (int)(($h - $sh) / 2), $W, $H, $sw, $sh);
+        } else {
+            // intera, con un margine
+            $m = 36;
+            $s = min(($W - 2 * $m) / $w, ($H - 2 * $m) / $h);
+            $nw = (int)round($w * $s); $nh = (int)round($h * $s);
+            imagecopyresampled($dst, $src, (int)(($W - $nw) / 2), (int)(($H - $nh) / 2), 0, 0, $nw, $nh, $w, $h);
+        }
+        imagedestroy($src);
+        if (!is_dir(PP_ROOT . '/uploads/share')) @mkdir(PP_ROOT . '/uploads/share', 0755, true);
+        imageinterlace($dst, true);
+        $ok = @imagejpeg($dst, PP_ROOT . '/' . $out, 84);
+        imagedestroy($dst);
+        if (!$ok) return $orig;
+        @chmod(PP_ROOT . '/' . $out, 0644);
+        return [$out, $W, $H];
+    }
 }

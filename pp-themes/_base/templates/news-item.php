@@ -1,5 +1,5 @@
 <?php
-$pageTitle = $item['title']; $metaDesc = $item['excerpt'] ?: $item['title']; $seoType = 'article'; $seoDate = $item['pub_date']; $ogImage = $item['image'];
+$pageTitle = $item['title']; $metaDesc = $item['excerpt'] ?: $item['title']; $seoType = 'article'; $seoDate = $item['pub_date']; $ogImage = $item['image']; $ogAlt = $item['image_alt'] ?? '';
 $lg = $item['_fallback'] ? ' lang="' . e(I18n::hreflang($item['_lang'])) . '"' : '';
 $cat = !empty($item['meta_arr']['category']) ? Content::byId((int)$item['meta_arr']['category'], lang()) : null;
 $meta = '<time datetime="' . e($item['pub_date']) . '">' . e(fmt_date($item['pub_date'])) . '</time>' . ($cat ? ' · <span class="band__cat">' . e($cat['title']) . '</span>' : '');

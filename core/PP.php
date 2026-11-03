@@ -301,7 +301,7 @@ final class PP
             return [ob_get_clean(), get_defined_vars()];
         })();
         // le variabili impostate dal template (pageTitle, metaDesc, ogImage…) passano al layout
-        $layoutVars = array_intersect_key($defined, array_flip(['pageTitle', 'metaDesc', 'ogImage', 'seoType', 'seoDate', 'bodyClass', 'noindex']));
+        $layoutVars = array_intersect_key($defined, array_flip(['pageTitle', 'metaDesc', 'ogImage', 'ogAlt', 'seoType', 'seoDate', 'bodyClass', 'noindex']));
         $layoutVars['content'] = $html;
         return (function () use ($layoutVars) {
             extract($layoutVars, EXTR_SKIP);
