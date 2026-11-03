@@ -326,8 +326,13 @@ final class PP
 
     public static function csp(): string
     {
-        $frames = implode(' ', Hooks::filter('csp_frames', ['https://www.youtube-nocookie.com', 'https://player.vimeo.com', 'https://www.openstreetmap.org']));
-        return "default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; frame-src $frames; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
+        // i moduli aprono solo i domini che servono (video e mappe incorporati, statistiche configurate)
+        $list = fn(string $hook, array $base) => implode(' ', array_values(array_unique(Hooks::filter($hook, $base))));
+        $frames = $list('csp_frames', ['https://www.youtube-nocookie.com', 'https://player.vimeo.com', 'https://www.openstreetmap.org']);
+        $img = $list('csp_img', ["'self'", 'data:', 'https://i.ytimg.com']);
+        $script = $list('csp_scripts', ["'self'"]);
+        $connect = $list('csp_connect', ["'self'"]);
+        return "default-src 'self'; img-src $img; media-src 'self'; frame-src $frames; style-src 'self' 'unsafe-inline'; script-src $script; connect-src $connect; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
     }
 
     private static function headers(): void

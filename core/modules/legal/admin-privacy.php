@@ -37,4 +37,25 @@
     </form>
     <p class="hint">I testi completi di privacy e cookie policy sono in Testi del sito → Legale, in tutte le lingue. Sono un modello solido per un sito senza tracciamento: falli comunque vedere a chi si occupa della privacy per il consorzio.</p>
   </section>
+<section class="panel" id="statistiche">
+  <h2>Statistiche delle visite</h2>
+  <p class="hint">Scrivi solo l’identificativo: il codice su tutte le pagine lo mettiamo noi, e privacy e cookie policy si aggiornano da sole. Matomo e Plausible non usano cookie: niente banner. Google Analytics invece parte solo dopo il consenso del visitatore, e compare nel banner.</p>
+  <form method="post" class="stack" data-form>
+    <?= Admin::csrfField() ?>
+    <?php $bad = fn($k, $ok) => trim((string)($stats[$k] ?? '')) !== '' && $ok === '' ? ' <span class="badge badge--out">non valido</span>' : ''; ?>
+    <fieldset class="stack"><legend>Matomo <span class="muted">(senza cookie)</span></legend>
+      <label class="field">Indirizzo del tuo Matomo<?= $bad('matomo_url', $statsOk['matomo_url']) ?><input type="url" name="matomo_url" value="<?= e($stats['matomo_url'] ?? '') ?>" placeholder="https://statistiche.esempio.it/"></label>
+      <label class="field">Numero del sito in Matomo<input type="number" name="matomo_id" min="1" value="<?= e($stats['matomo_id'] ?? '') ?>" placeholder="1"></label>
+    </fieldset>
+    <fieldset class="stack"><legend>Plausible <span class="muted">(senza cookie)</span></legend>
+      <label class="field">Dominio come l’hai scritto su Plausible<?= $bad('plausible', $statsOk['plausible']) ?><input type="text" name="plausible" value="<?= e($stats['plausible'] ?? '') ?>" placeholder="esempio.it"></label>
+      <label class="field">Indirizzo di Plausible <span class="muted">(solo se lo installi tu; vuoto = plausible.io)</span><input type="url" name="plausible_host" value="<?= e($stats['plausible_host'] ?? '') ?>" placeholder="https://plausible.io"></label>
+    </fieldset>
+    <fieldset class="stack"><legend>Google Analytics 4 <span class="muted">(con il consenso)</span></legend>
+      <label class="field">ID di misurazione<?= $bad('ga4', $statsOk['ga4']) ?><input type="text" name="ga4" value="<?= e($stats['ga4'] ?? '') ?>" placeholder="G-XXXXXXXXXX" pattern="[Gg]\-[A-Za-z0-9]{4,16}"></label>
+      <p class="hint">Lo trovi in Google Analytics → Amministrazione → Stream di dati. Chi rifiuta i cookie non viene contato.</p>
+    </fieldset>
+    <button class="btn btn--primary" name="action" value="stats">Salva le statistiche</button>
+  </form>
+</section>
 </div>

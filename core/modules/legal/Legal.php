@@ -85,6 +85,7 @@ final class Legal
         }
         $found = array_map(fn($a) => array_values(array_unique($a)), $found);
         foreach ((PP::$config['cookie_services_always'] ?? []) as $k) $found[$k] = $found[$k] ?? ['configurazione'];
+        if (Stats::cfg()['ga4']) $found['ga4'] = ['statistiche (Privacy e cookie)'];
         $res = ['at' => Content::now(), 'found' => $found];
         Settings::set('cookie_scan', $res);
         return $res;
@@ -125,9 +126,13 @@ final class Legal
             '{a11y_date}' => fmt_date($c['a11y_date'], $lang),
             '{privacy_link}' => '<a href="' . e(PP::link(self::slug('privacy', $lang), $lang)) . '">' . e(t('legal_privacy_title', $lang)) . '</a>',
             '{cookie_link}' => '<a href="' . e(PP::link(self::slug('cookies', $lang), $lang)) . '">' . e(t('legal_cookies_title', $lang)) . '</a>',
+            '{stats}' => Stats::privacy($lang),
             '{prefs_button}' => self::found() ? '<button type="button" class="btn btn--dark" data-pp-consent-open>' . e(t('cookie_prefs', $lang)) . '</button>' : '',
         ];
-        $body = strtr(Sanitizer::html(t($bodies[$key], $lang)), $rep);
+        $raw = Sanitizer::html(t($bodies[$key], $lang));
+        // testi salvati prima delle statistiche: il paragrafo "nessuna statistica" diventa quello giusto
+        if ($key === 'privacy' && !str_contains($raw, '{stats}')) $raw = preg_replace('~<p><strong>(No profiling and no statistics|Nessuna profilazione e nessuna statistica)\.</strong>.*?</p>~s', '{stats}', $raw, 1);
+        $body = strtr($raw, $rep);
         $master = !I18n::has($bodies[$key], $lang) && $lang !== I18n::$master;
         return ['id' => 0, 'type' => 'legal', 'base_slug' => $key, 'slug' => self::slug($key, $lang), 'template' => 'default', 'title' => t($titles[$key], $lang), 'excerpt' => strtr(t('legal_updated', $lang), $rep),
             'body' => $body, 'image' => '', 'meta_arr' => [], '_lang' => $master ? I18n::$master : $lang, '_fallback' => $master];
@@ -165,6 +170,8 @@ final class Legal
         $L = I18n::$current;
         $txt = [];
         foreach (['cookie_title', 'cookie_text', 'cookie_accept', 'cookie_reject', 'cookie_customize', 'cookie_save', 'cookie_close', 'video_consent', 'video_accept', 'video_external', 'map_consent', 'map_accept', 'map_external', 'cookie_policy_link'] as $k) $txt[$k] = t($k, $L);
+        // con Google Analytics il banner non parla solo di video
+        if (isset($f['ga4'])) { $txt['cookie_title'] = t('cookie_title_stats', $L); $txt['cookie_text'] = t('cookie_text_stats', $L); }
         $cfg['t'] = $txt;
         return '<div class="pp-consent" data-pp-consent-root data-config="' . e(json_encode($cfg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) . '" hidden></div>'
             . '<script src="' . e(PP::url('pp-assets/pp.js')) . '?v=' . PP::VERSION . '" defer></script>';
@@ -193,12 +200,17 @@ final class Legal
                 Settings::set('legal', array_merge(Settings::get('legal', []), $keep));
                 Admin::flash('Dati della privacy salvati.');
             }
+            if (Admin::post('action') === 'stats') {
+                Stats::save();
+                Admin::flash(Stats::any() ? 'Statistiche salvate: il codice è già su tutte le pagine, privacy e cookie policy sono aggiornate.' : 'Statistiche tolte.');
+            }
             self::scan();
             Admin::changed('privacy');
-            if (Admin::post('action') !== 'save') Admin::flash('Scansione eseguita.');
+            if (!in_array(Admin::post('action'), ['save', 'stats'], true)) Admin::flash('Scansione eseguita.');
             PP::redirect(Admin::u('privacy'));
         }
         $scan = Settings::get('cookie_scan') ?: self::scan();
-        Admin::view(__DIR__ . '/admin-privacy.php', ['title' => 'Privacy e cookie', 'scan' => $scan, 'services' => self::services(), 'cfg' => self::cfg()]);
+        Admin::view(__DIR__ . '/admin-privacy.php', ['title' => 'Privacy e cookie', 'scan' => $scan, 'services' => self::services(), 'cfg' => self::cfg(),
+            'stats' => Settings::get('stats', []) ?: [], 'statsOk' => Stats::cfg()]);
     }
 }
