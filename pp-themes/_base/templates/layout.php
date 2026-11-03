@@ -11,7 +11,7 @@ $hasId = class_exists('Identity');
 $siteName = $hasId ? Identity::name() : $cfg['site_name'];
 $menu = class_exists('Menus') ? Menus::items('main') : [];
 $footMenu = class_exists('Menus') ? (Menus::items('footer') ?: $menu) : [];
-$ctx = ['title' => $pageTitle ?? null, 'desc' => $metaDesc ?? '', 'image' => $ogImage ?? '', 'type' => $seoType ?? '', 'date' => $seoDate ?? '', 'noindex' => !empty($noindex)];
+$ctx = ['title' => $pageTitle ?? null, 'desc' => $metaDesc ?? '', 'image' => $ogImage ?? '', 'image_alt' => $ogAlt ?? '', 'type' => $seoType ?? '', 'date' => $seoDate ?? '', 'noindex' => !empty($noindex)];
 $head = Hooks::html('head', $ctx);
 $legal = Hooks::filter('footer_links', []);
 $favicon = $hasId ? Identity::favicon() : '';

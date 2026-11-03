@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.17.0';
+    public const VERSION = '1.18.0';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -301,7 +301,7 @@ final class PP
             return [ob_get_clean(), get_defined_vars()];
         })();
         // le variabili impostate dal template (pageTitle, metaDesc, ogImage…) passano al layout
-        $layoutVars = array_intersect_key($defined, array_flip(['pageTitle', 'metaDesc', 'ogImage', 'seoType', 'seoDate', 'bodyClass', 'noindex']));
+        $layoutVars = array_intersect_key($defined, array_flip(['pageTitle', 'metaDesc', 'ogImage', 'ogAlt', 'seoType', 'seoDate', 'bodyClass', 'noindex']));
         $layoutVars['content'] = $html;
         return (function () use ($layoutVars) {
             extract($layoutVars, EXTR_SKIP);
@@ -326,8 +326,13 @@ final class PP
 
     public static function csp(): string
     {
-        $frames = implode(' ', Hooks::filter('csp_frames', ['https://www.youtube-nocookie.com', 'https://player.vimeo.com', 'https://www.openstreetmap.org']));
-        return "default-src 'self'; img-src 'self' data: https://i.ytimg.com; media-src 'self'; frame-src $frames; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
+        // i moduli aprono solo i domini che servono (video e mappe incorporati, statistiche configurate)
+        $list = fn(string $hook, array $base) => implode(' ', array_values(array_unique(Hooks::filter($hook, $base))));
+        $frames = $list('csp_frames', ['https://www.youtube-nocookie.com', 'https://player.vimeo.com', 'https://www.openstreetmap.org']);
+        $img = $list('csp_img', ["'self'", 'data:', 'https://i.ytimg.com']);
+        $script = $list('csp_scripts', ["'self'"]);
+        $connect = $list('csp_connect', ["'self'"]);
+        return "default-src 'self'; img-src $img; media-src 'self'; frame-src $frames; style-src 'self' 'unsafe-inline'; script-src $script; connect-src $connect; base-uri 'self'; form-action 'self'; frame-ancestors 'self'";
     }
 
     private static function headers(): void
@@ -385,18 +390,22 @@ final class PP
         $html = preg_replace_callback('~(?:<p>\s*)?\[video:([A-Za-z0-9_-]{6,20})\](?:\s*</p>)?~', fn($m) => self::partial('video', ['id' => $m[1], 'service' => 'youtube']), $html);
         $html = preg_replace_callback('~(?:<p>\s*)?\[vimeo:(\d{5,12})\](?:\s*</p>)?~', fn($m) => self::partial('video', ['id' => $m[1], 'service' => 'vimeo']), $html);
         // galleria nel testo: [gallery:uploads/media/a.webp=descrizione|uploads/media/b.webp=descrizione]
-        $html = preg_replace_callback('~(?:<p>\s*)?\[gallery:([^\]]+)\](?:\s*</p>)?~', function ($m) {
-            $items = [];
-            foreach (explode('|', html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')) as $part) {
-                [$path, $alt] = array_pad(explode('=', $part, 2), 2, '');
-                $path = trim($path);
-                // seed-media/… = foto dimostrative del motore (contenuti di esempio e anteprima dei temi)
-                if (str_starts_with($path, 'seed-media/')) $path = 'pp-assets/demo/media/' . substr($path, 11);
-                if (preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif)$~i', $path) && is_file(PP_ROOT . '/' . $path)) $items[] = [$path, trim($alt)];
-            }
-            return $items ? self::partial('gallery', ['items' => $items]) : '';
-        }, $html);
+        $html = preg_replace_callback('~(?:<p>\s*)?\[gallery:([^\]]+)\](?:\s*</p>)?~', fn($m) => self::gallery(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')), $html);
         return Hooks::filter('body', $html);
+    }
+
+    /** Galleria di foto da "percorso=descrizione|percorso=descrizione" (il codice [gallery:…] nel testo, o il campo Galleria). */
+    public static function gallery(string $spec): string
+    {
+        $items = [];
+        foreach (explode('|', $spec) as $part) {
+            [$path, $alt] = array_pad(explode('=', $part, 2), 2, '');
+            $path = trim($path);
+            // seed-media/… = foto dimostrative del motore (contenuti di esempio e anteprima dei temi)
+            if (str_starts_with($path, 'seed-media/')) $path = 'pp-assets/demo/media/' . substr($path, 11);
+            if (preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif)$~i', $path) && !str_contains($path, '..') && is_file(PP_ROOT . '/' . $path)) $items[] = [$path, trim($alt)];
+        }
+        return $items ? self::partial('gallery', ['items' => $items]) : '';
     }
 
     public static function partial(string $name, array $vars = []): string
@@ -447,6 +456,8 @@ function img(string $rel, string $alt = '', string $sizes = '100vw', string $cla
     if ($small !== $rel && is_file(PP_ROOT . '/' . $small) && $w > 960) {
         $srcset = ' srcset="' . e(PP::upload($small)) . ' 960w, ' . e(PP::upload($rel)) . ' ' . $w . 'w" sizes="' . e($sizes) . '"';
     }
+    // forma della foto: molto verticale o molto larga (negli elenchi si mostra intera invece di tagliarla)
+    if ($w && $h) { $r = $w / $h; if ($r < 0.8) $class = trim($class . ' pp-tall'); elseif ($r > 1.9) $class = trim($class . ' pp-wide'); }
     return '<img src="' . e(PP::upload($rel)) . '"' . $srcset . ' alt="' . e($alt) . '"'
         . ($w ? ' width="' . $w . '" height="' . $h . '"' : '')
         . ($class ? ' class="' . e($class) . '"' : '')
@@ -457,7 +468,9 @@ function img(string $rel, string $alt = '', string $sizes = '100vw', string $cla
 function focus_class(?array $e): string
 {
     $f = (string)($e['meta_arr']['image_focus'] ?? '');
-    return in_array($f, ['top', 'bottom', 'left', 'right'], true) ? ' pp-focus--' . $f : '';
+    // "Taglia la foto" (image_fit = cover): riempie il riquadro anche se ha un'altra forma
+    $crop = ($e['meta_arr']['image_fit'] ?? '') === 'cover' ? ' pp-crop' : '';
+    return (in_array($f, ['top', 'bottom', 'left', 'right'], true) ? ' pp-focus--' . $f : '') . $crop;
 }
 
 /** Pagina madre di una pagina: campo "parent" (id) o, nei contenuti iniziali, "parent_slug". */

@@ -5,6 +5,7 @@
   "best_for": "campagne, mobilitazione, giovani, diritti, progetti che devono farsi sentire",
   "direction": "Loud and flat (tasteskill, seed 2105798294)",
   "hero_on": "ground",
+  "accent_text": false,
   "palette": {
     "ground": "#ffffff",
     "ink": "#000000",
@@ -52,6 +53,73 @@
     },
     "site": {
       "header": "tabs"
+    },
+    "stories": {
+      "stories": "tiles"
+    },
+    "story": {
+      "work": "showcase"
+    },
+    "news": {
+      "list": "grid"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#000000",
+        "accent": "#a7ff9c",
+        "field1": "#c5c5c5",
+        "field2": "#ff6831",
+        "dark": "#000000",
+        "hero1": "#000000",
+        "hero2": "#000000"
+      }
+    },
+    {
+      "name": "Giallo segnale",
+      "note": "Il giallo della segnaletica con un blu deciso: per campagne di sensibilizzazione.",
+      "palette": {
+        "accent": "#ffd400",
+        "field1": "#c5c5c5",
+        "field2": "#10a7ff",
+        "ink": "#000000",
+        "ground": "#ffffff",
+        "dark": "#000000",
+        "hero1": "#000000",
+        "hero2": "#000000"
+      }
+    },
+    {
+      "name": "Rosa shock",
+      "note": "Rosa, lime e azzurro: per giovani, diritti e attivismo.",
+      "palette": {
+        "accent": "#ff7ac8",
+        "field1": "#c5c5c5",
+        "field2": "#00aede",
+        "ink": "#000000",
+        "ground": "#ffffff",
+        "dark": "#000000",
+        "hero1": "#000000",
+        "hero2": "#000000"
+      }
+    },
+    {
+      "name": "Ciano",
+      "note": "Ciano e arancio: per tecnologia civica e ambiente.",
+      "palette": {
+        "accent": "#5ce1ff",
+        "field1": "#c5c5c5",
+        "field2": "#ff5b8d",
+        "ink": "#000000",
+        "ground": "#ffffff",
+        "dark": "#000000",
+        "hero1": "#000000",
+        "hero2": "#000000"
+      }
+    }
+  ]
 }

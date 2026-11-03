@@ -52,6 +52,73 @@
     },
     "site": {
       "header": "center"
+    },
+    "stories": {
+      "stories": "covers"
+    },
+    "story": {
+      "work": "journal"
+    },
+    "news": {
+      "list": "feature"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffd6ec",
+        "ink": "#3d0012",
+        "accent": "#3d0012",
+        "field1": "#ff99d3",
+        "field2": "#f6e3ec",
+        "dark": "#3d0012",
+        "hero1": "#3d0012",
+        "hero2": "#3d0012"
+      }
+    },
+    {
+      "name": "Menta",
+      "note": "Il foglio diventa verde menta, il testo verde bosco.",
+      "palette": {
+        "accent": "#0f4d3c",
+        "field1": "#8cd0b8",
+        "field2": "#daefe7",
+        "ink": "#0f4d3c",
+        "ground": "#c9eddf",
+        "dark": "#0f4d3c",
+        "hero1": "#0f4d3c",
+        "hero2": "#0f4d3c"
+      }
+    },
+    {
+      "name": "Cielo",
+      "note": "Fogli azzurro cielo e inchiostro blu notte.",
+      "palette": {
+        "accent": "#14306b",
+        "field1": "#a5c0f2",
+        "field2": "#e1e9fa",
+        "ink": "#14306b",
+        "ground": "#d6e4ff",
+        "dark": "#14306b",
+        "hero1": "#14306b",
+        "hero2": "#14306b"
+      }
+    },
+    {
+      "name": "Senape",
+      "note": "Fogli color senape e testo bruno: caldo, da rivista.",
+      "palette": {
+        "accent": "#5a3a00",
+        "field1": "#e8b64a",
+        "field2": "#f3e7d8",
+        "ink": "#5a3a00",
+        "ground": "#f9dfbd",
+        "dark": "#5a3a00",
+        "hero1": "#5a3a00",
+        "hero2": "#5a3a00"
+      }
+    }
+  ]
 }

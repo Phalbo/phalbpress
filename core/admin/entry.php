@@ -2,7 +2,8 @@
 $isMaster = $lang === I18n::$master;
 $tabBase = Admin::u('entry/' . $row['id']);
 $trFields = array_filter($fields, fn($f) => $f['translatable']);
-$baseFields = array_filter($fields, fn($f) => !$f['translatable']);
+$baseFields = array_filter($fields, fn($f) => !$f['translatable'] && $f['type'] !== 'gallery');
+$galFields = array_filter($fields, fn($f) => !$f['translatable'] && $f['type'] === 'gallery');   // nella colonna principale, sotto il testo
 $hasPage = PP::typePrefix($type, $lang) !== null;
 $scheduled = $row['status'] === 'published' && ($row['publish_at'] > Content::now() || ($row['unpublish_at'] !== '' && $row['unpublish_at'] <= Content::now()));
 $dtl = fn($v) => $v ? str_replace(' ', 'T', substr($v, 0, 16)) : '';
@@ -43,7 +44,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
         <span>Indirizzo</span>
         <div class="row">
           <span class="muted small"><?= e(PP::link(PP::typePrefix($type, $lang), $lang)) ?></span>
-          <input type="text" name="slug" value="<?= e($tr['slug'] ?? '') ?>" data-slug data-auto="<?= empty($tr['slug']) ? '1' : '0' ?>" aria-label="Slug" pattern="[a-z0-9-]*">
+          <input type="text" name="slug" value="<?= e($tr['slug'] ?? '') ?>" data-slug data-auto="<?= empty($tr['slug']) ? '1' : '0' ?>" aria-label="Slug" pattern="[a-z0-9\-]*">
           <button type="button" class="btn btn--small" data-slug-regen>Rigenera dal titolo</button>
         </div>
         <?php if (!$isNew && $row['status'] === 'published'): ?><p class="hint">Se cambi l’indirizzo, quello vecchio porta da solo al nuovo (redirect 301).</p><?php endif; ?>
@@ -57,6 +58,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
     <div class="field"><span><?= e($lbl('body', 'Testo')) ?></span><?php $name = 'body'; $value = $tr['body'] ?? ''; include __DIR__ . '/_editor.php'; ?></div>
     <?php endif; ?>
     <?php foreach ($trFields as $k => $f): $fname = 'x[' . $k . ']'; $fval = $x[$k] ?? ''; $flang = ''; include __DIR__ . '/_field.php'; endforeach; ?>
+    <?php foreach ($galFields as $k => $f): $fname = 'meta[' . $k . ']'; $fval = $meta[$k] ?? ''; $flang = ''; include __DIR__ . '/_field.php'; endforeach; ?>
   </div>
   <aside class="edit__side">
     <div class="panel stack">
@@ -108,6 +110,11 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
       <label class="field">Testo alternativo <span class="muted">(cosa mostra l’immagine, per chi non vede)</span><input type="text" name="image_alt" value="<?= e($tr['image_alt'] ?? '') ?>" maxlength="300"></label>
       <label class="field">oppure carica<input type="file" name="image_file" accept="image/*"></label>
       <p class="hint"><?= e(Media::hint($type)) ?> La ridimensioniamo e comprimiamo noi.</p>
+      <?php if (in_array($type, ['story', 'news'], true)): ?>
+        <input type="hidden" name="meta[image_fit]" value="">
+        <label class="check"><input type="checkbox" name="meta[image_fit]" value="cover" <?= ($meta['image_fit'] ?? '') === 'cover' ? 'checked' : '' ?>> Negli elenchi riempi il riquadro</label>
+        <p class="hint">Una foto molto verticale o molto larga negli elenchi si vede intera su un fondo tenue. Spunta per riempire il riquadro tagliando i bordi.</p>
+      <?php endif; ?>
     </div>
     <?php endif; ?>
     <?php if ($baseFields): ?>
@@ -153,7 +160,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
         <span>Indirizzo in <?= e(I18n::name($lang)) ?></span>
         <div class="row">
           <span class="muted small"><?= e(PP::link(PP::typePrefix($type, $lang), $lang)) ?></span>
-          <input type="text" name="slug" value="<?= e($tr['slug'] ?? '') ?>" data-slug data-auto="<?= empty($tr['slug']) ? '1' : '0' ?>" aria-label="Slug" pattern="[a-z0-9-]*">
+          <input type="text" name="slug" value="<?= e($tr['slug'] ?? '') ?>" data-slug data-auto="<?= empty($tr['slug']) ? '1' : '0' ?>" aria-label="Slug" pattern="[a-z0-9\-]*">
           <button type="button" class="btn btn--small" data-slug-regen>Rigenera dal titolo</button>
         </div>
       </div>

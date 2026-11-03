@@ -4,6 +4,7 @@
  * Genera uploads/identity/identity.css con le variabili CSS che il tema usa.
  */
 require_once __DIR__ . '/Identity.php';
+require_once __DIR__ . '/Palette.php';
 
 return [
     'name' => 'identity',

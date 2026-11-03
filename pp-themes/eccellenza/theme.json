@@ -101,6 +101,70 @@
     },
     "site": {
       "header": "bar"
+    },
+    "stories": {
+      "stories": "mosaic"
+    },
+    "story": {
+      "work": "showcase"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#121820",
+        "accent": "#c4501c",
+        "field1": "#0f6e64",
+        "field2": "#eef2f5",
+        "dark": "#0b1016",
+        "hero1": "#121820",
+        "hero2": "#0f6e64"
+      }
+    },
+    {
+      "name": "Blu europeo",
+      "note": "Il blu delle istituzioni europee con neutri freddi: per progetti Horizon ed Erasmus+.",
+      "palette": {
+        "accent": "#1f4fa3",
+        "field1": "#4f607b",
+        "field2": "#eef2f5",
+        "ink": "#131820",
+        "ground": "#ffffff",
+        "dark": "#0c1016",
+        "hero1": "#131820",
+        "hero2": "#4f607b"
+      }
+    },
+    {
+      "name": "Magenta",
+      "note": "Magenta, verde e oro: per innovazione e design.",
+      "palette": {
+        "accent": "#a3246b",
+        "field1": "#0f6e64",
+        "field2": "#eef2f5",
+        "ink": "#1e1418",
+        "ground": "#ffffff",
+        "dark": "#150d10",
+        "hero1": "#1e1418",
+        "hero2": "#0f6e64"
+      }
+    },
+    {
+      "name": "Verde ricerca",
+      "note": "Verde e ottanio: per ambiente, salute e scienze della vita.",
+      "palette": {
+        "accent": "#0f7a52",
+        "field1": "#1b6c6f",
+        "field2": "#eef2f5",
+        "ink": "#101a15",
+        "ground": "#ffffff",
+        "dark": "#0a120d",
+        "hero1": "#101a15",
+        "hero2": "#1b6c6f"
+      }
+    }
+  ]
 }

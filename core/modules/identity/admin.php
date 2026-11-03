@@ -21,6 +21,33 @@
   <?php if (Settings::get('identity_previous')): ?><form method="post"><?= Admin::csrfField() ?><button class="btn btn--small" name="action" value="variant_undo">Torna ai colori di prima</button></form><?php endif; ?>
 </section>
 <?php endif; ?>
+<?php $pers = Palette::personal(); $pc = $pers ?: ['primary' => $s['colors']['accent'], 'secondary' => '', 'tertiary' => '', 'mood' => 'armonico']; ?>
+<section class="panel stack personal" id="personale" data-personal>
+  <h2>Colori personali</h2>
+  <p class="hint">Scegli il colore principale (quello del logo, per esempio) e, se vuoi, un secondo e un terzo. Calcoliamo noi gli altri colori per il tema <?= e($tv['name'] ?? PP::theme()) ?>, con i contrasti giusti per leggere bene. La scelta resta anche se cambi tema: i colori si ricalcolano per quello nuovo.</p>
+  <?php if ($pers): ?><p class="small"><span class="badge badge--ok">In uso</span> I colori del sito vengono da questa scelta.</p><?php endif; ?>
+  <form method="post" class="stack" data-personal-form>
+    <?= Admin::csrfField() ?>
+    <div class="personal__colors">
+      <label class="field">Colore principale<input type="color" name="p1" value="<?= e($pc['primary']) ?>"></label>
+      <div class="field"><label class="check"><input type="checkbox" name="use2" value="1" <?= $pc['secondary'] ? 'checked' : '' ?>> Secondo colore</label><input type="color" name="p2" value="<?= e($pc['secondary'] ?: '#888888') ?>" aria-label="Secondo colore"></div>
+      <div class="field"><label class="check"><input type="checkbox" name="use3" value="1" <?= $pc['tertiary'] ? 'checked' : '' ?>> Terzo colore</label><input type="color" name="p3" value="<?= e($pc['tertiary'] ?: '#cccccc') ?>" aria-label="Terzo colore"></div>
+    </div>
+    <fieldset class="personal__moods"><legend>Carattere <span class="muted">(decide i colori che non scegli tu)</span></legend>
+      <?php foreach (Palette::MOODS as $mk => [$ml, $md]): ?>
+        <label class="check"><input type="radio" name="mood" value="<?= e($mk) ?>" <?= ($pc['mood'] ?? 'armonico') === $mk ? 'checked' : '' ?>> <strong><?= e($ml) ?></strong> <span class="small muted"><?= e($md) ?></span></label>
+      <?php endforeach; ?>
+    </fieldset>
+    <div class="personal__result" data-personal-result hidden>
+      <span class="variant__sw" data-personal-sw></span>
+      <p class="small" role="status" aria-live="polite" data-personal-status></p>
+    </div>
+    <div class="row">
+      <a class="btn" target="_blank" rel="noopener" data-personal-preview data-base="<?= e(Admin::u('preview') . '?theme=' . rawurlencode(PP::theme())) ?>" href="<?= e(Admin::u('preview') . '?' . http_build_query(['theme' => PP::theme(), 'p1' => $pc['primary'], 'use2' => $pc['secondary'] ? 1 : '', 'p2' => $pc['secondary'], 'use3' => $pc['tertiary'] ? 1 : '', 'p3' => $pc['tertiary'], 'mood' => $pc['mood'] ?? 'armonico'])) ?>">Anteprima ↗</a>
+      <button class="btn btn--primary" name="action" value="personal">Applica</button>
+    </div>
+  </form>
+</section>
 <form method="post" enctype="multipart/form-data" data-form class="stack">
   <?= Admin::csrfField() ?>
   <div class="cols">
@@ -92,14 +119,18 @@
     <div class="row">
       <label class="field">Foto negli elenchi <span class="muted">(schede, portfolio, gallerie)</span>
         <select name="photo_fx">
-          <?php foreach (['' => 'Come le mostra il tema', 'none' => 'A colori', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_fx'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+          <?php $pfx = ($s['photo_fx'] ?? '') === 'none' ? '' : ($s['photo_fx'] ?? ''); foreach (['' => 'A colori', 'soft' => 'A colori con un velo tenue del colore principale', 'theme' => 'Come le mostra il tema', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= $pfx === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+        </select></label>
+      <label class="field">Forma delle foto negli elenchi <span class="muted">(portfolio, categorie, news)</span>
+        <select name="photo_ratio">
+          <?php foreach (['' => 'Quadrate', 'layout' => 'Come la disposizione scelta', '4:3' => '4:3', '3:2' => '3:2 (orizzontali)', '16:9' => '16:9 (video)', '3:4' => '3:4 (verticali)', 'auto' => 'Intere, come sono'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_ratio'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
         </select></label>
       <label class="field">Passandoci sopra
         <select name="photo_hover">
           <?php foreach (['' => 'Come fa il tema', 'color' => 'Tornano a colori', 'zoom' => 'Si ingrandiscono appena', 'none' => 'Niente'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_hover'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
         </select></label>
     </div>
-    <p class="hint">Le foto aperte (la pagina di un lavoro, l’apertura della home) restano sempre a colori.</p>
+    <p class="hint">Le foto aperte (la pagina di un lavoro, l’apertura della home) restano sempre a colori. Una foto con una forma molto diversa dal riquadro (una copertina verticale in un riquadro quadrato) si vede intera su un fondo tenue invece di essere tagliata; nella scheda del contenuto si può chiedere di tagliarla.</p>
     <label class="field">Intestazioni delle pagine interne <span class="muted">(titolo in alto di pagine, news, portfolio)</span>
       <select name="band_h">
         <?php foreach (['' => 'Come il tema', 'compact' => 'Basse: titolo di misura, si arriva subito al contenuto', 'tall' => 'Alte'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_h'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>

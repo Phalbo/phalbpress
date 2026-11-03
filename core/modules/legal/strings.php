@@ -11,7 +11,7 @@ return [
     'legal_privacy_body' => ['group' => 'Legale', 'html' => 'block', 'text' => [
         'en' => '<h2>Data controller</h2><p>{controller}, {address}. Contact: {email}. Data protection officer: {dpo}.</p>'
             . '<h2>What data we process</h2><p><strong>Browsing data.</strong> The web server that hosts {site} ({hosting}) automatically records technical data needed to deliver the pages and keep them secure, such as IP address, date and time, the page requested and the browser used. We use them only for security and to fix problems, and they are deleted by the hosting provider after a short period.</p>'
-            . '<p><strong>No profiling and no statistics.</strong> {site} does not use analytics, advertising or profiling cookies, does not load fonts or scripts from third parties and does not track you across sites.</p>'
+            . '{stats}'
             . '<p><strong>Content from other services.</strong> Some pages include videos hosted by external services (for example YouTube). They load only if you give your consent or press play, and from that moment the external service processes your data under its own privacy policy. Details are in the {cookie_link}.</p>'
             . '<p><strong>When you write to us.</strong> If you send us an email, we use your address and the content of your message only to reply.</p>'
             . '<h2>Legal basis</h2><ul><li>Security and technical operation of the site: legitimate interest (Art. 6(1)(f) GDPR).</li><li>External content such as videos: your consent (Art. 6(1)(a) GDPR), which you can withdraw at any time.</li><li>Replies to your messages: your request (Art. 6(1)(b) GDPR).</li></ul>'
@@ -19,7 +19,7 @@ return [
             . '<h2>Your rights</h2><p>You can ask to access, correct or delete your data, to restrict or object to its processing and to receive it in a portable format (Articles 15–22 GDPR) by writing to {email}. You also have the right to lodge a complaint with your data protection authority.</p>',
         'it' => '<h2>Titolare del trattamento</h2><p>{controller}, {address}. Contatto: {email}. Responsabile della protezione dei dati: {dpo}.</p>'
             . '<h2>Quali dati trattiamo</h2><p><strong>Dati di navigazione.</strong> Il server che ospita {site} ({hosting}) registra in automatico i dati tecnici necessari per mostrare le pagine e tenerle sicure, come indirizzo IP, data e ora, pagina richiesta e browser usato. Li usiamo solo per la sicurezza e per risolvere problemi; il fornitore di hosting li cancella dopo un breve periodo.</p>'
-            . '<p><strong>Nessuna profilazione e nessuna statistica.</strong> {site} non usa cookie di analisi, pubblicitari o di profilazione, non carica font o script di terze parti e non ti traccia su altri siti.</p>'
+            . '{stats}'
             . '<p><strong>Contenuti di altri servizi.</strong> Alcune pagine contengono video ospitati da servizi esterni (per esempio YouTube). Si caricano solo se dai il consenso o premi play, e da quel momento il servizio esterno tratta i tuoi dati secondo la propria privacy policy. I dettagli sono nella {cookie_link}.</p>'
             . '<p><strong>Quando ci scrivi.</strong> Se ci mandi un’email usiamo il tuo indirizzo e il contenuto del messaggio solo per risponderti.</p>'
             . '<h2>Base giuridica</h2><ul><li>Sicurezza e funzionamento tecnico del sito: legittimo interesse (art. 6, par. 1, lett. f GDPR).</li><li>Contenuti esterni come i video: il tuo consenso (art. 6, par. 1, lett. a GDPR), che puoi revocare in qualsiasi momento.</li><li>Risposte ai tuoi messaggi: la tua richiesta (art. 6, par. 1, lett. b GDPR).</li></ul>'
@@ -76,4 +76,23 @@ return [
     'map_external' => ['group' => 'Cookie', 'text' => ['en' => 'Open the map on {service}', 'it' => 'Apri la mappa su {service}']],
     'video_accept' => ['group' => 'Cookie', 'text' => ['en' => 'Accept and play', 'it' => 'Accetta e guarda']],
     'video_external' => ['group' => 'Cookie', 'text' => ['en' => 'Watch on {service}', 'it' => 'Guarda su {service}']],
+    // statistiche delle visite ({stats} nella privacy policy): il paragrafo cambia con quelle scelte in Privacy e cookie
+    'legal_stats_none' => ['group' => 'Legale', 'html' => 'block', 'text' => [
+        'en' => '<p><strong>No profiling and no statistics.</strong> {site} does not use analytics, advertising or profiling cookies, does not load fonts or scripts from third parties and does not track you across sites.</p>',
+        'it' => '<p><strong>Nessuna profilazione e nessuna statistica.</strong> {site} non usa cookie di analisi, pubblicitari o di profilazione, non carica font o script di terze parti e non ti traccia su altri siti.</p>']],
+    'legal_stats_on' => ['group' => 'Legale', 'html' => 'block', 'text' => [
+        'en' => '<p><strong>Visit statistics.</strong> To understand which pages are useful, we count visits with:</p>{tools}<p>{site} does not use advertising or profiling cookies and does not track you across sites.</p>',
+        'it' => '<p><strong>Statistiche delle visite.</strong> Per capire quali pagine sono utili contiamo le visite con:</p>{tools}<p>{site} non usa cookie pubblicitari o di profilazione e non ti traccia su altri siti.</p>']],
+    'legal_stats_matomo' => ['group' => 'Legale', 'html' => 'inline', 'text' => [
+        'en' => 'Matomo, on {host}: without cookies and with shortened IP addresses, so the statistics do not identify you (legitimate interest, Art. 6(1)(f) GDPR).',
+        'it' => 'Matomo, su {host}: senza cookie e con l’indirizzo IP accorciato, così le statistiche non ti identificano (legittimo interesse, art. 6, par. 1, lett. f GDPR).']],
+    'legal_stats_plausible' => ['group' => 'Legale', 'html' => 'inline', 'text' => [
+        'en' => 'Plausible Analytics (Plausible Insights OÜ, European Union): without cookies and without storing personal data (legitimate interest, Art. 6(1)(f) GDPR).',
+        'it' => 'Plausible Analytics (Plausible Insights OÜ, Unione europea): senza cookie e senza conservare dati personali (legittimo interesse, art. 6, par. 1, lett. f GDPR).']],
+    'legal_stats_ga4' => ['group' => 'Legale', 'html' => 'inline', 'text' => [
+        'en' => 'Google Analytics 4 (Google Ireland Ltd), only if you give your consent (Art. 6(1)(a) GDPR): it sets its own cookies and Google may transfer data outside the European Union under the EU–US Data Privacy Framework. Details in the {cookie_link}.',
+        'it' => 'Google Analytics 4 (Google Ireland Ltd), solo se dai il consenso (art. 6, par. 1, lett. a GDPR): installa i suoi cookie e Google può trasferire dati fuori dall’Unione europea sulla base del Data Privacy Framework UE–USA. I dettagli sono nella {cookie_link}.']],
+    'cookie_purpose_stats' => ['group' => 'Cookie', 'text' => ['en' => 'Visit statistics: which pages are read and how people arrive, in aggregate form.', 'it' => 'Statistiche delle visite: quali pagine si leggono e da dove si arriva, in forma aggregata.']],
+    'cookie_title_stats' => ['group' => 'Cookie', 'text' => ['en' => 'Cookies and external content', 'it' => 'Cookie e contenuti esterni']],
+    'cookie_text_stats' => ['group' => 'Cookie', 'text' => ['en' => 'With your consent we measure visits with Google Analytics, and some pages include videos from external services. Both set their own cookies: they load only if you agree.', 'it' => 'Con il tuo consenso misuriamo le visite con Google Analytics, e alcune pagine contengono video di servizi esterni. Entrambi usano i propri cookie: si caricano solo se sei d’accordo.']],
 ];

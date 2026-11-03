@@ -57,6 +57,73 @@
     },
     "404": {
       "head": "left"
+    },
+    "stories": {
+      "stories": "cards"
+    },
+    "story": {
+      "work": "sheet"
+    },
+    "news": {
+      "list": "grid"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#111111",
+        "ink": "#f2f2f2",
+        "accent": "#a08672",
+        "field1": "#a08672",
+        "field2": "#262626",
+        "dark": "#0a0a0a",
+        "hero1": "#f2f2f2",
+        "hero2": "#a08672"
+      }
+    },
+    {
+      "name": "Acido",
+      "note": "Verde acido su nero: da laboratorio digitale.",
+      "palette": {
+        "accent": "#9bd14a",
+        "field1": "#9bd14a",
+        "field2": "#262626",
+        "ink": "#f2f2f2",
+        "ground": "#111111",
+        "dark": "#0a0a0a",
+        "hero1": "#f2f2f2",
+        "hero2": "#9bd14a"
+      }
+    },
+    {
+      "name": "Ghiaccio",
+      "note": "Azzurro ghiaccio su nero: freddo e preciso.",
+      "palette": {
+        "accent": "#7fb7e6",
+        "field1": "#7fb7e6",
+        "field2": "#262626",
+        "ink": "#f2f2f2",
+        "ground": "#111111",
+        "dark": "#0a0a0a",
+        "hero1": "#f2f2f2",
+        "hero2": "#7fb7e6"
+      }
+    },
+    {
+      "name": "Arancio",
+      "note": "Arancio e blu: per startup e hardware.",
+      "palette": {
+        "accent": "#ff8a3d",
+        "field1": "#ff8a3d",
+        "field2": "#262626",
+        "ink": "#f2f2f2",
+        "ground": "#111111",
+        "dark": "#0a0a0a",
+        "hero1": "#f2f2f2",
+        "hero2": "#ff8a3d"
+      }
+    }
+  ]
 }

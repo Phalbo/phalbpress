@@ -193,7 +193,7 @@ final class Blocks
         $f = ['per_row' => ['label' => 'Riquadri per riga', 'type' => 'select', 'options' => ['' => 'Automatico', '2' => '2', '3' => '3', '4' => '4']],
             'boxed' => ['label' => 'Riquadri con il fondo', 'type' => 'checkbox']];
         for ($n = 1; $n <= 6; $n++) {
-            $f["i{$n}_icon"] = ['label' => "Riquadro $n: icona", 'type' => 'select', 'options' => ['' => '—'] + $icons];
+            $f["i{$n}_icon"] = ['label' => "Riquadro $n: icona", 'type' => 'select', 'options' => ['' => 'Automatica', 'none' => 'Nessuna'] + $icons];
             $f["i{$n}_t"] = $tr("Riquadro $n: titolo");
             $f["i{$n}_d"] = $tr("Riquadro $n: testo", 'textarea');
             $f["i{$n}_btn"] = $tr("Riquadro $n: pulsante", 'text', 'facoltativo, es. Vai ai servizi');

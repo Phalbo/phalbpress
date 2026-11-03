@@ -51,6 +51,73 @@
     },
     "contact": {
       "head": "left"
+    },
+    "stories": {
+      "stories": "zigzag"
+    },
+    "story": {
+      "work": "sheet"
+    },
+    "news": {
+      "list": "grid"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#242b4d",
+        "accent": "#1f7a4d",
+        "field1": "#7ed69a",
+        "field2": "#e3f3fb",
+        "dark": "#242b4d",
+        "hero1": "#ffffff",
+        "hero2": "#bff0cf"
+      }
+    },
+    {
+      "name": "Lavanda",
+      "note": "Viola lavanda e un lilla chiaro: accogliente, adatto a servizi alla persona.",
+      "palette": {
+        "accent": "#5b4bb7",
+        "field1": "#e2a7e8",
+        "field2": "#eeeefd",
+        "ink": "#2b294c",
+        "ground": "#ffffff",
+        "dark": "#2b294c",
+        "hero1": "#ffffff",
+        "hero2": "#dedeff"
+      }
+    },
+    {
+      "name": "Corallo",
+      "note": "Corallo e pesca: caldo e vicino, per associazioni e volontariato.",
+      "palette": {
+        "accent": "#b83a26",
+        "field1": "#edb36f",
+        "field2": "#fdebe8",
+        "ink": "#482119",
+        "ground": "#ffffff",
+        "dark": "#482119",
+        "hero1": "#ffffff",
+        "hero2": "#ffd8cf"
+      }
+    },
+    {
+      "name": "Oceano",
+      "note": "Un solo blu-verde in più toni: ordinato e tranquillo.",
+      "palette": {
+        "accent": "#0d6a85",
+        "field1": "#90c9df",
+        "field2": "#e2f3fa",
+        "ink": "#0a3340",
+        "ground": "#ffffff",
+        "dark": "#0a3340",
+        "hero1": "#ffffff",
+        "hero2": "#bceafd"
+      }
+    }
+  ]
 }

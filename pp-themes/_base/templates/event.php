@@ -1,5 +1,5 @@
 <?php
-$pageTitle = $item['title']; $metaDesc = $item['excerpt'] ?: $item['title']; $ogImage = $item['image']; $seoType = 'event'; $seoDate = Events::start($item);
+$pageTitle = $item['title']; $metaDesc = $item['excerpt'] ?: $item['title']; $ogImage = $item['image']; $ogAlt = $item['image_alt'] ?? ''; $seoType = 'event'; $seoDate = Events::start($item);
 $lg = $item['_fallback'] ? ' lang="' . e(I18n::hreflang($item['_lang'])) . '"' : '';
 $m = $item['meta_arr'];
 $head = Layouts::get('event', 'head', $item);

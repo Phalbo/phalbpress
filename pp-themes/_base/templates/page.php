@@ -1,6 +1,6 @@
 <?php
 $item = $page;
-$pageTitle = $page['title']; $metaDesc = $page['excerpt'] ?: $page['title']; $ogImage = $page['image'] ?? '';
+$pageTitle = $page['title']; $metaDesc = $page['excerpt'] ?: $page['title']; $ogImage = $page['image'] ?? ''; $ogAlt = $page['image_alt'] ?? '';
 $lg = $page['_fallback'] ? ' lang="' . e(I18n::hreflang($page['_lang'])) . '"' : '';
 // indice della pagina dai titoli H2
 $toc = [];

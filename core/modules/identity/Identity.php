@@ -24,7 +24,8 @@ final class Identity
             'buttons' => $d['buttons'] ?? 'pill',
             'logo_has_name' => !empty($d['logo_has_name']),   // il logo contiene già il nome: in testata il nome resta solo per i lettori di schermo
             'logo_h' => (int)($d['logo_h'] ?? 0),               // altezza del logo in testata (px); 0 = quella del tema
-            'photo_fx' => (string)($d['photo_fx'] ?? ''),        // foto negli elenchi: '' come il tema, none, mono (bianco e nero), tint (virate nel colore principale)
+            'photo_fx' => (string)($d['photo_fx'] ?? ''),        // foto negli elenchi: '' a colori, soft (a colori con un velo tenue), theme (come le mostra il tema), mono, tint (virate); 'none' dei siti vecchi = a colori
+            'photo_ratio' => (string)($d['photo_ratio'] ?? ''),  // proporzione delle foto negli elenchi: '' quadrate, layout (come la disposizione), 4:3, 3:2, 16:9, 3:4, auto (intere)
             'photo_hover' => (string)($d['photo_hover'] ?? ''),  // passandoci sopra: '' come il tema, color (tornano a colori), zoom, none
             'band_h' => (string)($d['band_h'] ?? ''),            // altezza delle intestazioni delle pagine interne: '' come il tema, compact, tall
             'logo_head' => (string)($d['logo_head'] ?? ''),      // logo in testata: '' da solo (chiaro se la testata è scura), day (sempre quello normale), night (sempre quello per fondi scuri)
@@ -88,9 +89,11 @@ final class Identity
      * Contrasti della palette. La frase grande dell'apertura si controlla sul fondo dove il tema la mette:
      * "hero_on" nel theme.json = accent (sul colore principale), ground (sullo sfondo, predefinito) o photo (sempre bianca sulla foto: non dipende dalla palette).
      */
-    public static function checks(array $c, ?string $heroOn = null): array
+    public static function checks(array $c, ?string $heroOn = null, ?bool $accentText = null): array
     {
         $heroOn ??= (string)((PP::themes()[PP::theme()] ?? [])['hero_on'] ?? 'ground');
+        // "accent_text": false nel theme.json = il tema usa il colore principale solo come fondo (es. evidenziatore chiaro): non serve 3:1 sullo sfondo
+        $accentText ??= (bool)((PP::themes()[PP::theme()] ?? [])['accent_text'] ?? true);
         $heroBg = $heroOn === 'ground' ? $c['ground'] : $c['accent'];
         $where = $heroOn === 'ground' ? 'sullo sfondo' : 'sul colore principale';
         $rows = [
@@ -104,7 +107,7 @@ final class Identity
             $rows[] = ['Frase grande, prima riga ' . $where, $c['hero1'], $heroBg, 3];
             $rows[] = ['Frase grande, seconda riga ' . $where, $c['hero2'], $heroBg, 3];
         }
-        $rows[] = ['Colore principale su sfondo (titoli, link evidenziati)', $c['accent'], $c['ground'], 3];
+        if ($accentText) $rows[] = ['Colore principale su sfondo (titoli, link evidenziati)', $c['accent'], $c['ground'], 3];
         return array_map(function ($r) {
             $ratio = self::contrast($r[1], $r[2]);
             $sug = '';
@@ -178,16 +181,38 @@ final class Identity
         $h = max(0, min(160, (int)($s['logo_h'] ?? 0)));
         if ($h >= 16) $css .= ".site-head .brand__logo{height:{$h}px;max-height:none}\n@media (max-width:960px){.site-head .brand__logo{height:" . min($h, 44) . "px}}\n";
         // foto degli elenchi (schede, portfolio, gallerie, altri lavori): mai quelle aperte, che restano a colori
-        $box = ':is(.story__pic,.card__img,.worknav__pic,.gallery__item,.collection__pic)';
-        $item = ':is(.story,.card,.worknav__item,.gallery__item,.collection__item)';
+        $box = ':is(.story__pic,.card__img,.worknav__pic,.gallery__item,.collection__pic,.lead-item__img)';
+        $item = ':is(.story,.card,.worknav__item,.gallery__item,.collection__item,.lead-item)';
+        // il velo non tocca i mosaici: lì ::after è la sfumatura scura che rende leggibile il titolo sulla foto
+        $veil = $box . ':not(.list--mosaic .card__img,.stories--mosaic .story__pic)';
+        // di base a colori: i temi che virano o sbiancano le foto lo fanno solo con "Come le mostra il tema"
         $fx = (string)($s['photo_fx'] ?? '');
-        if ($fx !== '') {
-            $css .= "{$box}{position:relative}\n{$box}::after{content:\"\";position:absolute;inset:0;pointer-events:none;border-radius:inherit;transition:opacity .5s cubic-bezier(.16,1,.3,1);opacity:0}\n";
-            $css .= "{$box} img{transition:filter .5s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);filter:" . ($fx === 'none' ? 'none' : 'grayscale(1) contrast(1.08)') . "}\n";
-            if ($fx === 'tint') $css .= "{$box}::after{background:color-mix(in srgb,var(--accent) 40%,#fff);mix-blend-mode:multiply;opacity:1}\n";
+        if ($fx === '' || $fx === 'none') $fx = 'color';
+        if ($fx !== 'theme') {
+            $css .= "{$veil}{position:relative}\n{$veil}::after{content:\"\";position:absolute;inset:0;pointer-events:none;border-radius:inherit;transition:opacity .5s cubic-bezier(.16,1,.3,1);opacity:0;mix-blend-mode:normal;background:none}\n";
+            $css .= "{$box} img{transition:filter .5s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);filter:" . (in_array($fx, ['color', 'soft'], true) ? 'none' : 'grayscale(1) contrast(1.08)') . "!important}\n";
+            if ($fx === 'tint') $css .= "{$veil}::after{background:color-mix(in srgb,var(--accent) 40%,#fff);mix-blend-mode:multiply;opacity:1}\n";
+            // un velo appena percettibile del colore principale: le foto restano a colori
+            if ($fx === 'soft') $css .= "{$veil}::after{background:var(--accent);opacity:.14}\n";
+            // a colori anche le foto aperte (del lavoro, della notizia, nel testo): alcuni temi le sbiancano
+            if (in_array($fx, ['color', 'soft'], true)) $css .= ":is(.storypage__pic,.article__img) img,.prose img{filter:none!important}\n:is(.storypage__pic,.article__img)::after{opacity:0!important}\n";
+        }
+        // proporzione delle foto negli elenchi (portfolio, categorie, news); l'elenco di contenuti in home ha la sua scelta.
+        // Restano fuori i mosaici (la foto riempie il riquadro) e l'indice (anteprima al passaggio)
+        $ratio = ['' => '1 / 1', '4:3' => '4 / 3', '3:2' => '3 / 2', '16:9' => '16 / 9', '3:4' => '3 / 4', 'auto' => 'auto'][(string)($s['photo_ratio'] ?? '')] ?? null;
+        $lists = '.site-main :is(.card__img,.story__pic,.lead-item__img):not(.collection .card__img,.list--mosaic .card__img,.stories--mosaic .story__pic,.stories--index .story__pic)';
+        if ($ratio !== null) {
+            $css .= "{$lists}{aspect-ratio:{$ratio}!important;height:auto!important}\n";
+            $css .= $ratio === 'auto' ? "{$lists} img{height:auto!important;object-fit:initial!important}\n" : "{$lists} img{width:100%;height:100%!important;object-fit:cover}\n";
+        }
+        // foto con una forma molto diversa dal riquadro (copertine verticali, panorami): intere su un fondo tenue, non tagliate.
+        // "Taglia la foto" sul contenuto (pp-crop) la riempie comunque
+        if ($ratio !== 'auto') {
+            $fit = ':is(.card__img,.story__pic,.lead-item__img):not(.list--mosaic .card__img,.stories--mosaic .story__pic,.pp-crop)';
+            $css .= ".site-main {$fit} img:is(.pp-tall,.pp-wide){object-fit:contain!important;background:color-mix(in srgb,var(--accent) 9%,var(--surface,#f4f4f4))}\n";
         }
         $hv = (string)($s['photo_hover'] ?? '');
-        if ($hv === 'color') $css .= "{$item}:is(:hover,:focus-within) {$box} img{filter:none}\n{$item}:is(:hover,:focus-within) {$box}::after{opacity:0}\n";
+        if ($hv === 'color') $css .= "{$item}:is(:hover,:focus-within) {$box} img{filter:none!important}\n{$item}:is(:hover,:focus-within) {$veil}::after{opacity:0}\n";
         if ($hv === 'zoom') $css .= "{$item}:is(:hover,:focus-within) {$box} img{transform:scale(1.05)}\n";
         if ($hv === 'none') $css .= "{$item}:is(:hover,:focus-within) {$box} img{transform:none}\n";
         if ($css !== '') $css .= "@media (prefers-reduced-motion:reduce){{$box} img,{$box}::after{transition:none}}\n";
@@ -295,8 +320,25 @@ final class Identity
                 $v = $vars[(int)Admin::post('variant')] ?? null;
                 if ($v) {
                     self::apply($v['palette'] ?? [], $v['fonts']['display'] ?? null, $v['fonts']['text'] ?? null, $v['buttons'] ?? null);
+                    Settings::set('identity_personal', null);
                     Admin::changed('identity');
                     Admin::flash('Variante “' . ($v['name'] ?? '') . '” applicata. Quella di prima si ripristina qui sotto.');
+                }
+                PP::redirect(Admin::u('identity'));
+            }
+            // colori personali: anteprima in tempo reale (JSON) e applicazione
+            if ($act === 'personal_json') {
+                $p = Palette::fromInput($_POST);
+                if (!$p['primary']) Admin::json(['error' => 'Scegli il colore principale'], 400);
+                $c = Palette::colorsFor($p);
+                Admin::json(['colors' => $c, 'checks' => array_map(fn($r) => ['label' => $r['label'], 'ok' => $r['ratio'] >= $r['min'], 'ratio' => round($r['ratio'], 1)], self::checks($c))]);
+            }
+            if ($act === 'personal') {
+                $p = Palette::fromInput($_POST);
+                if ($p['primary']) {
+                    Palette::applyPersonal($p);
+                    Admin::changed('identity');
+                    Admin::flash('Colori personali applicati. Valgono anche se cambi tema: si ricalcolano per quello nuovo. Quelli di prima si ripristinano qui sotto.');
                 }
                 PP::redirect(Admin::u('identity'));
             }
@@ -339,7 +381,8 @@ final class Identity
             if (in_array(Admin::post('buttons'), ['pill', 'soft', 'square'], true)) $s['buttons'] = Admin::post('buttons');
             $s['logo_has_name'] = (bool)Admin::post('logo_has_name');
             $s['logo_h'] = max(0, min(160, (int)Admin::post('logo_h')));
-            $s['photo_fx'] = in_array(Admin::post('photo_fx'), ['none', 'mono', 'tint'], true) ? Admin::post('photo_fx') : '';
+            $s['photo_fx'] = in_array(Admin::post('photo_fx'), ['soft', 'theme', 'mono', 'tint'], true) ? Admin::post('photo_fx') : '';
+            $s['photo_ratio'] = in_array(Admin::post('photo_ratio'), ['layout', '4:3', '3:2', '16:9', '3:4', 'auto'], true) ? Admin::post('photo_ratio') : '';
             $s['photo_hover'] = in_array(Admin::post('photo_hover'), ['color', 'zoom', 'none'], true) ? Admin::post('photo_hover') : '';
             $s['band_h'] = in_array(Admin::post('band_h'), ['compact', 'tall'], true) ? Admin::post('band_h') : '';
             $s['logo_head'] = in_array(Admin::post('logo_head'), ['day', 'night'], true) ? Admin::post('logo_head') : '';

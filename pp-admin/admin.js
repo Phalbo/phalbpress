@@ -322,4 +322,110 @@
       if (v) { const first = opts.find((o) => o.el.value && !o.el.hidden); if (first && !sel.value) sel.size = Math.min(8, opts.filter((o) => !o.el.hidden).length + 1); } else sel.size = 0;
     });
   });
+
+  /* galleria: anteprime da trascinare per l'ordine, una descrizione per foto, foto dal computer caricate subito.
+     Il testo sotto (una foto per riga "percorso | descrizione") resta la fonte: senza JavaScript si usa quello */
+  document.querySelectorAll('[data-gallery]').forEach((box) => {
+    const ta = box.querySelector('[data-gallery-value]');
+    const fileIn = box.querySelector('[data-gallery-files]');
+    const parse = () => ta.value.split(/\n/).map((l) => l.trim()).filter(Boolean).map((l) => {
+      const i = l.indexOf('|');
+      return i < 0 ? { path: l.trim(), alt: '' } : { path: l.slice(0, i).trim(), alt: l.slice(i + 1).trim() };
+    });
+    let items = parse();
+    const write = () => { ta.value = items.map((it) => it.path + (it.alt ? ' | ' + it.alt.replace(/[|\n]/g, ' ') : '')).join('\n'); };
+    ta.closest('.field').querySelector('label').hidden = false;
+    ta.hidden = true;
+    fileIn.closest('label').style.display = 'none';   // .field ha un display suo, hidden non basta
+    const ui = document.createElement('div');
+    ui.className = 'gal';
+    ui.innerHTML = '<ol class="gal__list"></ol><div class="gal__drop" tabindex="-1"><p><strong>Trascina qui le foto</strong> dal computer, una o tante insieme.</p>'
+      + '<p class="row"><button type="button" class="btn btn--small" data-gal-pc>Scegli dal computer</button> <button type="button" class="btn btn--small" data-gal-lib>Dalla libreria</button></p>'
+      + '<p class="hint">Qualsiasi forma va bene: almeno 1600 px sul lato lungo. Le ridimensioniamo e comprimiamo noi. Trascina le anteprime per cambiare l’ordine.</p></div>'
+      + '<p class="hint" role="status" aria-live="polite" data-gal-status></p>';
+    box.appendChild(ui);
+    const list = ui.querySelector('.gal__list');
+    const status = ui.querySelector('[data-gal-status]');
+    const pc = document.createElement('input');
+    pc.type = 'file'; pc.accept = 'image/*'; pc.multiple = true; pc.hidden = true;
+    ui.appendChild(pc);
+    let dragFrom = -1;
+    const move = (from, to) => { if (to < 0 || to >= items.length || from === to) return; const [it] = items.splice(from, 1); items.splice(to, 0, it); write(); render(); };
+    const render = () => {
+      list.replaceChildren();
+      items.forEach((it, i) => {
+        const li = document.createElement('li');
+        li.className = 'gal__item';
+        li.draggable = true;
+        const img = document.createElement('img');
+        img.src = `${ROOT}/${it.path}`; img.alt = ''; img.loading = 'lazy';
+        const alt = document.createElement('input');
+        alt.type = 'text'; alt.value = it.alt; alt.placeholder = 'Cosa mostra la foto';
+        alt.setAttribute('aria-label', `Descrizione della foto ${i + 1}`);
+        alt.addEventListener('input', () => { it.alt = alt.value; write(); });
+        const bar = document.createElement('div');
+        bar.className = 'gal__bar';
+        [['←', `Sposta la foto ${i + 1} prima`, () => move(i, i - 1)], ['→', `Sposta la foto ${i + 1} dopo`, () => move(i, i + 1)], ['×', `Togli la foto ${i + 1} dalla galleria`, () => { items.splice(i, 1); write(); render(); status.textContent = 'Foto tolta dalla galleria (resta nella libreria).'; }]]
+          .forEach(([t, l, fn]) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'btn btn--small'; b.textContent = t; b.setAttribute('aria-label', l); b.addEventListener('click', fn); bar.appendChild(b); });
+        li.append(img, alt, bar);
+        li.addEventListener('dragstart', (ev) => { dragFrom = i; li.classList.add('is-drag'); ev.dataTransfer.effectAllowed = 'move'; ev.dataTransfer.setData('text/plain', String(i)); });
+        li.addEventListener('dragend', () => li.classList.remove('is-drag'));
+        li.addEventListener('dragover', (ev) => { if (dragFrom >= 0) { ev.preventDefault(); li.classList.add('is-over'); } });
+        li.addEventListener('dragleave', () => li.classList.remove('is-over'));
+        li.addEventListener('drop', (ev) => { if (dragFrom < 0) return; ev.preventDefault(); ev.stopPropagation(); const f = dragFrom; dragFrom = -1; move(f, i); });
+        list.appendChild(li);
+      });
+    };
+    const upload = async (files) => {
+      const imgs = [...files].filter((f) => /^image\//.test(f.type));
+      let n = 0;
+      for (const f of imgs) {
+        n++;
+        status.textContent = `Carico la foto ${n} di ${imgs.length}…`;
+        try {
+          const r = await api('upload', { file: f });
+          items.push({ path: r.path, alt: '' }); write(); render();
+        } catch (e) { box.appendChild(err(`${f.name}: ${e.message}`)); }
+      }
+      status.textContent = imgs.length ? `Foto aggiunte: ${n}. Scrivi per ognuna cosa mostra, poi salva.` : 'Nessuna immagine tra i file scelti.';
+    };
+    pc.addEventListener('change', () => { upload(pc.files); pc.value = ''; });
+    ui.querySelector('[data-gal-pc]').addEventListener('click', () => pc.click());
+    ui.querySelector('[data-gal-lib]').addEventListener('click', async () => { const p = await pickImage(); if (p) { items.push({ path: p, alt: '' }); write(); render(); } });
+    const drop = ui.querySelector('.gal__drop');
+    ['dragenter', 'dragover'].forEach((t) => drop.addEventListener(t, (ev) => { if (dragFrom < 0) { ev.preventDefault(); drop.classList.add('is-over'); } }));
+    ['dragleave', 'drop'].forEach((t) => drop.addEventListener(t, () => drop.classList.remove('is-over')));
+    drop.addEventListener('drop', (ev) => { if (dragFrom >= 0) return; ev.preventDefault(); upload(ev.dataTransfer.files); });
+    render();
+  });
+
+  /* colori personali: i colori calcolati e i contrasti mentre si sceglie; il link all'anteprima segue la scelta */
+  document.querySelectorAll('[data-personal-form]').forEach((form) => {
+    const res = form.querySelector('[data-personal-result]');
+    const sw = form.querySelector('[data-personal-sw]');
+    const st = form.querySelector('[data-personal-status]');
+    const prev = form.querySelector('[data-personal-preview]');
+    let timer = 0; let seq = 0;
+    const update = async () => {
+      const fd = new FormData(form);
+      fd.set('action', 'personal_json');
+      const q = new URLSearchParams();
+      ['p1', 'use2', 'p2', 'use3', 'p3', 'mood'].forEach((k) => { if (fd.get(k)) q.set(k, fd.get(k)); });
+      if (prev) prev.href = `${prev.dataset.base}&${q}`;
+      const n = ++seq;
+      try {
+        const r = await fetch(location.pathname, { method: 'POST', body: fd, credentials: 'same-origin' });
+        const j = await r.json();
+        if (n !== seq) return;
+        if (!r.ok || j.error) throw new Error(j.error || `Errore ${r.status}`);
+        sw.replaceChildren(...Object.entries(j.colors).map(([k, v]) => { const i = document.createElement('i'); i.style.background = v; i.title = `${k} ${v}`; return i; }));
+        const bad = j.checks.filter((c) => !c.ok);
+        st.textContent = bad.length ? `Da sistemare: ${bad.map((c) => `${c.label} (${c.ratio}:1)`).join('; ')}` : `Tutti i contrasti vanno bene (${j.checks.length} controlli WCAG AA).`;
+        res.hidden = false;
+      } catch (e) { st.textContent = e.message; res.hidden = false; }
+    };
+    form.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(update, 250); });
+    form.addEventListener('change', () => { clearTimeout(timer); timer = setTimeout(update, 50); });
+    update();
+  });
 })();

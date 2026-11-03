@@ -95,6 +95,73 @@
     },
     "site": {
       "header": "bar"
+    },
+    "stories": {
+      "stories": "thumbs"
+    },
+    "story": {
+      "work": "sheet"
+    },
+    "news": {
+      "list": "rows"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#1b2420",
+        "accent": "#1f5a43",
+        "field1": "#1f5a43",
+        "field2": "#f2f3f2",
+        "dark": "#14231c",
+        "hero1": "#1b2420",
+        "hero2": "#1f5a43"
+      }
+    },
+    {
+      "name": "Blu consulenza",
+      "note": "Un solo blu in più toni: il classico della consulenza.",
+      "palette": {
+        "accent": "#1e4f8a",
+        "field1": "#1e4f8a",
+        "field2": "#f2f3f2",
+        "ink": "#1d2229",
+        "ground": "#ffffff",
+        "dark": "#17202b",
+        "hero1": "#1d2229",
+        "hero2": "#1e4f8a"
+      }
+    },
+    {
+      "name": "Rame",
+      "note": "Rame e grafite: per studi professionali e manifattura.",
+      "palette": {
+        "accent": "#9a4a24",
+        "field1": "#9a4a24",
+        "field2": "#f2f3f2",
+        "ink": "#281f1c",
+        "ground": "#ffffff",
+        "dark": "#291c16",
+        "hero1": "#281f1c",
+        "hero2": "#9a4a24"
+      }
+    },
+    {
+      "name": "Petrolio",
+      "note": "Petrolio e verde acqua: per energia, logistica e servizi.",
+      "palette": {
+        "accent": "#0f5c6e",
+        "field1": "#0f5c6e",
+        "field2": "#f2f3f2",
+        "ink": "#1a2326",
+        "ground": "#ffffff",
+        "dark": "#112227",
+        "hero1": "#1a2326",
+        "hero2": "#0f5c6e"
+      }
+    }
+  ]
 }

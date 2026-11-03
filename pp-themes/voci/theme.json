@@ -94,6 +94,73 @@
     },
     "site": {
       "header": "bar"
+    },
+    "stories": {
+      "stories": "grid"
+    },
+    "story": {
+      "work": "portrait"
+    },
+    "news": {
+      "list": "mosaic"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#221a16",
+        "accent": "#9c3a14",
+        "field1": "#245c31",
+        "field2": "#fbf3ec",
+        "dark": "#141110",
+        "hero1": "#9c3a14",
+        "hero2": "#221a16"
+      }
+    },
+    {
+      "name": "Fucsia",
+      "note": "Fucsia e verde: per giovani e partecipazione, con energia.",
+      "palette": {
+        "accent": "#b0186b",
+        "field1": "#005d4b",
+        "field2": "#fcf1f5",
+        "ink": "#22191c",
+        "ground": "#ffffff",
+        "dark": "#141110",
+        "hero1": "#b0186b",
+        "hero2": "#22191c"
+      }
+    },
+    {
+      "name": "Cobalto",
+      "note": "Blu cobalto e arancio: diretto, per campagne e movimenti.",
+      "palette": {
+        "accent": "#2443b8",
+        "field1": "#c2410c",
+        "field2": "#f1f5fe",
+        "ink": "#191c23",
+        "ground": "#ffffff",
+        "dark": "#141110",
+        "hero1": "#2443b8",
+        "hero2": "#191c23"
+      }
+    },
+    {
+      "name": "Lime",
+      "note": "Verde lime e oliva: per ambiente e comunità.",
+      "palette": {
+        "accent": "#4d7c0f",
+        "field1": "#065d47",
+        "field2": "#f1f7ee",
+        "ink": "#191e16",
+        "ground": "#ffffff",
+        "dark": "#141110",
+        "hero1": "#4d7c0f",
+        "hero2": "#191e16"
+      }
+    }
+  ]
 }

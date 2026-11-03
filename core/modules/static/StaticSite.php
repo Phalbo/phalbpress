@@ -98,6 +98,14 @@ final class StaticSite
             $res = Hooks::first('file', $f);
             if ($res) { self::write($f, $res['body']); $written[] = $f; }
         }
+        // le pagine statiche le serve Apache con la CSP di .htaccess, che l'aggiornamento non tocca: in ogni cartella di lingua
+        // un .htaccess con quella del motore (video, mappe, statistiche configurate), che vale al posto di quella generale
+        $csp = "# PhalbPress: scritto dalla pubblicazione statica, si rifà da solo\n<IfModule mod_headers.c>\n  <FilesMatch \"\\.html$\">\n    Header set Content-Security-Policy \"" . str_replace('"', '', PP::csp()) . "\"\n  </FilesMatch>\n</IfModule>\n";
+        foreach (I18n::codes() as $l) {
+            if (!is_dir(PP_ROOT . '/' . $l)) continue;
+            self::write($l . '/.htaccess', $csp);
+            $written[] = $l . '/.htaccess';
+        }
         // pagina 404 statica
         $nf = PP::notFound(I18n::$master);
         self::write('404.html', $nf['html']);

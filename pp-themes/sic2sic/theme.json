@@ -50,6 +50,73 @@
     "news-item": {
       "head": "left",
       "body": "aside"
+    },
+    "stories": {
+      "stories": "zigzag"
+    },
+    "story": {
+      "work": "journal"
+    },
+    "news": {
+      "list": "rows"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#f4eedf",
+        "ink": "#1f1a14",
+        "accent": "#9b1b1b",
+        "field1": "#2f5d3a",
+        "field2": "#e2d3a8",
+        "dark": "#1f1a14",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Blu sentiero",
+      "note": "Il blu dei segnavia con il verde dei prati, sulla carta paglia.",
+      "palette": {
+        "accent": "#1f4e8c",
+        "field1": "#544974",
+        "field2": "#adddeb",
+        "ink": "#171b21",
+        "ground": "#e6effd",
+        "dark": "#171b21",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Ocra e bosco",
+      "note": "Ocra, ruggine e verde bosco: per percorsi e territori.",
+      "palette": {
+        "accent": "#a0521a",
+        "field1": "#2f5d3a",
+        "field2": "#e2c79a",
+        "ink": "#201915",
+        "ground": "#fbebe2",
+        "dark": "#201915",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Prugna",
+      "note": "Prugna, salvia e senape: per storie e memoria.",
+      "palette": {
+        "accent": "#6b2d5c",
+        "field1": "#6d481d",
+        "field2": "#a8deee",
+        "ink": "#1f191d",
+        "ground": "#f8e9f3",
+        "dark": "#1f191d",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    }
+  ]
 }

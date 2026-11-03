@@ -1,10 +1,9 @@
-# Audit PhalbPress: cosa resta aperto dopo la 1.17.0
+# Audit PhalbPress: cosa resta aperto (aggiornato alla 1.18.0)
 
-L'audit completo della 1.16.0 (2-3 novembre 2026) e le sue correzioni sono nella storia di git (ramo `audit-1.17`, unito in `main` con la 1.17.0) e nel CHANGELOG. Qui resta solo quello che non è stato fatto, in ordine di importanza. Ogni voce: dove, cosa succede, correzione proposta.
+L'audit completo della 1.16.0 (2-3 novembre 2026) e le sue correzioni sono nella storia di git (ramo `audit-1.17`, unito in `main` con la 1.17.0) e nel CHANGELOG. Qui resta solo quello che non è stato fatto, in ordine di importanza. La 1.18.0 ha chiuso la CSP delle pagine statiche (ora in ogni cartella di lingua). Ogni voce: dove, cosa succede, correzione proposta.
 
 ## Sicurezza
 - **Anteprima per tutti i ruoli** — `core/Admin.php` (`preview` non è nella mappa dei permessi): autori e traduttori vedono tutte le bozze; `demo=1` ricrea `data/demo-preview.sqlite`. I traduttori vedono comunque tutto in gestione. Proposta: `demo` solo con `site`; valutare `preview` con `content|translate`.
-- **CSP delle pagine statiche** scolpita in `.htaccess` (che l'aggiornamento non tocca), diversa da `PP::csp()` quando un modulo usa il filtro `csp_frames`. Proposta: avviso in Sistema se la riga dell'`.htaccess` non coincide.
 - **Messaggi d'eccezione grezzi** in `Admin::view('error')` e nel JSON di `Visual.php` (testo PDO, percorsi). Proposta: messaggio generico fuori debug, dettaglio nel registro.
 - **Installazione senza autenticazione** (`install.php`, `phalbpress-installa.php`; quest'ultimo elenca i file della cartella). Documentato in LEGGIMI. Proposta: codice monouso stampato nel file.
 - **Caricamento font** (`Identity.php` ~310): solo l'estensione; mancano `error`, dimensione, firma `wOF2`.
