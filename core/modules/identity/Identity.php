@@ -184,12 +184,12 @@ final class Identity
         $box = ':is(.story__pic,.card__img,.worknav__pic,.gallery__item,.collection__pic,.lead-item__img)';
         $item = ':is(.story,.card,.worknav__item,.gallery__item,.collection__item,.lead-item)';
         // il velo non tocca i mosaici: lì ::after è la sfumatura scura che rende leggibile il titolo sulla foto
-        $veil = $box . ':not(.list--mosaic .card__img,.stories--mosaic .story__pic)';
+        $veil = $box . ':not(.list--mosaic .card__img,.stories--mosaic .story__pic,.stories--index .story__pic)';
         // di base a colori: i temi che virano o sbiancano le foto lo fanno solo con "Come le mostra il tema"
         $fx = (string)($s['photo_fx'] ?? '');
         if ($fx === '' || $fx === 'none') $fx = 'color';
         if ($fx !== 'theme') {
-            $css .= "{$veil}{position:relative}\n{$veil}::after{content:\"\";position:absolute;inset:0;pointer-events:none;border-radius:inherit;transition:opacity .5s cubic-bezier(.16,1,.3,1);opacity:0;mix-blend-mode:normal;background:none}\n";
+            $css .= ":where({$box}){position:relative}\n{$veil}::after{content:\"\";position:absolute;inset:0;pointer-events:none;border-radius:inherit;transition:opacity .5s cubic-bezier(.16,1,.3,1);opacity:0;mix-blend-mode:normal;background:none}\n";
             $css .= "{$box} img{transition:filter .5s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1);filter:" . (in_array($fx, ['color', 'soft'], true) ? 'none' : 'grayscale(1) contrast(1.08)') . "!important}\n";
             if ($fx === 'tint') $css .= "{$veil}::after{background:color-mix(in srgb,var(--accent) 40%,#fff);mix-blend-mode:multiply;opacity:1}\n";
             // un velo appena percettibile del colore principale: le foto restano a colori
