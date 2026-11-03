@@ -9,6 +9,8 @@ $lg = $item['_fallback'] ? ' lang="' . e(I18n::hreflang($item['_lang'])) . '"' :
 $role = $item['x']['role'] ?? ($m['role'] ?? '');
 $video = preg_match('~^[A-Za-z0-9_-]{6,20}$~', (string)($m['video'] ?? '')) ? $m['video'] : '';
 $body = PP::body($item['body']);
+// galleria del lavoro (campo "Galleria"): dopo il testo
+foreach (PP::$config['types']['story']['fields'] ?? [] as $gk => $gf) if (($gf['type'] ?? '') === 'gallery') $body .= PP::gallery((string)($m[$gk] ?? ''));
 // il video del campo non si ripete se è già nel testo
 if ($video && str_contains($item['body'], '[video:' . $video . ']')) $video = '';
 $lay = Layouts::get('story', 'work', $item);

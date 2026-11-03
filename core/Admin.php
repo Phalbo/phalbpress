@@ -301,6 +301,7 @@ final class Admin
             'entries' => implode(',', array_values(array_unique(array_filter(array_map('intval', preg_split('~[^0-9]+~', (string)$v)))))),
             'color' => preg_match('~^#[0-9a-f]{6}$~i', (string)$v) ? strtolower((string)$v) : '',
             'image' => preg_match('~^uploads/[A-Za-z0-9/_.-]+$~', (string)$v) && !str_contains((string)$v, '..') ? (string)$v : '',
+            'gallery' => Media::gallery((string)$v),
             default => (string)$v,
         };
     }
@@ -379,6 +380,19 @@ final class Admin
             foreach ($fields as $k => $f) {
                 if ($f['translatable']) { if (!$carried || array_key_exists($k, (array)($_POST['x'] ?? []))) $extra[$k] = self::fieldValue($f, $_POST['x'][$k] ?? ''); }
                 elseif ($isMaster) { if (!$carried || array_key_exists($k, (array)($_POST['meta'] ?? []))) $meta[$k] = self::fieldValue($f, $_POST['meta'][$k] ?? ''); }
+            }
+            // foto nuove della galleria (anche più di una alla volta): si caricano e si aggiungono in fondo
+            if ($isMaster) foreach ($fields as $k => $f) {
+                if ($f['type'] !== 'gallery' || empty($_FILES['gallery_' . $k]['name']) || !is_array($_FILES['gallery_' . $k]['name'])) continue;
+                $F = $_FILES['gallery_' . $k];
+                $add = [];
+                foreach ($F['name'] as $i => $n) {
+                    if ($n === '' || (int)$F['error'][$i] === UPLOAD_ERR_NO_FILE) continue;
+                    $one = ['name' => $n, 'type' => $F['type'][$i], 'tmp_name' => $F['tmp_name'][$i], 'error' => $F['error'][$i], 'size' => $F['size'][$i]];
+                    try { $add[] = Media::upload($one, 'media', Media::IMAGES); if (Media::$note) self::flash($n . ': ' . Media::$note); }
+                    catch (Throwable $e) { self::flash($n . ': ' . $e->getMessage(), 'error'); }
+                }
+                if ($add) $meta[$k] = Media::gallery(trim((string)($meta[$k] ?? '') . '|' . implode('|', $add), '|'));
             }
             if ($carried) Blocks::carry($row['template'], $meta, $extra);
             if (isset($meta['video'])) $meta['video'] = self::youtubeId((string)$meta['video']);
@@ -734,6 +748,16 @@ final class Admin
             }
         }
         if ($what === 'media') self::json(['items' => Media::library('media')]);
+        // una foto caricata subito (galleria con trascinamento): torna il percorso e le misure
+        if ($what === 'upload') {
+            if (!Auth::can('content')) self::json(['error' => 'Permesso negato'], 403);
+            if (empty($_FILES['file']['name'])) self::json(['error' => 'Nessun file'], 400);
+            try {
+                $path = Media::upload($_FILES['file'], 'media', Media::IMAGES);
+                $dim = @getimagesize(PP_ROOT . '/' . $path) ?: [0, 0];
+                self::json(['path' => $path, 'w' => (int)$dim[0], 'h' => (int)$dim[1], 'note' => (string)Media::$note]);
+            } catch (Throwable $e) { self::json(['error' => $e->getMessage()], 400); }
+        }
         if ($what === 'docs') {
             $rows = DB::all('SELECT d.id, d.code, t.title FROM pp_docs d LEFT JOIN pp_doc_tr t ON t.doc_id = d.id AND t.lang = ? ORDER BY d.sort, d.id DESC', [I18n::$master]);
             self::json(['items' => $rows]);

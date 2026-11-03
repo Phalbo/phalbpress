@@ -458,6 +458,31 @@ final class WpImport
         return false;
     }
 
+    /**
+     * Se il tipo ha un campo Galleria, le gallerie del testo ([gallery:…] dai blocchi di WordPress) passano lì, in ordine;
+     * se ha un campo video vuoto, ci va il primo video del testo. Così nel testo non restano codici da toccare.
+     */
+    private static function intoFields(array $data): array
+    {
+        $fields = PP::$config['types'][$data['type']]['fields'] ?? [];
+        $gal = null;
+        foreach ($fields as $k => $f) if (is_array($f) && ($f['type'] ?? '') === 'gallery') { $gal = $k; break; }
+        if ($gal !== null && str_contains($data['body'], '[gallery:')) {
+            $parts = [];
+            $data['body'] = preg_replace_callback('~(?:<p>\s*)?\[gallery:([^\]]+)\](?:\s*</p>)?~', function ($m) use (&$parts) {
+                $parts[] = html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                return '';
+            }, $data['body']);
+            $data['meta'][$gal] = Media::gallery(implode('|', $parts));
+        }
+        if (isset($fields['video']) && empty($data['meta']['video']) && preg_match('~(?:<p>\s*)?\[video:([A-Za-z0-9_-]{6,20})\](?:\s*</p>)?~', $data['body'], $vm)) {
+            $data['meta']['video'] = $vm[1];
+            $data['body'] = str_replace($vm[0], '', $data['body']);
+        }
+        $data['body'] = trim(preg_replace('~(\n\s*){3,}~', "\n\n", $data['body']));
+        return $data;
+    }
+
     /** Un gruppo di traduzioni → un contenuto con i testi nelle sue lingue. */
     private static function entry(string $key, array $g): void
     {
@@ -485,6 +510,7 @@ final class WpImport
                     if ($ref) { $data['meta'][$tc['field']] ??= $ref; $data['meta']['categories'][] = $ref; }
                 }
             }
+            $data = self::intoFields($data);
             $data = Hooks::filter('wp_import_entry', $data, $it, $lang);
             if (!empty($data['skip'])) continue;
             $texts[$lang] = $data;

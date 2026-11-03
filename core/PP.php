@@ -385,18 +385,22 @@ final class PP
         $html = preg_replace_callback('~(?:<p>\s*)?\[video:([A-Za-z0-9_-]{6,20})\](?:\s*</p>)?~', fn($m) => self::partial('video', ['id' => $m[1], 'service' => 'youtube']), $html);
         $html = preg_replace_callback('~(?:<p>\s*)?\[vimeo:(\d{5,12})\](?:\s*</p>)?~', fn($m) => self::partial('video', ['id' => $m[1], 'service' => 'vimeo']), $html);
         // galleria nel testo: [gallery:uploads/media/a.webp=descrizione|uploads/media/b.webp=descrizione]
-        $html = preg_replace_callback('~(?:<p>\s*)?\[gallery:([^\]]+)\](?:\s*</p>)?~', function ($m) {
-            $items = [];
-            foreach (explode('|', html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')) as $part) {
-                [$path, $alt] = array_pad(explode('=', $part, 2), 2, '');
-                $path = trim($path);
-                // seed-media/… = foto dimostrative del motore (contenuti di esempio e anteprima dei temi)
-                if (str_starts_with($path, 'seed-media/')) $path = 'pp-assets/demo/media/' . substr($path, 11);
-                if (preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif)$~i', $path) && is_file(PP_ROOT . '/' . $path)) $items[] = [$path, trim($alt)];
-            }
-            return $items ? self::partial('gallery', ['items' => $items]) : '';
-        }, $html);
+        $html = preg_replace_callback('~(?:<p>\s*)?\[gallery:([^\]]+)\](?:\s*</p>)?~', fn($m) => self::gallery(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5, 'UTF-8')), $html);
         return Hooks::filter('body', $html);
+    }
+
+    /** Galleria di foto da "percorso=descrizione|percorso=descrizione" (il codice [gallery:…] nel testo, o il campo Galleria). */
+    public static function gallery(string $spec): string
+    {
+        $items = [];
+        foreach (explode('|', $spec) as $part) {
+            [$path, $alt] = array_pad(explode('=', $part, 2), 2, '');
+            $path = trim($path);
+            // seed-media/… = foto dimostrative del motore (contenuti di esempio e anteprima dei temi)
+            if (str_starts_with($path, 'seed-media/')) $path = 'pp-assets/demo/media/' . substr($path, 11);
+            if (preg_match('~^(uploads|pp-assets/demo/media)/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif)$~i', $path) && !str_contains($path, '..') && is_file(PP_ROOT . '/' . $path)) $items[] = [$path, trim($alt)];
+        }
+        return $items ? self::partial('gallery', ['items' => $items]) : '';
     }
 
     public static function partial(string $name, array $vars = []): string

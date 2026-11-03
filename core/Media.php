@@ -339,4 +339,23 @@ final class Media
         $h = PP::$config['image_hints'][$key] ?? PP::$config['image_hints']['default'] ?? '';
         return $h;
     }
+
+    /**
+     * Galleria: una foto per riga ("percorso | descrizione") o già nella forma "percorso=descrizione|…".
+     * Si salva come il codice [gallery:…]: percorsi delle immagini caricate, descrizione senza i caratteri che separano.
+     */
+    public static function gallery(string $v): string
+    {
+        $parts = [];
+        foreach (preg_split('~\R|\|(?=\s*uploads/)~', str_contains($v, "\n") ? $v : str_replace('|', "\n", $v)) as $line) {
+            $line = trim($line);
+            if ($line === '') continue;
+            [$path, $alt] = array_pad(preg_split('~\s*[=|]\s*~', $line, 2), 2, '');
+            $path = trim($path);
+            if (!preg_match('~^uploads/[A-Za-z0-9/_.-]+\.(webp|jpe?g|png|gif)$~i', $path) || str_contains($path, '..')) continue;
+            $alt = trim(preg_replace('~\s+~', ' ', preg_replace('~[|=\]]+~', ' ', $alt)));
+            $parts[] = $alt !== '' ? $path . '=' . $alt : $path;
+        }
+        return implode('|', array_values(array_unique($parts)));
+    }
 }

@@ -41,6 +41,18 @@ switch ($f['type']):
     <div class="field"><span><?= e($f['label']) ?> <?= $hint ?></span>
       <?php if ($fval): ?><img src="<?= e(upload_url($fval)) ?>" alt="" class="thumb"><?php endif; ?>
       <div class="row"><input type="text" name="<?= e($fname) ?>" value="<?= e($fval) ?>" placeholder="uploads/media/…" aria-label="<?= e($f['label']) ?>: percorso del file" data-image-path><button type="button" class="btn btn--small" data-pick-image>Libreria</button></div></div>
+  <?php break; case 'gallery':
+    // una foto per riga "percorso | descrizione". Con JavaScript: anteprime da trascinare per l'ordine, descrizione per ogni foto,
+    // foto trascinate dal computer caricate subito. Senza: si scrive qui e si aggiungono file col campo sotto
+    $gid = 'f-' . preg_replace('~[^a-z0-9]+~i', '-', $fname);
+    $glines = [];
+    foreach (array_filter(explode('|', (string)$fval)) as $gp) { [$gpath, $galt] = array_pad(explode('=', $gp, 2), 2, ''); $glines[] = $gpath . ($galt !== '' ? ' | ' . $galt : ''); } ?>
+    <div class="field gallery-field" data-gallery>
+      <label for="<?= e($gid) ?>"><?= e($f['label']) ?> <?= $hint ?></label>
+      <textarea id="<?= e($gid) ?>" name="<?= e($fname) ?>" rows="5" data-gallery-value placeholder="uploads/media/foto.webp | cosa mostra la foto"><?= e(implode("\n", $glines)) ?></textarea>
+      <label class="field gallery-field__add">Aggiungi foto dal computer <span class="muted">(anche più di una; si aggiungono in fondo)</span>
+        <input type="file" name="gallery_<?= e($k) ?>[]" accept="image/*" multiple data-gallery-files></label>
+    </div>
   <?php break; default:
     $it = ['number' => 'number', 'date' => 'date', 'url' => 'url'][$f['type']] ?? 'text'; ?>
     <label class="field"><?= e($f['label']) ?> <?= $hint ?><input type="<?= $it ?>" name="<?= e($fname) ?>" value="<?= e($fval) ?>"<?= $fl ?><?= $it === 'number' ? ' step="any"' : '' ?>></label>
