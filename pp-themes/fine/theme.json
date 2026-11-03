@@ -20,7 +20,7 @@
     "text": "Source Serif 4"
   },
   "buttons": "square",
-  "body_class": "photo-hero",
+  "body_class": "photo-hero hero-notext",
   "motion": {
     "marks": {
       ".step": [

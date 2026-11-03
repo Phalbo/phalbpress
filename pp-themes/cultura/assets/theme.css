@@ -61,6 +61,10 @@
 .js .hero--img .hero__img img { clip-path: inset(0 0 100% 0); transition: clip-path 1200ms var(--fx-soft); }
 .js .fx-go .hero--img .hero__img img { clip-path: inset(0 0 0 0); }
 .photo-hero .hero--img > :not(.hero__img) { background: var(--black); color: var(--black-ink); }
+/* la fascia sotto la foto è tutta nera e il titolo sta al centro, qualunque disposizione abbia l'apertura */
+.photo-hero .hero--img { grid-template-columns: minmax(0, 1fr) !important; background: var(--black); }
+.photo-hero .hero--img > :not(.hero__img) { grid-column: 1 / -1 !important; justify-self: stretch; align-self: stretch; width: 100% !important; max-width: none !important; box-sizing: border-box; }
+.photo-hero .hero--img .hero__title { display: flex; flex-direction: column; align-items: center; text-align: center; }
 .photo-hero .hero--img.chapter--custom > :not(.hero__img) { background: var(--chapter-bg); color: var(--chapter-ink); }
 .photo-hero .hero--img .hero__l1, .photo-hero .hero--img .hero__l2 { color: inherit; }
 .photo-hero .hero--img .hero__l2 { color: var(--c2); }

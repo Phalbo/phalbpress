@@ -28,6 +28,8 @@ final class Identity
             'photo_ratio' => (string)($d['photo_ratio'] ?? ''),  // proporzione delle foto negli elenchi: '' quadrate, layout (come la disposizione), 4:3, 3:2, 16:9, 3:4, auto (intere)
             'photo_hover' => (string)($d['photo_hover'] ?? ''),  // passandoci sopra: '' come il tema, color (tornano a colori), zoom, none
             'band_h' => (string)($d['band_h'] ?? ''),            // altezza delle intestazioni delle pagine interne: '' come il tema, compact, tall
+            'band_deco' => (string)($d['band_deco'] ?? ''),      // fondo delle intestazioni senza foto: '' motivo del tema, plain (tinta unita), gradient (sfumato)
+            'logos_size' => (string)($d['logos_size'] ?? ''),    // loghi di clienti e partner: '' medi, s piccoli, l grandi
             'logo_head' => (string)($d['logo_head'] ?? ''),      // logo in testata: '' da solo (chiaro se la testata è scura), day (sempre quello normale), night (sempre quello per fondi scuri)
             'space' => (string)($d['space'] ?? ''),              // spazi tra le fasce: '' come il tema, compact, wide
             'boxed' => !empty($d['boxed']),                      // contenuto in un riquadro centrale (le foto di apertura restano a tutta larghezza)
@@ -205,11 +207,11 @@ final class Identity
             $css .= "{$lists}{aspect-ratio:{$ratio}!important;height:auto!important}\n";
             $css .= $ratio === 'auto' ? "{$lists} img{height:auto!important;object-fit:initial!important}\n" : "{$lists} img{width:100%;height:100%!important;object-fit:cover}\n";
         }
-        // foto con una forma molto diversa dal riquadro (copertine verticali, panorami): intere su un fondo tenue, non tagliate.
-        // "Taglia la foto" sul contenuto (pp-crop) la riempie comunque
+        // foto molto verticali (copertine, locandine): intere su un fondo tenue, non tagliate. Le orizzontali, anche molto larghe,
+        // riempiono il riquadro (si tagliano i lati). "Negli elenchi riempi il riquadro" sul contenuto (pp-crop) riempie anche le verticali
         if ($ratio !== 'auto') {
             $fit = ':is(.card__img,.story__pic,.lead-item__img):not(.list--mosaic .card__img,.stories--mosaic .story__pic,.pp-crop)';
-            $css .= ".site-main {$fit} img:is(.pp-tall,.pp-wide){object-fit:contain!important;background:color-mix(in srgb,var(--accent) 9%,var(--surface,#f4f4f4))}\n";
+            $css .= ".site-main {$fit} img.pp-tall{object-fit:contain!important;background:color-mix(in srgb,var(--accent) 9%,var(--surface,#f4f4f4))}\n";
         }
         $hv = (string)($s['photo_hover'] ?? '');
         if ($hv === 'color') $css .= "{$item}:is(:hover,:focus-within) {$box} img{filter:none!important}\n{$item}:is(:hover,:focus-within) {$veil}::after{opacity:0}\n";
@@ -218,6 +220,14 @@ final class Identity
         if ($css !== '') $css .= "@media (prefers-reduced-motion:reduce){{$box} img,{$box}::after{transition:none}}\n";
         // intestazioni delle pagine interne più basse o più alte
         if (($s['band_h'] ?? '') === 'compact') $css .= ".site-main .band{padding-top:clamp(2rem,4vw,3.25rem)!important;padding-bottom:clamp(1.75rem,3vw,2.75rem)!important;min-height:0!important}\n.site-main .band.head--cover.band--img{min-height:min(40svh,380px)!important}\n.site-main .band .band__title{font-size:clamp(2rem,1.2rem + 2.6vw,3.6rem)}\n.site-main .band.band--long .band__title{font-size:clamp(1.7rem,1.1rem + 1.8vw,2.8rem)}\n.site-main .head--split .band__img img{max-height:340px;min-height:220px}\n";
+        // intestazioni senza foto: il motivo del tema, una tinta unita o uno sfumato verso il colore principale
+        $bd = (string)($s['band_deco'] ?? '');
+        if ($bd !== '') $css .= ".band__deco i{display:none!important}\n";
+        if ($bd === 'gradient') $css .= ".band__deco{background-image:linear-gradient(115deg,transparent 35%,color-mix(in srgb,var(--accent) 55%,transparent))!important}\n";
+        // loghi di clienti e partner (pagina Clienti e partner e nastro dei loghi): di base un po' più grandi di quelli del tema
+        $lz = ['s' => [150, 64, 'clamp(36px,3.4vw,52px)', 160], '' => [230, 104, 'clamp(48px,4.8vw,80px)', 220], 'l' => [300, 136, 'clamp(60px,6.4vw,104px)', 280]][(string)($s['logos_size'] ?? '')] ?? null;
+        if ($lz) $css .= ".partner__logo{max-width:{$lz[0]}px!important;max-height:{$lz[1]}px!important}\n.partners--logos .partner__logo{max-height:" . ($lz[1] + 12) . "px!important}\n"
+            . ".logos__item img{height:{$lz[2]}!important;max-width:{$lz[3]}px!important}\n";
         if (($s['band_h'] ?? '') === 'tall') $css .= ".site-main .band.head--cover.band--img{min-height:min(80svh,760px)!important}\n";
         return $css . self::layoutCss($s);
     }
@@ -239,7 +249,9 @@ final class Identity
             . ":where(.site-main>*),:where(.site-foot){background-color:var(--bg)}\n"
             . "@media (max-width:1380px){.site-main>:not(.hero--img),.site-foot{max-width:none}}\n";
         // velo e testo sulle foto
-        foreach (['hero' => ['.photo-hero .hero--img', '.hero__img', '.photo-hero .hero--img > :not(.hero__img)', '.photo-hero .hero--img :is(.hero__l1,.hero__l2,.hero__sentence)'],
+        // i temi con il testo accanto alla foto (o in una fascia sotto) lo dicono con `hero-notext` e `hero-noshade` in body_class:
+        // l'ombra sul testo e il velo valgono solo dove il testo sta sopra la foto
+        foreach (['hero' => ['.photo-hero:not(.hero-noshade) .hero--img', '.hero__img', '.photo-hero:not(.hero-notext) .hero--img > :not(.hero__img)', '.photo-hero:not(.hero-notext) .hero--img :is(.hero__l1,.hero__l2,.hero__sentence)'],
                   'band' => ['.band.head--cover.band--img', '.band__img', '.band.head--cover.band--img > :not(.band__img):not(.band__deco)', '.band.head--cover.band--img :is(.band__title,.band__lead,.band__label)']] as $k => [$box, $fig, $txt, $lines]) {
             $sh = (string)($s[$k . '_shade'] ?? '');
             if ($sh !== '' && ctype_digit($sh)) {
@@ -254,7 +266,7 @@ final class Identity
         // foto dell'apertura: a colori (senza il viraggio del tema) o in bianco e nero
         $hf = (string)($s['hero_fx'] ?? '');
         if ($hf !== '') $css .= ".photo-hero .hero--img .hero__img img{filter:" . ($hf === 'color' ? 'none' : 'grayscale(1) contrast(1.06)') . "!important}\n"
-            . ($hf === 'color' && (string)($s['hero_shade'] ?? '') === '' ? ".photo-hero .hero--img .hero__img::after{mix-blend-mode:normal!important;background:linear-gradient(to top,rgb(0 0 0/.55),rgb(0 0 0/.05) 60%)!important;opacity:1!important}\n" : '');
+            . ($hf === 'color' && (string)($s['hero_shade'] ?? '') === '' ? ".photo-hero:not(.hero-noshade) .hero--img .hero__img::after{mix-blend-mode:normal!important;background:linear-gradient(to top,rgb(0 0 0/.55),rgb(0 0 0/.05) 60%)!important;opacity:1!important}\n" : '');
         // foto delle intestazioni: a colori, in bianco e nero o virate, indipendenti da quelle degli elenchi
         $bf = (string)($s['band_fx'] ?? '');
         if ($bf !== '') {
@@ -385,6 +397,8 @@ final class Identity
             $s['photo_ratio'] = in_array(Admin::post('photo_ratio'), ['layout', '4:3', '3:2', '16:9', '3:4', 'auto'], true) ? Admin::post('photo_ratio') : '';
             $s['photo_hover'] = in_array(Admin::post('photo_hover'), ['color', 'zoom', 'none'], true) ? Admin::post('photo_hover') : '';
             $s['band_h'] = in_array(Admin::post('band_h'), ['compact', 'tall'], true) ? Admin::post('band_h') : '';
+            $s['band_deco'] = in_array(Admin::post('band_deco'), ['plain', 'gradient'], true) ? Admin::post('band_deco') : '';
+            $s['logos_size'] = in_array(Admin::post('logos_size'), ['s', 'l'], true) ? Admin::post('logos_size') : '';
             $s['logo_head'] = in_array(Admin::post('logo_head'), ['day', 'night'], true) ? Admin::post('logo_head') : '';
             $s['space'] = in_array(Admin::post('space'), ['compact', 'wide'], true) ? Admin::post('space') : '';
             $s['boxed'] = (bool)Admin::post('boxed');

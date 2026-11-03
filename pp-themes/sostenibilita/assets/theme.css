@@ -200,6 +200,8 @@
 .head--cover { --curve: clamp(40px, 6vw, 90px); padding-bottom: calc(var(--curve) + 24px); justify-items: center; text-align: center; border-radius: 0 !important; overflow: hidden; }
 .head--cover > * { margin-left: auto !important; margin-right: auto !important; }
 .head--cover::after { content: ""; position: absolute; z-index: 0; left: -15%; right: -15%; bottom: calc(var(--curve) * -1); height: calc(var(--curve) * 2); background: var(--bg); border-radius: 50% 50% 0 0 / 100% 100% 0 0; }
+/* la curva bianca in fondo copre la parte bassa: il testo resta sempre sopra, anche con "intestazioni basse" (Identità visiva) */
+.site-main .band.head--cover { padding-bottom: calc(var(--curve) + 28px) !important; }
 .head--cover .band__crumb ol { justify-content: center; }
 .head--cover .band__title { position: relative; z-index: 1; display: inline-block; justify-self: center; padding: 0.35em 0.8em 0.4em; border-radius: 999px; background: var(--accent); color: var(--accent-ink) !important; box-shadow: 0 18px 40px rgba(6, 30, 28, 0.25); }
 .head--cover > :not(.band__img):not(.band__deco):not(.band__title) { position: relative; z-index: 1; }

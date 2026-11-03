@@ -205,3 +205,9 @@
 @media (max-width: 760px) { .partners--rows .partner { grid-template-columns: 1fr; } .partners--rows .partner__logo { grid-row: auto; } }
 .head--cover.band--noimg > .band__deco { opacity: 0.9; }
 .head--cover.band--noimg { background: var(--black); color: var(--black-ink); }
+
+/* ---------- pagina in un riquadro centrale (scelta del tema, come "Riquadro" in Identità visiva): l'apertura con la foto resta a tutta larghezza ---------- */
+body { background: color-mix(in srgb, var(--ink) 7%, var(--bg)); }
+.site-main > :not(.hero--img), .site-foot { max-width: var(--boxed-w, 1340px); margin-left: auto !important; margin-right: auto !important; box-sizing: border-box; }
+:where(.site-main > *), :where(.site-foot) { background-color: var(--bg); }
+@media (max-width: 1380px) { .site-main > :not(.hero--img), .site-foot { max-width: none; } }

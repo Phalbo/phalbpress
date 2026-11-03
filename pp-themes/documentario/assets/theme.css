@@ -9,7 +9,7 @@
   --step-body: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
   --step-display: clamp(3.75rem, 1rem + 12vw, 13rem);
   --radius: 0px;
-  --section: clamp(3.5rem, 7.5vw, 7.5rem);
+  --section: clamp(2.75rem, 5.5vw, 5.5rem);
   --head-bg: var(--bg);
 }
 .chapter--accent, .chapter--blue { background: var(--surface); color: var(--ink); }

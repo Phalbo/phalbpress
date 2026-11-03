@@ -3,6 +3,7 @@
    Grotesk pesante per i titoli, serif da libro per leggere, arancio solo per le azioni e i numeri.
    Corregge il riferimento: niente onde, strisce tratteggiate e diagonali insieme; niente testo serif da 12 px centrato; titoli in minuscolo. */
 :root {
+  --section: clamp(2.5rem, 4.8vw, 4.75rem);   /* fasce più vicine: la home non si sfilaccia */
   --weight-head: 800;
   --tracking-head: -0.035em;
   --leading-head: 0.98;

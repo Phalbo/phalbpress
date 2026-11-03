@@ -131,6 +131,16 @@
         </select></label>
     </div>
     <p class="hint">Le foto aperte (la pagina di un lavoro, l’apertura della home) restano sempre a colori. Una foto con una forma molto diversa dal riquadro (una copertina verticale in un riquadro quadrato) si vede intera su un fondo tenue invece di essere tagliata; nella scheda del contenuto si può chiedere di tagliarla.</p>
+    <div class="row">
+      <label class="field">Fondo delle intestazioni senza foto
+        <select name="band_deco">
+          <?php foreach (['' => 'Il motivo del tema', 'plain' => 'Tinta unita', 'gradient' => 'Sfumato verso il colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_deco'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+        </select></label>
+      <label class="field">Loghi di clienti e partner
+        <select name="logos_size">
+          <?php foreach (['s' => 'Piccoli', '' => 'Medi', 'l' => 'Grandi'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['logos_size'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+        </select></label>
+    </div>
     <label class="field">Intestazioni delle pagine interne <span class="muted">(titolo in alto di pagine, news, portfolio)</span>
       <select name="band_h">
         <?php foreach (['' => 'Come il tema', 'compact' => 'Basse: titolo di misura, si arriva subito al contenuto', 'tall' => 'Alte'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_h'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
