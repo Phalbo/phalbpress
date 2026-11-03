@@ -270,7 +270,7 @@ final class Setup
         <label class="check"><input type="checkbox" name="driver" value="sqlite"<?= !$mysqlOk ? ' checked' : '' ?>> Usa SQLite, un file nella cartella data/ (per prove in locale, senza MySQL)</label>
       <?php endif; ?>
       <label class="field">Indirizzo della gestione <span class="muted">(il sito risponderà su /<?= $e($slug) ?>/)</span>
-        <input type="text" name="admin_slug" value="<?= $e($_POST['admin_slug'] ?? $slug) ?>" pattern="[a-z0-9][a-z0-9-]{2,40}" required></label>
+        <input type="text" name="admin_slug" value="<?= $e($_POST['admin_slug'] ?? $slug) ?>" pattern="[a-z0-9][a-z0-9\-]{2,40}" required></label>
       <label class="field">Indirizzo del sito <span class="muted">(quello da cui stai installando; cambialo se il sito avrà un altro dominio)</span>
         <input type="url" name="site_url" value="<?= $e($_POST['site_url'] ?? $guess) ?>" placeholder="<?= $e($guess) ?>"></label>
       <button class="btn btn--primary">Prova la connessione e continua</button>
