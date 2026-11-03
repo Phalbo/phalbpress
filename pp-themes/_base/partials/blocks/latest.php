@@ -1,19 +1,54 @@
 <?php
-$news = Content::entries('news', lang(), max(1, (int)($m['limit'] ?? 4)), 'pub_date DESC, id DESC');
+/* Ultime news (e documenti). Aspetto (campo style): '' elenco con le date · grid riquadri quadrati con la foto e il titolo sopra
+   · cards schede con foto, data e titolo · feature la prima in grande, le altre in elenco accanto. */
+$style = in_array($m['style'] ?? '', ['grid', 'cards', 'feature'], true) ? $m['style'] : '';
+$news = Content::entries('news', lang(), max(1, (int)($m['limit'] ?? ($style === '' ? 4 : 3))), 'pub_date DESC, id DESC');
 $docs = !empty($m['docs']) ? array_slice(Content::docs(lang()), 0, 5) : [];
-?>
-<section class="latest <?= e(Blocks::toneClass($b['tone'])) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>" aria-labelledby="<?= e($b['id_attr']) ?>-h">
-  <h2 id="<?= e($b['id_attr']) ?>-h" class="latest__head reveal"<?= $b['lg'] ?>><?= e($b['title']) ?></h2>
-  <div class="latest__cols<?= $docs ? '' : ' latest__cols--one' ?>">
-    <div class="latest__col reveal">
-      <h3 class="latest__sub"><a href="<?= e(section_link('news')) ?>"><?= e(t('news_title')) ?></a></h3>
+$lgOf = fn($n) => $n['_fallback'] ? ' lang="' . e(I18n::hreflang($n['_lang'])) . '"' : '';
+$rows = function (array $list) use ($lgOf) { ob_start(); ?>
       <ul class="rows2">
-        <?php foreach ($news as $n): ?>
-          <li><a href="<?= e(entry_url($n)) ?>"<?= $n['_fallback'] ? ' lang="' . e(I18n::hreflang($n['_lang'])) . '"' : '' ?>><?= e($n['title']) ?></a><span><?= e(fmt_date($n['pub_date'])) ?></span></li>
+        <?php foreach ($list as $n): ?>
+          <li><a href="<?= e(entry_url($n)) ?>"<?= $lgOf($n) ?>><?= e($n['title']) ?></a><span><?= e(fmt_date($n['pub_date'])) ?></span></li>
         <?php endforeach; ?>
         <li class="rows2__more"><a href="<?= e(section_link('news')) ?>"><?= e(t('all_news')) ?></a></li>
       </ul>
+<?php return ob_get_clean(); };
+?>
+<section class="latest<?= $style ? ' latest--' . e($style) : '' ?> <?= e(Blocks::toneClass($b['tone'])) ?>" id="<?= e($b['id_attr']) ?>" data-ink="<?= $b['tone'] === 'dark' ? 'light' : 'dark' ?>" aria-labelledby="<?= e($b['id_attr']) ?>-h">
+  <h2 id="<?= e($b['id_attr']) ?>-h" class="latest__head reveal"<?= $b['lg'] ?>><?= e($b['title']) ?></h2>
+  <?php if ($style === 'grid'): ?>
+    <ul class="latest__grid">
+      <?php foreach ($news as $n): ?>
+        <li class="latest__tile reveal<?= $n['image'] ? '' : ' latest__tile--noimg' ?>">
+          <?php if ($n['image']): ?><span class="latest__pic<?= e(focus_class($n)) ?>" aria-hidden="true"><?= img($n['image'], '', '(min-width: 900px) 33vw, 100vw') ?></span><?php endif; ?>
+          <span class="latest__info"><time datetime="<?= e($n['pub_date']) ?>"><?= e(fmt_date($n['pub_date'])) ?></time>
+            <a class="latest__title" href="<?= e(entry_url($n)) ?>"<?= $lgOf($n) ?>><?= e($n['title']) ?></a></span>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <p class="latest__more"><a href="<?= e(section_link('news')) ?>"><?= e(t('all_news')) ?></a></p>
+  <?php elseif ($style === 'cards'): ?>
+    <div class="cards latest__cards"><?php foreach ($news as $n) echo PP::partial('card', ['e' => $n, 'date' => true, 'sizes' => '(min-width: 900px) 33vw, 100vw']); ?></div>
+    <p class="latest__more"><a href="<?= e(section_link('news')) ?>"><?= e(t('all_news')) ?></a></p>
+  <?php elseif ($style === 'feature' && $news): $first = array_shift($news); ?>
+    <div class="latest__feature">
+      <article class="latest__lead reveal">
+        <?php if ($first['image']): ?><a class="latest__pic<?= e(focus_class($first)) ?>" href="<?= e(entry_url($first)) ?>" tabindex="-1" aria-hidden="true"><?= img($first['image'], '', '(min-width: 900px) 50vw, 100vw') ?></a><?php endif; ?>
+        <p class="latest__date"><time datetime="<?= e($first['pub_date']) ?>"><?= e(fmt_date($first['pub_date'])) ?></time></p>
+        <h3 class="latest__title"<?= $lgOf($first) ?>><a href="<?= e(entry_url($first)) ?>"><?= e($first['title']) ?></a></h3>
+        <?php if ($first['excerpt']): ?><p class="latest__ex"<?= $lgOf($first) ?>><?= e($first['excerpt']) ?></p><?php endif; ?>
+      </article>
+      <div class="latest__col reveal"><?= $rows($news) ?></div>
     </div>
+  <?php endif; ?>
+  <?php if ($style === '' || $docs): ?>
+  <div class="latest__cols<?= ($docs && $style === '') ? '' : ' latest__cols--one' ?>">
+    <?php if ($style === ''): ?>
+    <div class="latest__col reveal">
+      <h3 class="latest__sub"><a href="<?= e(section_link('news')) ?>"><?= e(t('news_title')) ?></a></h3>
+      <?= $rows($news) ?>
+    </div>
+    <?php endif; ?>
     <?php if ($docs): ?>
     <div class="latest__col reveal">
       <h3 class="latest__sub"><a href="<?= e(section_link('results')) ?>"><?= e(t('results_title')) ?></a></h3>
@@ -27,4 +62,5 @@ $docs = !empty($m['docs']) ? array_slice(Content::docs(lang()), 0, 5) : [];
     </div>
     <?php endif; ?>
   </div>
+  <?php endif; ?>
 </section>

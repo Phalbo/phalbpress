@@ -80,7 +80,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   Categorie: ordine con `menu_order`, `meta.nav_hidden` le toglie da filtri e menu (restano raggiungibili); con aree e divisioni (`Stories::nested()`) in alto ci sono solo le aree.
 - **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`); `logo_h` (altezza del logo in px), `photo_fx` (1.18: ''=a colori|soft=velo tenue dell'accento|theme=come il tema|mono|tint; i vecchi `none` = a colori.
   Fuori da `theme` le foto degli elenchi e quelle aperte – `.storypage__pic`, `.article__img`, `.prose` – non prendono filtri del tema; il velo non tocca i mosaici, dove `::after` è la sfumatura del titolo),
-  `photo_ratio` (1.18: ''=quadrate|layout|4:3|3:2|16:9|3:4|auto, per card/storie/news degli elenchi tranne mosaici e indice; `img()` mette `pp-tall` (l/a < 0,8) o `pp-wide` (> 1,9) e quelle restano intere su fondo tenue, `pp-crop` da meta `image_fit`=cover le riempie),
+  `photo_ratio` (1.18: ''=quadrate|layout|4:3|3:2|16:9|3:4|auto, per card/storie/news degli elenchi tranne mosaici e indice; `img()` mette `pp-tall` (l/a < 0,8) o `pp-wide` (> 1,9); dalla 1.18.1 solo le `pp-tall` restano intere su fondo tenue, le larghe riempiono; `pp-crop` da meta `image_fit`=cover riempie anche le verticali),
+  `band_deco` (1.18.1: ''|plain|gradient, fondo delle intestazioni senza foto), `logos_size` (1.18.1: s|''|l, `.partner__logo` e `.logos__item img`),
   `photo_hover` (color|zoom|none), `band_h` (compact|tall: altezza delle intestazioni). Scritte in `identity.css` da `Identity::extraCss()`.
   1.16 (`Identity::layoutCss()`): `logo_head` (''|day|night), `space` (''|compact|wide → `--section`), `boxed`, `hero_shade`/`band_shade` (0-80, velo in `.pp-shade`
   dentro la figura), `hero_text`/`band_text` (shadow|panel), `hero_fx` (color|mono), `band_fx` (color|mono|tint, `.pp-tint`).
@@ -151,7 +152,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Layout di base: testata con logo, menu esteso (`Menus::items('main')`, sottomenu), ricerca, lingue in `<details>`; footer con `partials/footer-extra.php` del sito.
 - CSS in ordine: base.css → theme.css del tema → identity.css (colori e font dell'Identità visiva vincono) → pp.css → `site/theme/assets/site.css` se c'è.
 - **Il tema usa solo le variabili dell'identità** per colori e font: `--bg --ink --surface --muted --accent(-ink) --field-1(-ink) --field-2(-ink) --black(-ink) --hero-1 --hero-2 --font --font-display --radius`.
-- `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`), palettes, layouts, `accent_text`,
+- `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`; `hero-notext`/`hero-noshade` se il testo dell'apertura non sta sopra la foto: l'ombra e il velo dell'Identità non si applicano), palettes, layouts, `accent_text`,
   `hero_on` (`accent` | `ground` | `photo`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
 - Home: se la prima fascia non è un'apertura, `templates/home.php` stampa un `h1` `sr-only` col nome del sito. Fascia loghi con pulsante di pausa (`[data-logos-pause]`, `.logos.is-paused`).
   Sottomenu: sul computer il passaggio del mouse mette anche `aria-expanded`; Esc aggiunge `html.sub-esc` che chiude anche quelli aperti da `:hover`/`:focus-within` finché non si esce dalla voce.
@@ -164,6 +165,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   Cambiare tipo non perde niente: `Blocks::ITEMS` (voci di icons, steps, faq, figures) e `Blocks::carry()` passano le voci al tipo nuovo; la gestione salva
   anche i valori dei campi che il modulo non mostra (extra e meta restano), e al cambio di tipo i campi del tipo nuovo non inviati tengono il loro valore.
   Un tema aggiunge un segno all'apertura con `partials/hero-extra.php` (riceve `$b` e `$mark`, campo `mark` dell'apertura: ''|dots|bars|rings|none; non ricopiare `blocks/hero.php`).
+  Ultime news (`latest`): `style` ''|grid|cards|feature (1.18.1).
   Elenco di contenuti: `picks` (campo `entries`, sostituisce pick1…8, migrati da `Blocks::migratePicks()`), `ratio` (''=quadrate|4:3|3:2|16:9|3:4|auto → `cards--r-*`),
   `photo_fx`/`photo_hover` per fascia (`collection--fx-*`, `collection--hover-*`). Con più foto i comandi vanno nella figura se la figura non è `absolute` (`.has-ctl`).
   Definizioni e campi in `Blocks::kinds()` (filtro `block_kinds`); render `Blocks::render()` → `partials/blocks/<tipo>.php`; tono → `Blocks::toneClass()`.
@@ -221,7 +223,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Le migrazioni del database devono restare additive (colonne e tabelle nuove), così il ritorno alla versione precedente non rompe nulla.
 
 ## Stato al 3 novembre 2026
-- `main` = **1.18.0** (tag `v1.18.0` lo crea Andrea). 1.17.0 = audit di Fable più correzioni (storia nel ramo `audit-1.17`); 1.18.0 = ramo `v1.18`: disposizioni diverse per tema,
+- `main` = **1.18.1** (tag `v1.18.1` lo crea Andrea; la 1.18.0 non è stata installata, Andrea parte da questa). 1.17.0 = audit di Fable più correzioni (storia nel ramo `audit-1.17`); 1.18.0 = ramo `v1.18`: disposizioni diverse per tema,
   foto a colori e quadrate, varianti per tutti i temi, colori personali, statistiche, campo Galleria, anteprime social, servizi di Ares.
 - **`AUDIT.md`** nella radice: quello che resta aperto dall'audit, in ordine di importanza.
 - Sito Ares: Andrea lo reinstalla da zero con la 1.18 (database e file nuovi, poi Importa da WordPress con xml, dump e zip delle foto). Le scelte di Ares stanno nel seed, nel config e nel modulo `site/modules/ares`, non in migrazioni.

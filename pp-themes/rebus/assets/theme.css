@@ -146,9 +146,10 @@ h1, h2, h3, .brand__name, .foot__name { text-transform: uppercase; }
 .hero--img .btn--dark { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 
 /* l'evidenziatore segue le righe del testo invece di riempire tutta la larghezza del titolo */
-.hero__title { display: block; line-height: 1.16; }
-.hero__l1 { display: block; }
-.hero__l2:not(:empty) { display: inline; }
+/* il fondino copre tutta l'altezza del carattere: righe più distanti, così non tocca mai la riga sopra */
+.hero__title { display: block; line-height: 1.34; }
+.hero__l1 { display: block; line-height: 1.06; margin-bottom: 0.2em; }
+.hero__l2:not(:empty) { display: inline; padding: 0 0.12em; line-height: 1.34; }
 .statement__fact { text-wrap: balance; }
 .band.chapter--ink { border-bottom: 1px solid var(--line); }
 .band:has(.band__img) { padding-bottom: 0; }

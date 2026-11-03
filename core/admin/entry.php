@@ -113,7 +113,7 @@ $lbl = fn($k, $d) => $uses[$k] ?? $d;
       <?php if (in_array($type, ['story', 'news'], true)): ?>
         <input type="hidden" name="meta[image_fit]" value="">
         <label class="check"><input type="checkbox" name="meta[image_fit]" value="cover" <?= ($meta['image_fit'] ?? '') === 'cover' ? 'checked' : '' ?>> Negli elenchi riempi il riquadro</label>
-        <p class="hint">Una foto molto verticale o molto larga negli elenchi si vede intera su un fondo tenue. Spunta per riempire il riquadro tagliando i bordi.</p>
+        <p class="hint">Negli elenchi le foto riempiono il riquadro; una foto molto verticale (copertina, locandina) si vede intera su un fondo tenue. Spunta per riempire il riquadro anche con quella, tagliando sopra e sotto.</p>
       <?php endif; ?>
     </div>
     <?php endif; ?>

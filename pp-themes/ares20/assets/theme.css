@@ -163,8 +163,10 @@
 .head--cover .band__title { letter-spacing: -0.045em; }
 .band__deco { background: var(--field-1); border-radius: 0; clip-path: polygon(0 0, 100% 0, 100% 70%, 30% 100%, 0 100%); }
 .band__deco i { background: color-mix(in srgb, var(--field-1-ink) 14%, transparent); border-radius: 0; clip-path: polygon(50% 0, 100% 100%, 0 100%); }
-.band__deco i:nth-child(1) { width: 70%; aspect-ratio: 1; right: -6%; top: -10%; }
-.band__deco i:nth-child(2) { width: 40%; aspect-ratio: 1; left: 6%; bottom: -6%; top: auto; }
+/* due vele intere sulla stessa linea, dentro il taglio diagonale: niente forme tagliate dai bordi */
+.band__deco i:nth-child(1) { height: 56%; width: auto; aspect-ratio: 0.8; right: 7%; top: 10%; left: auto; bottom: auto; }
+.band__deco i:nth-child(2) { height: 34%; width: auto; aspect-ratio: 0.8; right: calc(7% + 0.45 * 56cqh + 3%); top: 32%; left: auto; bottom: auto; opacity: 0.6; }
+.band__deco { container-type: size; }
 .band__deco i:nth-child(3) { display: none; }
 .prose h2 { letter-spacing: -0.03em; }
 .article__side { padding: 0 0 0 24px; border-left: 1px solid var(--line); }

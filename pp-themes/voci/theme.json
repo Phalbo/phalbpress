@@ -20,7 +20,7 @@
     "text": "Figtree"
   },
   "buttons": "soft",
-  "body_class": "photo-hero",
+  "body_class": "photo-hero hero-noshade hero-notext",
   "motion": {
     "marks": {
       ".step": [

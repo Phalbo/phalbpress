@@ -4,7 +4,7 @@
  */
 final class PP
 {
-    public const VERSION = '1.18.0';
+    public const VERSION = '1.18.1';
     public static array $config = [];
     public static array $route = ['name' => 'home', 'params' => []];
     public static bool $building = false;   // true durante la generazione delle pagine statiche
@@ -456,7 +456,7 @@ function img(string $rel, string $alt = '', string $sizes = '100vw', string $cla
     if ($small !== $rel && is_file(PP_ROOT . '/' . $small) && $w > 960) {
         $srcset = ' srcset="' . e(PP::upload($small)) . ' 960w, ' . e(PP::upload($rel)) . ' ' . $w . 'w" sizes="' . e($sizes) . '"';
     }
-    // forma della foto: molto verticale o molto larga (negli elenchi si mostra intera invece di tagliarla)
+    // forma della foto: molto verticale o molto larga (una molto verticale negli elenchi si mostra intera invece di tagliarla)
     if ($w && $h) { $r = $w / $h; if ($r < 0.8) $class = trim($class . ' pp-tall'); elseif ($r > 1.9) $class = trim($class . ' pp-wide'); }
     return '<img src="' . e(PP::upload($rel)) . '"' . $srcset . ' alt="' . e($alt) . '"'
         . ($w ? ' width="' . $w . '" height="' . $h . '"' : '')

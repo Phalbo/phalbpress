@@ -13,7 +13,7 @@
   --radius: 999px;
   --radius-box: clamp(18px, 2vw, 28px);
   --head-h: 80px;
-  --section: clamp(3rem, 6vw, 6rem);
+  --section: clamp(2.5rem, 4.6vw, 4.5rem);
 }
 
 /* testata */

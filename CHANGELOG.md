@@ -2,6 +2,25 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.18.1
+Le correzioni dopo la revisione dei 16 temi su Ares.
+
+- **Foto negli elenchi**: le orizzontali, anche molto larghe, riempiono sempre il riquadro (si tagliano i lati); restano intere su un fondo tenue solo le foto molto verticali, come le copertine.
+- **News in home**: tre aspetti nuovi oltre all'elenco con le date: riquadri quadrati con la foto che li copre e il titolo sopra, schede con foto, data e titolo, la prima news in grande con le altre accanto.
+- **Identità visiva**: si sceglie il fondo delle intestazioni senza foto (il motivo del tema, una tinta unita o uno sfumato) e la grandezza dei loghi di clienti e partner (piccoli, medi, grandi; di base un po' più grandi di prima).
+- **Ombra e velo sull'apertura** solo dove il testo sta sopra la foto: niente più ombra nera sul testo accanto alla foto (SME Star, People's Choice, Cultural Ambassador, FINE) né fondo grigio dietro la forma di People's Choice.
+- **Menu**: una voce senza etichetta in una lingua prende il titolo della pagina tradotta (prima prendeva l'etichetta della lingua originale).
+- **Temi**:
+  - Tipografico: apertura più compatta, titolo e frase allineati; l'intestazione delle pagine interne non finisce più sotto la testata;
+  - Manifesto: i numeri in fila, tutti della stessa misura;
+  - Documentario, Adrestia, FINE: meno spazio tra le fasce;
+  - ACE: la pagina in un riquadro centrale;
+  - Ares 2.0: il motivo delle intestazioni è fatto di due vele intere, niente più forme tagliate;
+  - Rebus: il fondino della seconda riga dell'apertura non copre più la riga sopra;
+  - Cultural Ambassador: la fascia del titolo sotto la foto è tutta nera, col titolo al centro;
+  - Sustainability Champion: il testo delle intestazioni non finisce più sulla curva bianca;
+  - mosaico del portfolio (European Excellence, Documentario): titoli di misura, sempre dentro la sfumatura scura.
+
 ## 1.18.0
 Sedici temi che danno davvero sedici siti diversi, foto a colori, colori personali, statistiche, un portfolio che si riempie senza fatica.
 

@@ -72,11 +72,12 @@ h1, h2, .step__line, .collection__name, .figure__val, .brand__name, .nav__link, 
 @media (max-width: 760px) { .collection__item { grid-template-columns: minmax(0, 1fr); } .collection__item > * { padding-top: 6px; padding-bottom: 6px; } .collection__item > :first-child { padding-top: 14px; } .collection__item > :last-child { padding-bottom: 14px; } .collection__who { text-align: left; } }
 
 /* un numero si prende lo schermo */
-.figures__list { grid-template-columns: 1fr; gap: 24px; }
-.figure { flex-direction: row; align-items: flex-end; gap: 24px; flex-wrap: wrap; }
-.figure__val { font-size: clamp(4.5rem, 2rem + 8vw, 10rem); line-height: 0.82; letter-spacing: -0.03em; }
-.figure--2 .figure__val { font-size: clamp(3.5rem, 2rem + 5vw, 7rem); }
-.figure__cap { font-size: var(--step-lead); font-weight: 700; max-width: 16ch; padding-bottom: 0.4em; }
+/* numeri in fila, tutti della stessa misura, la didascalia sotto ognuno */
+.figures__list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 32px var(--gutter); }
+.figure { flex-direction: column; align-items: flex-start; gap: 10px; border-top: 6px solid var(--ink); padding-top: 14px; }
+.figure__val { font-size: clamp(3.6rem, 2rem + 4.4vw, 6.5rem); line-height: 0.86; letter-spacing: -0.03em; }
+.figure__cap { font-size: var(--step-lead); font-weight: 700; max-width: 18ch; }
+@media (max-width: 760px) { .figures__list { grid-template-columns: repeat(2, minmax(0, 1fr)); } .figure__val { font-size: clamp(2.8rem, 1.6rem + 6vw, 4rem); } }
 
 .latest__head { font-size: var(--step-head); }
 .latest__sub { font-size: 2rem; }
