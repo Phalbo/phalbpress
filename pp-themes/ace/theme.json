@@ -62,5 +62,63 @@
     "news": {
       "list": "rows"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#15171c",
+        "accent": "#d42a20",
+        "field1": "#3c9a3a",
+        "field2": "#7cc8ea",
+        "dark": "#1b2150",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Ottanio",
+      "note": "Ottanio, ocra e lampone al posto dei tre colori pieni: più calmo, sempre deciso.",
+      "palette": {
+        "accent": "#0f6f8f",
+        "field1": "#b5446e",
+        "field2": "#d9a441",
+        "ink": "#12181b",
+        "ground": "#ffffff",
+        "dark": "#002c3c",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Arancio e viola",
+      "note": "Un arancio acceso con il suo opposto: per campagne e progetti che devono farsi notare.",
+      "palette": {
+        "accent": "#d9541a",
+        "field1": "#0091b1",
+        "field2": "#61d2cb",
+        "ink": "#1b1614",
+        "ground": "#ffffff",
+        "dark": "#471300",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Blu istituzionale",
+      "note": "Un blu profondo e neutri sobri: per enti e progetti europei.",
+      "palette": {
+        "accent": "#1d4f91",
+        "field1": "#5c84bc",
+        "field2": "#c3be97",
+        "ink": "#14171c",
+        "ground": "#ffffff",
+        "dark": "#052650",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    }
+  ]
 }

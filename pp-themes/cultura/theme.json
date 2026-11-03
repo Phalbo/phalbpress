@@ -104,5 +104,63 @@
     "news": {
       "list": "feature"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#111111",
+        "accent": "#c2410c",
+        "field1": "#16d96b",
+        "field2": "#ff3d9a",
+        "dark": "#111111",
+        "hero1": "#111111",
+        "hero2": "#c2410c"
+      }
+    },
+    {
+      "name": "Elettrico",
+      "note": "Blu elettrico con giallo e arancio: per festival e rassegne.",
+      "palette": {
+        "accent": "#3a36d6",
+        "field1": "#ff9f1c",
+        "field2": "#ffd23f",
+        "ink": "#111111",
+        "ground": "#ffffff",
+        "dark": "#111111",
+        "hero1": "#111111",
+        "hero2": "#3a36d6"
+      }
+    },
+    {
+      "name": "Tropicale",
+      "note": "Lampone, ottanio e giallo: tre colori pieni in equilibrio.",
+      "palette": {
+        "accent": "#c8124f",
+        "field1": "#85cf18",
+        "field2": "#2d9aff",
+        "ink": "#111111",
+        "ground": "#ffffff",
+        "dark": "#111111",
+        "hero1": "#111111",
+        "hero2": "#c8124f"
+      }
+    },
+    {
+      "name": "Terra",
+      "note": "Terracotta e ocra: per musei, archivi e patrimonio.",
+      "palette": {
+        "accent": "#9c4416",
+        "field1": "#e8aa00",
+        "field2": "#fc4c82",
+        "ink": "#111111",
+        "ground": "#ffffff",
+        "dark": "#111111",
+        "hero1": "#111111",
+        "hero2": "#9c4416"
+      }
+    }
+  ]
 }

@@ -101,5 +101,63 @@
     "news": {
       "list": "grid"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#16302f",
+        "accent": "#0d7a74",
+        "field1": "#2b9a8f",
+        "field2": "#e7f4f2",
+        "dark": "#0f2e2c",
+        "hero1": "#16302f",
+        "hero2": "#0d7a74"
+      }
+    },
+    {
+      "name": "Bosco",
+      "note": "Verde bosco e verde prato: per natura e agricoltura.",
+      "palette": {
+        "accent": "#2f6b2f",
+        "field1": "#3e988b",
+        "field2": "#ebf3eb",
+        "ink": "#222f21",
+        "ground": "#ffffff",
+        "dark": "#1d2d1c",
+        "hero1": "#222f21",
+        "hero2": "#2f6b2f"
+      }
+    },
+    {
+      "name": "Mare",
+      "note": "Blu mare e azzurro: per acqua, coste e clima.",
+      "palette": {
+        "accent": "#1565a8",
+        "field1": "#847fba",
+        "field2": "#eaf2fa",
+        "ink": "#1f2c39",
+        "ground": "#ffffff",
+        "dark": "#1a2a3a",
+        "hero1": "#1f2c39",
+        "hero2": "#1565a8"
+      }
+    },
+    {
+      "name": "Terra",
+      "note": "Toni di terra: per suolo, cibo e comunità rurali.",
+      "palette": {
+        "accent": "#9a5b1f",
+        "field1": "#a08066",
+        "field2": "#f8efe8",
+        "ink": "#36271c",
+        "ground": "#ffffff",
+        "dark": "#332519",
+        "hero1": "#36271c",
+        "hero2": "#9a5b1f"
+      }
+    }
+  ]
 }

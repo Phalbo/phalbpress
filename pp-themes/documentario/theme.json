@@ -4,7 +4,7 @@
   "description": "Le fotografie fanno il racconto: apertura a tutto schermo con il titolo sul bordo come in un film, poche parole in colonna stretta, immagini grandi a misure diverse.",
   "best_for": "progetti con molte foto e video dal territorio: comunità, luoghi, reportage, storie di persone",
   "direction": "The place carries it (tasteskill, seed 90413904)",
-  "hero_on": "ground",
+  "hero_on": "photo",
   "palette": {
     "ground": "#e5e1d8",
     "ink": "#2a1d17",
@@ -62,5 +62,63 @@
     "news": {
       "list": "mosaic"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#e5e1d8",
+        "ink": "#2a1d17",
+        "accent": "#456f3a",
+        "field1": "#456f3a",
+        "field2": "#dad5ca",
+        "dark": "#2a1d17",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Inchiostro blu",
+      "note": "Un blu d'inchiostro sulla carta: per reportage e ricerca sociale.",
+      "palette": {
+        "accent": "#2b4c7e",
+        "field1": "#2b4c7e",
+        "field2": "#cfd6e0",
+        "ink": "#1a212c",
+        "ground": "#dce2ea",
+        "dark": "#1a212c",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Ruggine",
+      "note": "Ruggine e sabbia: caldo, da diario di viaggio.",
+      "palette": {
+        "accent": "#9a3b1e",
+        "field1": "#9a3b1e",
+        "field2": "#e0d2ce",
+        "ink": "#2a1d18",
+        "ground": "#eadfdb",
+        "dark": "#2a1d18",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    },
+    {
+      "name": "Notte",
+      "note": "Un indaco profondo e grigi caldi: per fondazioni e archivi.",
+      "palette": {
+        "accent": "#3a3870",
+        "field1": "#3a3870",
+        "field2": "#d3d4e0",
+        "ink": "#1f1f2b",
+        "ground": "#e0e0ea",
+        "dark": "#1f1f2b",
+        "hero1": "#ffffff",
+        "hero2": "#ffffff"
+      }
+    }
+  ]
 }

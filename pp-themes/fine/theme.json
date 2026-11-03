@@ -66,5 +66,63 @@
     "news": {
       "list": "feature"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#111a2e",
+        "accent": "#c2410c",
+        "field1": "#0b4a9c",
+        "field2": "#e6eefc",
+        "dark": "#0e1a33",
+        "hero1": "#ffffff",
+        "hero2": "#ffd9c2"
+      }
+    },
+    {
+      "name": "Bordeaux accademico",
+      "note": "Il bordeaux delle università con neutri sobri.",
+      "palette": {
+        "accent": "#8c1d40",
+        "field1": "#763745",
+        "field2": "#fbe8eb",
+        "ink": "#2b1217",
+        "ground": "#ffffff",
+        "dark": "#2e0f16",
+        "hero1": "#ffffff",
+        "hero2": "#ffd5dc"
+      }
+    },
+    {
+      "name": "Verde campus",
+      "note": "Verde e ottanio: per scuole, campus e formazione all'aperto.",
+      "palette": {
+        "accent": "#1d7a46",
+        "field1": "#005b58",
+        "field2": "#e4f2e7",
+        "ink": "#092011",
+        "ground": "#ffffff",
+        "dark": "#03220f",
+        "hero1": "#ffffff",
+        "hero2": "#c8edd2"
+      }
+    },
+    {
+      "name": "Viola e ambra",
+      "note": "Riquadri viola profondo e pulsanti ambra: per accademie e conservatori.",
+      "palette": {
+        "accent": "#a15c0a",
+        "field1": "#4b2a86",
+        "field2": "#f8ebe0",
+        "ink": "#281605",
+        "ground": "#ffffff",
+        "dark": "#2c1400",
+        "hero1": "#ffffff",
+        "hero2": "#fcdbbf"
+      }
+    }
+  ]
 }

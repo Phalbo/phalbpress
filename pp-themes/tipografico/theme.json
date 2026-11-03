@@ -58,5 +58,63 @@
     "news": {
       "list": "rows"
     }
-  }
+  },
+  "palettes": [
+    {
+      "name": "Originale",
+      "note": "I colori con cui il tema è nato.",
+      "palette": {
+        "ground": "#ffffff",
+        "ink": "#000000",
+        "accent": "#c63232",
+        "field1": "#298343",
+        "field2": "#3f74b8",
+        "dark": "#000000",
+        "hero1": "#ffffff",
+        "hero2": "#000000"
+      }
+    },
+    {
+      "name": "Primari",
+      "note": "Blu, rosso e oro pieni: tipografia e colore, come un manifesto.",
+      "palette": {
+        "accent": "#1f5bd8",
+        "field1": "#c62828",
+        "field2": "#7a5a00",
+        "ink": "#000000",
+        "ground": "#ffffff",
+        "dark": "#000000",
+        "hero1": "#ffffff",
+        "hero2": "#000000"
+      }
+    },
+    {
+      "name": "Caldi",
+      "note": "Arancio, rosso e oro: caldo, per cultura e cibo.",
+      "palette": {
+        "accent": "#c2410c",
+        "field1": "#946400",
+        "field2": "#a55670",
+        "ink": "#000000",
+        "ground": "#ffffff",
+        "dark": "#000000",
+        "hero1": "#ffffff",
+        "hero2": "#000000"
+      }
+    },
+    {
+      "name": "Notte",
+      "note": "Fasce in toni di blu notte: serio e misurato.",
+      "palette": {
+        "accent": "#466087",
+        "field1": "#567099",
+        "field2": "#5c749a",
+        "ink": "#000000",
+        "ground": "#ffffff",
+        "dark": "#000000",
+        "hero1": "#ffffff",
+        "hero2": "#000000"
+      }
+    }
+  ]
 }
