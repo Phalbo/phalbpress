@@ -92,14 +92,18 @@
     <div class="row">
       <label class="field">Foto negli elenchi <span class="muted">(schede, portfolio, gallerie)</span>
         <select name="photo_fx">
-          <?php foreach (['' => 'Come le mostra il tema', 'none' => 'A colori', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_fx'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+          <?php $pfx = ($s['photo_fx'] ?? '') === 'none' ? '' : ($s['photo_fx'] ?? ''); foreach (['' => 'A colori', 'soft' => 'A colori con un velo tenue del colore principale', 'theme' => 'Come le mostra il tema', 'mono' => 'In bianco e nero', 'tint' => 'Virate nel colore principale'] as $k => $l): ?><option value="<?= $k ?>" <?= $pfx === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
+        </select></label>
+      <label class="field">Forma delle foto negli elenchi <span class="muted">(portfolio, categorie, news)</span>
+        <select name="photo_ratio">
+          <?php foreach (['' => 'Quadrate', 'layout' => 'Come la disposizione scelta', '4:3' => '4:3', '3:2' => '3:2 (orizzontali)', '16:9' => '16:9 (video)', '3:4' => '3:4 (verticali)', 'auto' => 'Intere, come sono'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_ratio'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
         </select></label>
       <label class="field">Passandoci sopra
         <select name="photo_hover">
           <?php foreach (['' => 'Come fa il tema', 'color' => 'Tornano a colori', 'zoom' => 'Si ingrandiscono appena', 'none' => 'Niente'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['photo_hover'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>
         </select></label>
     </div>
-    <p class="hint">Le foto aperte (la pagina di un lavoro, l’apertura della home) restano sempre a colori.</p>
+    <p class="hint">Le foto aperte (la pagina di un lavoro, l’apertura della home) restano sempre a colori. Una foto con una forma molto diversa dal riquadro (una copertina verticale in un riquadro quadrato) si vede intera su un fondo tenue invece di essere tagliata; nella scheda del contenuto si può chiedere di tagliarla.</p>
     <label class="field">Intestazioni delle pagine interne <span class="muted">(titolo in alto di pagine, news, portfolio)</span>
       <select name="band_h">
         <?php foreach (['' => 'Come il tema', 'compact' => 'Basse: titolo di misura, si arriva subito al contenuto', 'tall' => 'Alte'] as $k => $l): ?><option value="<?= $k ?>" <?= ($s['band_h'] ?? '') === $k ? 'selected' : '' ?>><?= $l ?></option><?php endforeach; ?>

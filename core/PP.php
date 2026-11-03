@@ -447,6 +447,8 @@ function img(string $rel, string $alt = '', string $sizes = '100vw', string $cla
     if ($small !== $rel && is_file(PP_ROOT . '/' . $small) && $w > 960) {
         $srcset = ' srcset="' . e(PP::upload($small)) . ' 960w, ' . e(PP::upload($rel)) . ' ' . $w . 'w" sizes="' . e($sizes) . '"';
     }
+    // forma della foto: molto verticale o molto larga (negli elenchi si mostra intera invece di tagliarla)
+    if ($w && $h) { $r = $w / $h; if ($r < 0.8) $class = trim($class . ' pp-tall'); elseif ($r > 1.9) $class = trim($class . ' pp-wide'); }
     return '<img src="' . e(PP::upload($rel)) . '"' . $srcset . ' alt="' . e($alt) . '"'
         . ($w ? ' width="' . $w . '" height="' . $h . '"' : '')
         . ($class ? ' class="' . e($class) . '"' : '')
@@ -457,7 +459,9 @@ function img(string $rel, string $alt = '', string $sizes = '100vw', string $cla
 function focus_class(?array $e): string
 {
     $f = (string)($e['meta_arr']['image_focus'] ?? '');
-    return in_array($f, ['top', 'bottom', 'left', 'right'], true) ? ' pp-focus--' . $f : '';
+    // "Taglia la foto" (image_fit = cover): riempie il riquadro anche se ha un'altra forma
+    $crop = ($e['meta_arr']['image_fit'] ?? '') === 'cover' ? ' pp-crop' : '';
+    return (in_array($f, ['top', 'bottom', 'left', 'right'], true) ? ' pp-focus--' . $f : '') . $crop;
 }
 
 /** Pagina madre di una pagina: campo "parent" (id) o, nei contenuti iniziali, "parent_slug". */
