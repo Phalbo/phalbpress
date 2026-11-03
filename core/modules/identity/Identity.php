@@ -89,9 +89,11 @@ final class Identity
      * Contrasti della palette. La frase grande dell'apertura si controlla sul fondo dove il tema la mette:
      * "hero_on" nel theme.json = accent (sul colore principale), ground (sullo sfondo, predefinito) o photo (sempre bianca sulla foto: non dipende dalla palette).
      */
-    public static function checks(array $c, ?string $heroOn = null): array
+    public static function checks(array $c, ?string $heroOn = null, ?bool $accentText = null): array
     {
         $heroOn ??= (string)((PP::themes()[PP::theme()] ?? [])['hero_on'] ?? 'ground');
+        // "accent_text": false nel theme.json = il tema usa il colore principale solo come fondo (es. evidenziatore chiaro): non serve 3:1 sullo sfondo
+        $accentText ??= (bool)((PP::themes()[PP::theme()] ?? [])['accent_text'] ?? true);
         $heroBg = $heroOn === 'ground' ? $c['ground'] : $c['accent'];
         $where = $heroOn === 'ground' ? 'sullo sfondo' : 'sul colore principale';
         $rows = [
@@ -105,7 +107,7 @@ final class Identity
             $rows[] = ['Frase grande, prima riga ' . $where, $c['hero1'], $heroBg, 3];
             $rows[] = ['Frase grande, seconda riga ' . $where, $c['hero2'], $heroBg, 3];
         }
-        $rows[] = ['Colore principale su sfondo (titoli, link evidenziati)', $c['accent'], $c['ground'], 3];
+        if ($accentText) $rows[] = ['Colore principale su sfondo (titoli, link evidenziati)', $c['accent'], $c['ground'], 3];
         return array_map(function ($r) {
             $ratio = self::contrast($r[1], $r[2]);
             $sug = '';
@@ -318,8 +320,25 @@ final class Identity
                 $v = $vars[(int)Admin::post('variant')] ?? null;
                 if ($v) {
                     self::apply($v['palette'] ?? [], $v['fonts']['display'] ?? null, $v['fonts']['text'] ?? null, $v['buttons'] ?? null);
+                    Settings::set('identity_personal', null);
                     Admin::changed('identity');
                     Admin::flash('Variante “' . ($v['name'] ?? '') . '” applicata. Quella di prima si ripristina qui sotto.');
+                }
+                PP::redirect(Admin::u('identity'));
+            }
+            // colori personali: anteprima in tempo reale (JSON) e applicazione
+            if ($act === 'personal_json') {
+                $p = Palette::fromInput($_POST);
+                if (!$p['primary']) Admin::json(['error' => 'Scegli il colore principale'], 400);
+                $c = Palette::colorsFor($p);
+                Admin::json(['colors' => $c, 'checks' => array_map(fn($r) => ['label' => $r['label'], 'ok' => $r['ratio'] >= $r['min'], 'ratio' => round($r['ratio'], 1)], self::checks($c))]);
+            }
+            if ($act === 'personal') {
+                $p = Palette::fromInput($_POST);
+                if ($p['primary']) {
+                    Palette::applyPersonal($p);
+                    Admin::changed('identity');
+                    Admin::flash('Colori personali applicati. Valgono anche se cambi tema: si ricalcolano per quello nuovo. Quelli di prima si ripristinano qui sotto.');
                 }
                 PP::redirect(Admin::u('identity'));
             }

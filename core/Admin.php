@@ -501,6 +501,11 @@ final class Admin
         if (PP::$theme && isset($_GET['variant']) && class_exists('Identity') && ($v = PP::themes()[PP::$theme]['palettes'][(int)$_GET['variant']] ?? null)) {
             $html = str_replace('</head>', '<style>' . Identity::css($v) . '</style></head>', $html);
         }
+        // colori personali (Identità visiva): calcolati per il tema dell'anteprima, senza salvare niente
+        if (!empty($_GET['p1']) && class_exists('Palette')) {
+            $pp = Palette::fromInput($_GET);
+            if ($pp['primary']) $html = str_replace('</head>', '<style>' . Identity::css(['palette' => Palette::colorsFor($pp, PP::$theme ?: PP::theme())]) . '</style></head>', $html);
+        }
         if ($edit) {
             if (class_exists('Layouts') && Layouts::$type !== '') $html = preg_replace('~<html\b~', '<html data-pp-type="' . e(Layouts::$type) . '" data-pp-entry="' . (int)Layouts::$entry . '"', $html, 1);
             $tools = '<link rel="stylesheet" href="' . e(PP::url('pp-admin/visual-frame.css')) . '?v=' . PP::VERSION . '">'

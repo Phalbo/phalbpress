@@ -10,7 +10,12 @@ final class Themes
             if ($act === 'activate' && isset($themes[$slug])) {
                 Settings::set('theme', $slug);
                 $t = $themes[$slug];
-                if (Admin::post('apply') && class_exists('Identity')) {
+                // colori personali ancora in uso: si ricalcolano per il tema nuovo (i font suggeriti, se richiesti, sì)
+                $personal = class_exists('Palette') && Palette::onThemeChange($slug);
+                if ($personal) {
+                    if (Admin::post('apply')) Identity::apply([], $t['fonts']['display'] ?? null, $t['fonts']['text'] ?? null, $t['buttons'] ?? null);
+                    Admin::flash('I tuoi colori personali sono stati ricalcolati per questo tema.');
+                } elseif (Admin::post('apply') && class_exists('Identity')) {
                     Identity::apply($t['palette'] ?? [], $t['fonts']['display'] ?? null, $t['fonts']['text'] ?? null, $t['buttons'] ?? null);
                     Admin::flash('Applicati anche colori, font e pulsanti suggeriti. Quelli di prima si possono ripristinare qui sotto.');
                 }

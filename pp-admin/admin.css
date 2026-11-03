@@ -346,3 +346,10 @@ fieldset.field { border: 0; padding: 0; margin: 0; } fieldset.field legend { fon
 .gal__drop.is-over { border-color: var(--focus); background: #f3f7ff; }
 .gal__drop p { margin: 4px 0; }
 .gal__drop .row { justify-content: center; }
+
+/* colori personali */
+.personal__colors { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: end; }
+.personal__colors input[type=color] { width: 72px; height: 44px; padding: 2px; border: 1px solid var(--line-strong); border-radius: var(--r); background: #fff; }
+.personal__moods { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+.personal__moods legend { font-weight: 600; margin-bottom: 6px; }
+.personal__result { display: grid; gap: 6px; }

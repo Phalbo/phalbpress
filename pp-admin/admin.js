@@ -398,4 +398,34 @@
     drop.addEventListener('drop', (ev) => { if (dragFrom >= 0) return; ev.preventDefault(); upload(ev.dataTransfer.files); });
     render();
   });
+
+  /* colori personali: i colori calcolati e i contrasti mentre si sceglie; il link all'anteprima segue la scelta */
+  document.querySelectorAll('[data-personal-form]').forEach((form) => {
+    const res = form.querySelector('[data-personal-result]');
+    const sw = form.querySelector('[data-personal-sw]');
+    const st = form.querySelector('[data-personal-status]');
+    const prev = form.querySelector('[data-personal-preview]');
+    let timer = 0; let seq = 0;
+    const update = async () => {
+      const fd = new FormData(form);
+      fd.set('action', 'personal_json');
+      const q = new URLSearchParams();
+      ['p1', 'use2', 'p2', 'use3', 'p3', 'mood'].forEach((k) => { if (fd.get(k)) q.set(k, fd.get(k)); });
+      if (prev) prev.href = `${prev.dataset.base}&${q}`;
+      const n = ++seq;
+      try {
+        const r = await fetch(location.pathname, { method: 'POST', body: fd, credentials: 'same-origin' });
+        const j = await r.json();
+        if (n !== seq) return;
+        if (!r.ok || j.error) throw new Error(j.error || `Errore ${r.status}`);
+        sw.replaceChildren(...Object.entries(j.colors).map(([k, v]) => { const i = document.createElement('i'); i.style.background = v; i.title = `${k} ${v}`; return i; }));
+        const bad = j.checks.filter((c) => !c.ok);
+        st.textContent = bad.length ? `Da sistemare: ${bad.map((c) => `${c.label} (${c.ratio}:1)`).join('; ')}` : `Tutti i contrasti vanno bene (${j.checks.length} controlli WCAG AA).`;
+        res.hidden = false;
+      } catch (e) { st.textContent = e.message; res.hidden = false; }
+    };
+    form.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(update, 250); });
+    form.addEventListener('change', () => { clearTimeout(timer); timer = setTimeout(update, 50); });
+    update();
+  });
 })();

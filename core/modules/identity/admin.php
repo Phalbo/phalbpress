@@ -21,6 +21,33 @@
   <?php if (Settings::get('identity_previous')): ?><form method="post"><?= Admin::csrfField() ?><button class="btn btn--small" name="action" value="variant_undo">Torna ai colori di prima</button></form><?php endif; ?>
 </section>
 <?php endif; ?>
+<?php $pers = Palette::personal(); $pc = $pers ?: ['primary' => $s['colors']['accent'], 'secondary' => '', 'tertiary' => '', 'mood' => 'armonico']; ?>
+<section class="panel stack personal" id="personale" data-personal>
+  <h2>Colori personali</h2>
+  <p class="hint">Scegli il colore principale (quello del logo, per esempio) e, se vuoi, un secondo e un terzo. Calcoliamo noi gli altri colori per il tema <?= e($tv['name'] ?? PP::theme()) ?>, con i contrasti giusti per leggere bene. La scelta resta anche se cambi tema: i colori si ricalcolano per quello nuovo.</p>
+  <?php if ($pers): ?><p class="small"><span class="badge badge--ok">In uso</span> I colori del sito vengono da questa scelta.</p><?php endif; ?>
+  <form method="post" class="stack" data-personal-form>
+    <?= Admin::csrfField() ?>
+    <div class="personal__colors">
+      <label class="field">Colore principale<input type="color" name="p1" value="<?= e($pc['primary']) ?>"></label>
+      <div class="field"><label class="check"><input type="checkbox" name="use2" value="1" <?= $pc['secondary'] ? 'checked' : '' ?>> Secondo colore</label><input type="color" name="p2" value="<?= e($pc['secondary'] ?: '#888888') ?>" aria-label="Secondo colore"></div>
+      <div class="field"><label class="check"><input type="checkbox" name="use3" value="1" <?= $pc['tertiary'] ? 'checked' : '' ?>> Terzo colore</label><input type="color" name="p3" value="<?= e($pc['tertiary'] ?: '#cccccc') ?>" aria-label="Terzo colore"></div>
+    </div>
+    <fieldset class="personal__moods"><legend>Carattere <span class="muted">(decide i colori che non scegli tu)</span></legend>
+      <?php foreach (Palette::MOODS as $mk => [$ml, $md]): ?>
+        <label class="check"><input type="radio" name="mood" value="<?= e($mk) ?>" <?= ($pc['mood'] ?? 'armonico') === $mk ? 'checked' : '' ?>> <strong><?= e($ml) ?></strong> <span class="small muted"><?= e($md) ?></span></label>
+      <?php endforeach; ?>
+    </fieldset>
+    <div class="personal__result" data-personal-result hidden>
+      <span class="variant__sw" data-personal-sw></span>
+      <p class="small" role="status" aria-live="polite" data-personal-status></p>
+    </div>
+    <div class="row">
+      <a class="btn" target="_blank" rel="noopener" data-personal-preview data-base="<?= e(Admin::u('preview') . '?theme=' . rawurlencode(PP::theme())) ?>" href="<?= e(Admin::u('preview') . '?' . http_build_query(['theme' => PP::theme(), 'p1' => $pc['primary'], 'use2' => $pc['secondary'] ? 1 : '', 'p2' => $pc['secondary'], 'use3' => $pc['tertiary'] ? 1 : '', 'p3' => $pc['tertiary'], 'mood' => $pc['mood'] ?? 'armonico'])) ?>">Anteprima ↗</a>
+      <button class="btn btn--primary" name="action" value="personal">Applica</button>
+    </div>
+  </form>
+</section>
 <form method="post" enctype="multipart/form-data" data-form class="stack">
   <?= Admin::csrfField() ?>
   <div class="cols">
