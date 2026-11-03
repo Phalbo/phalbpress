@@ -1,10 +1,13 @@
 <?php
 /* Riquadri con icona (servizi, aree di lavoro): icona disegnata, titolo, testo, pulsante. Fino a 6, per riga 2-4. */
 $items = [];
+// senza un'icona scelta ("Automatica") ogni riquadro ne prende una diversa, così non restano vuoti; "Nessuna" la toglie
+$auto = ['layers', 'send', 'book', 'chart', 'people', 'idea'];
 for ($n = 1; $n <= 6; $n++) {
     $t = trim((string)($x["i{$n}_t"] ?? ''));
     if ($t === '') continue;
-    $items[] = ['icon' => (string)($m["i{$n}_icon"] ?? ''), 't' => $t, 'd' => trim((string)($x["i{$n}_d"] ?? '')), 'btn' => trim((string)($x["i{$n}_btn"] ?? '')), 'url' => Blocks::href((string)($m["i{$n}_url"] ?? ''))];
+    $ic = (string)($m["i{$n}_icon"] ?? '');
+    $items[] = ['icon' => $ic === 'none' ? '' : ($ic !== '' ? $ic : $auto[count($items) % 6]), 't' => $t, 'd' => trim((string)($x["i{$n}_d"] ?? '')), 'btn' => trim((string)($x["i{$n}_btn"] ?? '')), 'url' => Blocks::href((string)($m["i{$n}_url"] ?? ''))];
 }
 $per = in_array($m['per_row'] ?? '', ['2', '3', '4'], true) ? (int)$m['per_row'] : min(4, max(2, count($items)));
 ?>
