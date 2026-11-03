@@ -2,6 +2,22 @@
 
 Ogni release ha una sezione `## X.Y.Z`: è il testo che i siti mostrano in Gestione → Aggiornamenti.
 
+## 1.18.0
+Sedici temi che danno davvero sedici siti diversi, foto a colori, colori personali, statistiche, un portfolio che si riempie senza fatica.
+
+- **Ogni tema ha le sue disposizioni**: elenco del portfolio, pagina del singolo lavoro ed elenco delle news cambiano da tema a tema (griglia, copertine, mosaico, indice, schermi, miniature…). Si cambiano come prima nella Modifica visuale.
+- **Foto a colori**: negli elenchi le foto restano a colori in tutti i temi, anche in quelli che le volevano in bianco e nero (lo fanno ancora solo con "Come le mostra il tema"). Nuova scelta in Identità visiva: "A colori con un velo tenue del colore principale".
+- **Forma delle foto negli elenchi**: quadrate di base, in ogni disposizione (si cambia in Identità visiva: come la disposizione, 4:3, 3:2, 16:9, 3:4, intere). Le foto con una forma molto diversa, come le copertine verticali, si vedono intere su un fondo tenue invece di essere tagliate; sul singolo contenuto "Negli elenchi riempi il riquadro" le taglia comunque. Al massimo quattro foto per riga.
+- **Varianti di colore per tutti i temi**: tre per ognuno, pensate per argomenti diversi, tutte con i contrasti WCAG AA.
+- **Colori personali** (Identità visiva): scegli il colore principale e, se vuoi, un secondo e un terzo, poi un carattere (sobrio, armonico, vivace, triade, istituzionale). Il motore calcola tutti i colori del tema, li porta ai contrasti giusti e li ricalcola se cambi tema. Si vedono mentre scegli e in anteprima.
+- **Statistiche delle visite** (Privacy e cookie): Matomo e Plausible senza cookie e senza banner, Google Analytics 4 solo dopo il consenso. Scrivi solo l'identificativo: il codice, i permessi della pagina, il banner, la privacy e la cookie policy si aggiornano da soli.
+- **Portfolio più semplice da riempire**: campo Galleria con più foto insieme (trascinandole dal computer), ordine da cambiare trascinando, una descrizione per foto. La foto principale può avere qualsiasi forma: le misure consigliate sono scritte accanto. Importando da WordPress le gallerie e il primo video vanno nei loro campi, non più come codici nel testo.
+- **Anteprime sui social**: per ogni contenuto un'immagine 1200×630 fatta apposta (le foto verticali intere su un fondo tenue), con misure e descrizione. Finché il sito è nascosto ai motori di ricerca le anteprime non ci sono.
+- **Riquadri con icona**: senza un'icona scelta ogni riquadro ne prende una diversa ("Automatica"); "Nessuna" la toglie.
+- **Importa da WordPress**: escludere un contenuto esclude anche le sue traduzioni, col redirect nella lingua giusta; un contenuto escluso può portare a una pagina (`'page:slug'`).
+- **Sito statico**: ogni cartella di lingua ha la sua regola di sicurezza (CSP) aggiornata dal motore, così video, mappe e statistiche funzionano anche lì.
+- Gestione: il controllo degli indirizzi delle pagine non dà più errore in Chrome.
+
 ## 1.17.0
 Revisione completa del motore (sicurezza, correttezza, accessibilità, velocità), provata sul sito Ares e sul sito dimostrativo.
 

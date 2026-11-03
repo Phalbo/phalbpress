@@ -59,7 +59,10 @@ translator (solo le lingue in `users.langs`). Controlli: `Auth::can('admin'|'sit
 Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` = `admin`).
 
 ## Funzioni comuni (in _base, valgono con ogni tema)
-- **Galleria nel testo**: shortcode `[gallery:percorso=alt|percorso=alt]` (pulsante "Galleria" nell'editor) → `partials/gallery.php`.
+- **Galleria nel testo**: shortcode `[gallery:percorso=alt|percorso=alt]` (pulsante "Galleria" nell'editor) → `PP::gallery()` → `partials/gallery.php`.
+- **Campo Galleria** (1.18, tipo di campo `gallery`, es. `'gallery' => ['label' => 'Galleria', 'type' => 'gallery']` nei campi di `story`): stesso formato del codice (`Media::gallery()` normalizza; in gestione una riga per foto `percorso | descrizione`),
+  nella colonna principale dell'editor; con JS anteprime da trascinare, descrizione per foto, foto dal computer caricate subito con `POST /{admin}/api/upload` (permesso `content`); senza JS file multipli `gallery_<campo>[]` aggiunti in fondo.
+  `story.php` la stampa dopo il testo. L'importazione da WordPress (`WpImport::intoFields()`) sposta lì i `[gallery:…]` del testo e il primo `[video:…]` nel campo `video` se il tipo li ha.
 - **Lightbox**: `<dialog class="pp-lightbox">` in base.js per gallerie, `[data-lightbox]` e immagini della `.prose`; frecce, tastiera, swipe, testi da `data-ui` del body.
 - **Punto focale**: meta `image_focus` (top|bottom|left|right) → `focus_class($e)` = classe `pp-focus--X` su card, intestazione, mosaico.
 - **Pagine madri**: meta `parent` (id) o `parent_slug` nel seed → `page_parent($e)`; percorso sopra il titolo ed elenco `.children` (parte `list`) nella madre.
@@ -75,7 +78,9 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   Ogni categoria usata ha la pagina `/{lang}/{sezione storie}/{slug}/` (rotta `stories-cat`, template `stories` con `$category`, in `PP::items()` quindi anche statica);
   la disposizione dell'elenco si sceglie per tipo o per categoria (meta `layout_stories`). Dati della scheda: campi del tipo `story` con `'public' => chiave del testo` (`Stories::facts`).
   Categorie: ordine con `menu_order`, `meta.nav_hidden` le toglie da filtri e menu (restano raggiungibili); con aree e divisioni (`Stories::nested()`) in alto ci sono solo le aree.
-- **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`); `logo_h` (altezza del logo in px), `photo_fx` (none|mono|tint: foto degli elenchi),
+- **Identità**: `logo_has_name` (il logo contiene già il nome: `.brand__text` diventa `sr-only`); `logo_h` (altezza del logo in px), `photo_fx` (1.18: ''=a colori|soft=velo tenue dell'accento|theme=come il tema|mono|tint; i vecchi `none` = a colori.
+  Fuori da `theme` le foto degli elenchi e quelle aperte – `.storypage__pic`, `.article__img`, `.prose` – non prendono filtri del tema; il velo non tocca i mosaici, dove `::after` è la sfumatura del titolo),
+  `photo_ratio` (1.18: ''=quadrate|layout|4:3|3:2|16:9|3:4|auto, per card/storie/news degli elenchi tranne mosaici e indice; `img()` mette `pp-tall` (l/a < 0,8) o `pp-wide` (> 1,9) e quelle restano intere su fondo tenue, `pp-crop` da meta `image_fit`=cover le riempie),
   `photo_hover` (color|zoom|none), `band_h` (compact|tall: altezza delle intestazioni). Scritte in `identity.css` da `Identity::extraCss()`.
   1.16 (`Identity::layoutCss()`): `logo_head` (''|day|night), `space` (''|compact|wide → `--section`), `boxed`, `hero_shade`/`band_shade` (0-80, velo in `.pp-shade`
   dentro la figura), `hero_text`/`band_text` (shadow|panel), `hero_fx` (color|mono), `band_fx` (color|mono|tint, `.pp-tint`).
@@ -83,7 +88,12 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   (fondo opaco, o colore del testo se la testata è trasparente sopra una foto). Senza logo chiaro: fondino rettangolare. Mai ovali nei temi.
   Con la barra dei contatti, una testata `fixed`/`absolute` parte sotto la barra (base.js).
 - **Varianti di colore**: `palettes` nel theme.json (`[{name, note, palette, fonts, buttons}]`), applicate da Identità visiva (azione `variant`, ripristino `variant_undo`),
-  anteprima `/{admin}/preview?theme=x&variant=N`.
+  anteprima `/{admin}/preview?theme=x&variant=N`. Dalla 1.18 ogni tema ne ha almeno quattro (Originale + tre), tutte con `Identity::checks()` senza errori.
+- **Colori personali** (1.18, `core/modules/identity/Palette.php`): OKLCH; `Palette::derive($base, $primary, $secondary, $tertiary, $mood, $heroOn, $accentText)` tiene luminosità e intensità di ogni ruolo del tema
+  e cambia la tinta (accento = colore principale; campo 1/2 = secondo/terzo o tinte dal carattere `sobrio|armonico|vivace|triade|istituzionale`; neutri restano neutri; fondi molto scuri o chiari prendono la tinta principale;
+  ruoli uguali nel tema restano uguali), poi `Palette::fix()` muove solo la luminosità finché i contrasti passano. Scelta in `identity_personal` (con i colori applicati): `Palette::onThemeChange()` (Temi → attiva)
+  la ricalcola se i colori del sito sono ancora quelli. Gestione: azioni `personal` e `personal_json` (anteprima dal vivo), anteprima `/{admin}/preview?p1=#..&use2=1&p2=..&use3=1&p3=..&mood=..`.
+  Le varianti dei 15 temi sono nate da qui (primario e carattere scelti per tema). `accent_text: false` nel theme.json = l'accento si usa solo come fondo (manifesto): niente controllo 3:1 sullo sfondo.
 - **Provini** (`core/modules/themes/Proofs.php`, pannello in Temi): `Proofs::build($palette, $only)` scrive `/provini/<tema>/…` (pagine di `PP::items()` tranne
   i lavori oltre i 24 più recenti e le news oltre le 10 più recenti, più i lavori scelti nelle fasce), link interni riscritti, `noindex`, indice `/provini/index.html`;
   manifesto in `data/provini.json`, `Proofs::clear()`. `provini` è riservato nel sito statico.
@@ -94,6 +104,13 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
   Id per modulo: `Forms::anchor($form)` = `pp-form` per il contatto, `pp-form-<nome>` per gli altri; l'esito torna in `#<ancora>-ok|err`.
 - **Fasce nelle pagine**: un blocco col campo `page` (id) o `page_slug` (nel seed: la pagina può arrivare dopo, es. con l'importazione) va in fondo a quella pagina
   (`Blocks::forPage()`, in `templates/page.php`) e non in home. `Blocks::bindPages()` (hook `saved`) trasforma `page_slug` in `page` quando la pagina esiste.
+- **Anteprime social** (1.18): `Media::share($img)` → `uploads/share/<hash>.jpg` 1200×630 (cover se l/a fra 1,45 e 2,6, altrimenti intera su 12% dell'accento; si rifà se cambiano foto o accento;
+  al massimo 25 nuove per richiesta, poi la foto com'è); `Seo::head()` scrive `og:image:width/height/alt` (alt da `$ogAlt` dei template, se no il titolo). Con `search_hidden` niente OG.
+- **Statistiche** (1.18, `core/modules/legal/Stats.php`, Privacy e cookie): impostazione `stats` (`ga4`, `matomo_url` + `matomo_id`, `plausible` + `plausible_host`). Plausible con il suo script,
+  Matomo (`disableCookies`) e GA4 da `pp-assets/stats.js` (configurazione negli attributi `data-`, GA4 solo con `ppConsent.has('ga4')` e l'evento `pp-consent`). GA4 è un servizio di `cookie_services`
+  sempre trovato dalla scansione (banner con `cookie_title_stats`/`cookie_text_stats`); la privacy ha `{stats}` (`Stats::privacy()`; nei testi salvati prima il paragrafo "nessuna statistica" viene sostituito).
+  Mai Meta/Facebook. Niente statistiche nell'anteprima.
+- **CSP** (`PP::csp()`): filtri `csp_frames`, `csp_img`, `csp_scripts`, `csp_connect`. Col sito statico `StaticSite::build()` scrive `<lingua>/.htaccess` con la stessa CSP (vale al posto di quella fissa del `.htaccess` principale).
 - **Mappa** (blocco `map`): OpenStreetMap in iframe solo dopo il consenso (`data-pp-embed`, servizio `openstreetmap` in `Legal::services`, `csp_frames`); senza consenso link "Apri su OpenStreetMap".
 - **Sito del progetto** (`core/SitePackage.php`): `extract()` scompatta la cartella `site/` da uno zip (anche annidata), mai `config.php`; lo usano l'installazione guidata
   e Aggiornamenti → "Sito del progetto" (`Updater::siteUpload()`: password, copia `sito-*.zip` in data/backups, `extract(..., mirror)`, `followSample()` per riscrivere un config.php
@@ -115,7 +132,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - `WpSource` legge (XMLReader, una riga SQL alla volta) e salva il modello in `data/wp-import/model.ser`; `WpContent::html()` converte gli shortcode (liste `WRAP`/`DROP`, il resto tiene il testo);
   `WpImport` lavora a passi `scan → media → terms → entries → links → menu → redirects` con stato in `state.json`, collegamenti in `pp_wp_map` (kind: media|post|entry|term|termgroup).
 - Gruppi di traduzione = `trid` di WPML; senza la lingua principale il contenuto diventa bozza. Slug di WordPress mantenuti. Foto con `Media::upload` (stesso trattamento del caricamento).
-- Config del sito `wp_import`: `types` (wp → pp), `taxonomies` (`['tax' => ['type','field']]`), `drafts`, `skip` (lista o `'slug' => 'home'|chiave sezione|'/percorso/'|'category:slug'` per il redirect), `download`, `menu`.
+- Config del sito `wp_import`: `types` (wp → pp), `taxonomies` (`['tax' => ['type','field']]`), `drafts`, `skip` (lista o `'slug' => 'home'|chiave sezione|'/percorso/'|'category:slug'|'page:slug'` per il redirect; vale anche per le traduzioni WPML dello stesso gruppo, `WpImport::skipped()`), `download`, `menu`.
 - Filtri: `wp_import_entry` ($data con type, title, excerpt, body, slug, image, image_alt, meta, extra, skip), `wp_import_term` (termine prima del salvataggio), `wp_import_term_url` (→ `['from','to']`), `wp_import_menu_item`.
 - CLI: `php cron.php wpimport plan|run|reset|undo` (hook `cli` dei moduli: `Hooks::first('cli', $args)`).
 - Ripresa (1.17, `WpImport::prepare()`): se cambia la sorgente delle foto (`sourceSig()`: zip nome/data/peso + `download`) i file mappati a `''` (mancanti) si riprovano e il passo torna a `media`, anche a importazione finita;
@@ -134,8 +151,8 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Layout di base: testata con logo, menu esteso (`Menus::items('main')`, sottomenu), ricerca, lingue in `<details>`; footer con `partials/footer-extra.php` del sito.
 - CSS in ordine: base.css → theme.css del tema → identity.css (colori e font dell'Identità visiva vincono) → pp.css → `site/theme/assets/site.css` se c'è.
 - **Il tema usa solo le variabili dell'identità** per colori e font: `--bg --ink --surface --muted --accent(-ink) --field-1(-ink) --field-2(-ink) --black(-ink) --hero-1 --hero-2 --font --font-display --radius`.
-- `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`),
-  `hero_on` (`accent` | `ground`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
+- `theme.json`: name, order, description, best_for, direction, palette (ruoli identità), fonts {display,text}, buttons, body_class (es. `photo-hero`), palettes, layouts, `accent_text`,
+  `hero_on` (`accent` | `ground` | `photo`): il fondo per cui sono pensati `hero1`/`hero2`. Un'apertura con tono "Automatico" va lì (`Blocks::render`) e `Identity::checks()` misura la frase grande su quel fondo: senza foto il titolo deve restare leggibile.
 - Home: se la prima fascia non è un'apertura, `templates/home.php` stampa un `h1` `sr-only` col nome del sito. Fascia loghi con pulsante di pausa (`[data-logos-pause]`, `.logos.is-paused`).
   Sottomenu: sul computer il passaggio del mouse mette anche `aria-expanded`; Esc aggiunge `html.sub-esc` che chiude anche quelli aperti da `:hover`/`:focus-within` finché non si esce dalla voce.
 - Home a blocchi: entry di tipo `block`, `template` = tipo (hero, statement, icons, steps, collection, figures, latest, text, gallery, cta, video, logos, team, roster, map, quote, faq, newsletter, events), ordine = menu_order.
@@ -160,7 +177,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - **Disposizioni delle pagine interne** (`core/modules/themes/Layouts.php`): ogni tipo di pagina (page, news, news-item, stories, story, results, partners, contact, search, 404) ha delle parti
   (`head`: left|center|split|cover|minimal · `body`: read|wide|aside|columns · `list`: grid|feature|rows|mosaic · `stories`: zigzag|grid|mosaic|tiles|cards|covers|screens|index|thumbs
   · `work` (tipo `story`, la scheda): portrait|sheet|showcase|journal · `docs`: cards|table · `partners`: cards|logos|rows),
-  uguali per tutti i temi. `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina, news, storia o categoria → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json
+  uguali per tutti i temi. Dalla 1.18 ogni tema ha in `layouts` la sua disposizione di `stories.stories`, `story.work` e `news.list`, diversa dagli altri (tabella nelle skill). `Layouts::get($tipo, $parte, $contenuto)` cerca: meta `layout_<parte>` della singola pagina, news, storia o categoria → impostazione `layouts` del sito (per tipo) → `layouts` del theme.json
   (`"*"` vale per tutti i tipi) → base. I template mettono la classe `head--X` sull'intestazione (partial `band`, struttura piatta: percorso, etichetta, titolo, frase, dati, foto o `.band__deco`),
   `body--X`, `list--X`, `stories--X`, `docs--X`, `partners--X` sulle parti e `data-pp-part`; la struttura sta in base.css, il tema ci mette il carattere e deve reggerle tutte, anche senza foto.
   Nella Modifica visuale si sceglie la pagina in alto e si clicca una parte: vale per tutte le pagine del tipo o solo per quella (anteprima con `data-pp-type`/`data-pp-entry` sull'html).
@@ -187,7 +204,7 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 | `block_kinds` / `menu_sections` / `search_types` / `search_index` | filter | blocchi, sezioni nel menu, ricerca |
 | `form_data` | filter | dati di una richiesta prima del salvataggio |
 | `backup_tables` | filter | tabelle dei moduli da includere nei backup |
-| `head`, `body_end`, `footer_links`, `body`, `cookie_services`, `csp_frames` | | come prima |
+| `head`, `body_end`, `footer_links`, `body`, `cookie_services`, `csp_frames`, `csp_img`, `csp_scripts`, `csp_connect` | | come prima |
 | `saved` | fire | dopo ogni salvataggio (scansione cookie 10, statico 50) |
 | `admin.pages` | filter | `slug => ['label','group','handler','perm']` |
 | `cron` | fire | lavori periodici dei moduli, da `cron.php` |
@@ -204,9 +221,11 @@ Pagine di modulo: chiave `perm` in `admin.pages` (default `site`; `admin_only` =
 - Le migrazioni del database devono restare additive (colonne e tabelle nuove), così il ritorno alla versione precedente non rompe nulla.
 
 ## Stato al 3 novembre 2026
-- `main` = **1.17.0** (tag `v1.17.0` lo crea Andrea): l'audit della 1.16.0 fatto da Fable (24 commit) più le correzioni decise dopo (sito statico differito, antispam, indirizzo del sito, WordPress, accessibilità, eventi, anteprima demo). Storia completa nel ramo `audit-1.17`, unito senza squash.
-- **`AUDIT.md`** nella radice: solo quello che resta aperto, in ordine di importanza. Si parte da lì per la 1.18.
-- Sui siti già installati l'`.htaccess` non si aggiorna da solo: vanno copiate a mano le righe `RewriteRule ^(site|pp-assets)/.+\.php$ - [F,L]` e `RewriteRule ^uploads/.+\.(php\d?|phtml|phar|shtml)$ - [F,L]` (dopo quella di `pp-themes`) e `https://www.openstreetmap.org` nella `frame-src`.
+- `main` = **1.18.0** (tag `v1.18.0` lo crea Andrea). 1.17.0 = audit di Fable più correzioni (storia nel ramo `audit-1.17`); 1.18.0 = ramo `v1.18`: disposizioni diverse per tema,
+  foto a colori e quadrate, varianti per tutti i temi, colori personali, statistiche, campo Galleria, anteprime social, servizi di Ares.
+- **`AUDIT.md`** nella radice: quello che resta aperto dall'audit, in ordine di importanza.
+- Sito Ares: Andrea lo reinstalla da zero con la 1.18 (database e file nuovi, poi Importa da WordPress con xml, dump e zip delle foto). Le scelte di Ares stanno nel seed, nel config e nel modulo `site/modules/ares`, non in migrazioni.
+- Sui siti installati prima della 1.17 l'`.htaccess` non si aggiorna da solo: vanno copiate a mano le righe `RewriteRule ^(site|pp-assets)/.+\.php$ - [F,L]` e `RewriteRule ^uploads/.+\.(php\d?|phtml|phar|shtml)$ - [F,L]` (dopo quella di `pp-themes`) e `https://www.openstreetmap.org` nella `frame-src`.
 
 ## Test locale
 Sito dimostrativo (progetto inventato "Common Ground", 3 lingue, foto con le misure stampate sopra): `php tools/demo.php` (o `--force` per rifarlo) copia `tools/demo/site` in `site/`,
